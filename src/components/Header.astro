@@ -13,32 +13,22 @@ import BookButton from './BookButton.astro';
     <BookButton class="hide-sm" />
 
     {/* Sous 880 px la navigation est masquée : ce bouton la rend accessible.
-        L'API Popover fournit nativement la fermeture au clic extérieur, la
-        touche Échap et le placement au-dessus du reste. */}
+        Il reste en place quand le panneau s'ouvre et se change en croix,
+        ce qui évite de dupliquer le nom du salon dans le panneau — c'était
+        la cause du léger saut de taille et de position à l'ouverture. */}
     <button
       class="burger show-sm"
-      popovertarget="menu-mobile"
+      id="burger"
       aria-label="Ouvrir le menu"
       aria-expanded="false"
+      aria-controls="menu-mobile"
     >
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
 
-<nav id="menu-mobile" popover class="sheet" aria-label="Sections du site">
-  <div class="sheet-top">
-    <span class="sheet-brand">{site.name}</span>
-    <button
-      class="sheet-close"
-      popovertarget="menu-mobile"
-      popovertargetaction="hide"
-      aria-label="Fermer le menu"
-    >
-      <span></span><span></span>
-    </button>
-  </div>
-
+<nav id="menu-mobile" class="sheet" aria-label="Sections du site" hidden>
   <ul class="sheet-nav">
     {sections.map((s, i) => (
       <li>

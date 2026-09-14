@@ -45,6 +45,7 @@
   --script: var(--font-script);
   --gut: clamp(20px, 5vw, 72px);
   --banner: 0px;
+  --header-h: 60px;
 }
 
 /* Decale l'en-tete sous le bandeau d'apercu. `:root.has-banner` (0-1-1)
@@ -220,6 +221,10 @@ main:focus {
     background 0.35s,
     border-color 0.35s;
 }
+.top.menu-ouvert {
+  background: var(--paper);
+  border-bottom-color: var(--line);
+}
 .top.solid {
   background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(14px);
@@ -240,7 +245,8 @@ main:focus {
   transition: color 0.35s;
   white-space: nowrap;
 }
-.top.solid .brand {
+.top.solid .brand,
+.top.menu-ouvert .brand {
   color: var(--ink);
 }
 .nav {
@@ -278,6 +284,9 @@ main:focus {
   }
   .top .shell {
     padding-block: 13px;
+  }
+  :root {
+    --header-h: 54px;
   }
 }
 
@@ -350,84 +359,66 @@ main:focus {
 .burger span {
   display: block;
   height: 1.5px;
+  width: 22px;
   background: #fff;
-  transition: background 0.35s, width 0.25s;
+  transform-origin: center;
+  transition:
+    background 0.35s,
+    width 0.25s,
+    opacity 0.18s,
+    transform 0.34s cubic-bezier(0.22, 0.9, 0.28, 1);
 }
-.burger span:nth-child(1) { width: 22px; }
 .burger span:nth-child(2) { width: 16px; }
-.burger span:nth-child(3) { width: 22px; }
 .burger:hover span:nth-child(2) { width: 22px; }
-.top.solid .burger span {
+.top.solid .burger span,
+.top.menu-ouvert .burger span {
   background: var(--ink);
 }
 
+/* Les trois barres se replient en croix. L'écart vertical entre deux
+   centres vaut 6,5 px : 5 px de `gap` plus 1,5 px d'épaisseur. */
+.burger[aria-expanded='true'] span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+.burger[aria-expanded='true'] span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.2);
+}
+.burger[aria-expanded='true'] span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+  width: 22px;
+}
+
 .sheet {
+  /* Sous l'en-tête, pas au-dessus : celui-ci garde le nom du salon et le
+     bouton, qui devient la croix de fermeture. Le nom ne bouge donc plus
+     d'un pixel entre les deux états. */
   position: fixed;
-  inset: 0;
-  /* Les styles par défaut d'un popover imposent width/height: fit-content,
-     ce qui annule l'étirement de `inset: 0` : il faut les reprendre. */
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
-  margin: 0;
-  border: 0;
-  padding: 0;
+  inset: var(--header-h) 0 0;
+  z-index: 45;
   background: var(--paper);
   color: var(--ink);
   display: flex;
   flex-direction: column;
   overflow: hidden auto;
 }
-.sheet:not(:popover-open) {
+.sheet[hidden] {
   display: none;
 }
-.sheet::backdrop {
-  background: rgb(20 17 14 / 0.5);
-}
 @media (prefers-reduced-motion: no-preference) {
-  .sheet:popover-open {
-    animation: sheet-in 0.26s cubic-bezier(0.22, 0.9, 0.3, 1);
+  .sheet {
+    animation: sheet-in 0.3s cubic-bezier(0.22, 0.9, 0.28, 1);
   }
   @keyframes sheet-in {
-    from { opacity: 0; transform: translateY(-14px); }
-    to   { opacity: 1; transform: none; }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: none; }
   }
 }
-.sheet-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px var(--gut);
-  border-bottom: 1px solid var(--line);
-}
-.sheet-brand {
-  font-family: var(--script);
-  font-size: 26px;
-  line-height: 1;
-}
-.sheet-close {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  padding: 0;
-}
-.sheet-close span {
-  position: absolute;
-  inset: 50% 11px auto;
-  height: 1.5px;
-  background: var(--ink);
-}
-.sheet-close span:first-child { transform: rotate(45deg); }
-.sheet-close span:last-child { transform: rotate(-45deg); }
 
 .sheet-nav {
   list-style: none;
   margin: 0;
-  padding: 8px var(--gut) 0;
+  padding: 6px var(--gut) 0;
   flex: 1;
 }
 .sheet-nav li + li {

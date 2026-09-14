@@ -116,37 +116,39 @@ const showBanner = pending.length > 0;
     <Dock />
 
     <script>
-      /* Menu mobile. L'API Popover gère Échap, le clic extérieur et le
-         placement ; il reste à refléter l'état sur aria-expanded, à fermer
-         après un saut d'ancre, et à couvrir les navigateurs sans l'API. */
+      /* Menu mobile. Le panneau se glisse SOUS l'en-tête, qui reste
+         visible : son bouton se change en croix et sert à refermer. C'est
+         ce qui évite de redessiner le nom du salon dans le panneau — la
+         copie précédente était 1 px plus petite et 1,5 px plus basse, d'où
+         un léger saut à l'ouverture.
+         Le placement dans le calque supérieur de l'API Popover rendait ça
+         impossible : il aurait masqué l'en-tête. On reprend donc Échap et
+         le clic extérieur à la main, ce qui tient en quelques lignes. */
       const sheet = document.getElementById('menu-mobile');
-      const burger = document.querySelector('.burger');
-      if (sheet && burger) {
-        const natif = typeof sheet.showPopover === 'function';
-        if (!natif) {
-          sheet.removeAttribute('popover');
-          sheet.hidden = true;
-          const bascule = (ouvrir) => {
-            sheet.hidden = !ouvrir;
-            burger.setAttribute('aria-expanded', String(ouvrir));
-          };
-          burger.addEventListener('click', () => bascule(sheet.hidden));
-          sheet.querySelector('.sheet-close')?.addEventListener('click', () => bascule(false));
-          document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !sheet.hidden) bascule(false);
-          });
-          sheet.addEventListener('click', (e) => {
-            if (e.target instanceof Element && e.target.closest('a')) bascule(false);
-          });
-        } else {
-          sheet.addEventListener('toggle', (e) => {
-            burger.setAttribute('aria-expanded', String(e.newState === 'open'));
-          });
-          // un lien d'ancre ne ferme pas le panneau tout seul
-          sheet.addEventListener('click', (e) => {
-            if (e.target instanceof Element && e.target.closest('a')) sheet.hidePopover();
-          });
-        }
+      const burger = document.getElementById('burger');
+      const topBar = document.getElementById('top');
+      if (sheet && burger && topBar) {
+        const dehors = [document.querySelector('main'), document.querySelector('footer')];
+        const basculer = (ouvrir: boolean) => {
+          sheet.hidden = !ouvrir;
+          burger.setAttribute('aria-expanded', String(ouvrir));
+          burger.setAttribute('aria-label', ouvrir ? 'Fermer le menu' : 'Ouvrir le menu');
+          topBar.classList.toggle('menu-ouvert', ouvrir);
+          document.body.style.overflow = ouvrir ? 'hidden' : '';
+          // le reste de la page sort du parcours clavier et des lecteurs d'écran
+          dehors.forEach((el) => el && (ouvrir ? el.setAttribute('inert', '') : el.removeAttribute('inert')));
+        };
+
+        burger.addEventListener('click', () => basculer(sheet.hidden));
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !sheet.hidden) {
+            basculer(false);
+            burger.focus();
+          }
+        });
+        sheet.addEventListener('click', (e) => {
+          if (e.target instanceof Element && e.target.closest('a')) basculer(false);
+        });
       }
 
       /* En-tête opaque dès qu'on quitte le hero. */
