@@ -15,6 +15,11 @@ src/styles/fonts.css. Relancer après avoir ajouté une graisse.
 
 Seules les plages latin et latin-ext sont conservées : le cyrillique, le
 grec et le vietnamien que sert Google ne servent à rien sur un site français.
+
+ATTENTION : vercel.json met /fonts/ en cache immuable pour un an. Les noms
+produits ici ne portent pas d'empreinte ; si vous remplacez le contenu d'une
+fonte sans changer son nom, les visiteurs garderont l'ancienne. Renommez le
+fichier dans ce cas.
 """
 import pathlib
 import re
