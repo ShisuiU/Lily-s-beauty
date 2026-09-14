@@ -54,9 +54,20 @@ npm run preview  # sert dist/ localement
 
 ## Déployer sur Vercel
 
-Le dépôt contient déjà `vercel.json` (cache long sur les fichiers
-versionnés, en-têtes de sécurité, URLs sans extension). Vercel détecte
-Astro tout seul.
+Le dépôt contient déjà `vercel.json`. Vercel détecte Astro tout seul.
+
+Le fichier règle trois familles de cache. Les fichiers de `/_astro/`
+portent une empreinte dans leur nom : cache d'un an, immuable. Les
+polices de `/fonts/` ont un nom stable mais ne bougent jamais : même
+traitement, avec la contrepartie décrite dans `scripts/fetch-fonts.py`.
+L'image de partage et le favicon sont régénérables : un jour, avec
+rafraîchissement en arrière-plan.
+
+**JSON n'accepte pas de commentaires**, et le schéma Vercel refuse toute
+clé inconnue dans une règle d'en-tête — y compris `comment`. En ajouter
+fait rejeter la configuration en silence : les en-têtes ne s'appliquent
+plus et rien ne le signale. D'où cette explication ici plutôt que dans le
+fichier.
 
 1. Sur [vercel.com/new](https://vercel.com/new), importer ce dépôt GitHub.
 2. Laisser les réglages proposés — `astro build`, dossier `dist`.
