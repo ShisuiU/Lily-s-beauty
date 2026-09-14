@@ -56,11 +56,21 @@ export const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${geo.la
 export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${geo.lat},${geo.lon}`;
 
 /** Les ancres de la page, partagées par l'en-tête, le menu mobile et le pied.
-    Une seule liste : ajouter une section ici la fait apparaître aux trois endroits. */
+    Une seule liste : ajouter une section ici la fait apparaître aux trois
+    endroits. L'ordre suit celui des sections dans la page.
+
+    « Rendez-vous » mène à la section qui explique comment la réservation
+    fonctionne — à ne pas confondre avec le bouton « Réserver », qui ouvre
+    Planity. L'un renseigne, l'autre agit.
+
+    « Nous trouver » désigne la section qui porte l'adresse, le plan et le
+    lien d'itinéraire. Elle s'appelait « Le salon », ce qui ne disait pas
+    qu'on y trouve la localisation. */
 export const sections = [
   { href: '#tarifs', label: 'Prestations et tarifs' },
   { href: '#horaires', label: 'Horaires' },
-  { href: '#acces', label: 'Le salon' },
+  { href: '#reserver', label: 'Rendez-vous' },
+  { href: '#acces', label: 'Nous trouver' },
 ];
 
 /** Les deux praticiennes, telles que Planity les attribue aux prestations.
