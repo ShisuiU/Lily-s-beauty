@@ -1,5 +1,5 @@
 ---
-import { universes, practitioners } from '../data/site';
+import { universes, practitioners, pseudo } from '../data/site';
 const numerals = ['i', 'ii', 'iii'];
 ---
 <section id="prestations">
@@ -17,7 +17,15 @@ const numerals = ['i', 'ii', 'iii'];
         </p>
         <ul class="who">
           {practitioners.map((p) => (
-            <li><b>{p.name}</b><span>{p.craft}</span></li>
+            <li>
+              <b>{p.name}</b>
+              <span>{p.craft}</span>
+              {p.instagram && (
+                <a class="who-ig" href={p.instagram} target="_blank" rel="noopener">
+                  {pseudo(p.instagram)}
+                </a>
+              )}
+            </li>
           ))}
         </ul>
       </div>

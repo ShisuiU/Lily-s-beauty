@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site, address, contact, pending, hours, universes, rating, geo } from '../data/site';
+import { site, address, contact, pending, hours, universes, rating, geo, practitioners } from '../data/site';
 import { openingHoursSpecification } from '../lib/hours';
 import Header from '../components/Header.astro';
 import Dock from '../components/Dock.astro';
@@ -52,7 +52,10 @@ if (address.street && address.city && address.postalCode) {
 jsonLd.geo = { '@type': 'GeoCoordinates', latitude: geo.lat, longitude: geo.lon };
 if (contact.phone) jsonLd.telephone = contact.phone;
 if (contact.email) jsonLd.email = contact.email;
-if (contact.instagram) jsonLd.sameAs = [contact.instagram];
+// sameAs relie l'établissement à ses comptes : Google s'en sert pour
+// rattacher la fiche locale aux profils sociaux.
+const reseaux = practitioners.map((p) => p.instagram).filter(Boolean);
+if (reseaux.length) jsonLd.sameAs = reseaux;
 
 const ogImage = new URL('/og.jpg', Astro.site ?? site.url).href;
 const showBanner = pending.length > 0;

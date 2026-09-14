@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { address, contact, practitioners, about, mapsUrl, directionsUrl } from '../data/site';
+import { address, contact, practitioners, about, mapsUrl, directionsUrl, pseudo } from '../data/site';
 import facade from '../assets/salon-facade.jpg';
 import plan from '../assets/plan-salon.jpg';
 
@@ -40,9 +40,14 @@ const fullAddress = `${address.streetNumber}, ${address.street} — ${address.po
             <div>
               <dt>Instagram</dt>
               <dd class="insta">
-                {practitioners.filter((p) => p.instagram).map((p) => (
-                  <a href={p.instagram!} target="_blank" rel="noopener">{p.name}</a>
-                ))}
+                {practitioners
+                  .filter((p) => p.instagram)
+                  .map((p) => (
+                    <a href={p.instagram!} target="_blank" rel="noopener">
+                      <b>{pseudo(p.instagram!)}</b>
+                      <span>{p.name}</span>
+                    </a>
+                  ))}
               </dd>
             </div>
           )}

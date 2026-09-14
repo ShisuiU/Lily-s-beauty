@@ -24,10 +24,10 @@ export const planityUrl: string | null =
   'https://www.planity.com/lilys-beauty-30290-laudun-lardoise';
 
 export const contact = {
-  /** Planity n'en publie pas. Renseignez-le pour l'afficher ; sinon la ligne est masquée. */
+  /** Décision du salon : pas de numéro public. Tout passe par Planity.
+      Renseigner ici ferait réapparaître la ligne « Téléphone ». */
   phone: null as string | null,
   email: null as string | null,
-  instagram: null as string | null,
 };
 
 export const address = {
@@ -58,16 +58,25 @@ export const sections = [
 ];
 
 /** Les deux praticiennes, telles que Planity les attribue aux prestations.
-    `instagram` : coller l'URL complète du compte, ex. 'https://www.instagram.com/xxx/'.
-    Tant qu'il vaut `null`, le lien n'apparaît pas. */
+    `instagram` : URL propre du compte, sans le paramètre `?stkn=` que
+    l'application ajoute au partage — c'est un jeton lié au compte qui a
+    copié le lien, il n'a rien à faire sur une page publique. */
 export const practitioners = [
-  { name: 'Fiacrine', craft: 'Les ongles', instagram: null as string | null },
+  {
+    name: 'Fiacrine',
+    craft: 'Les ongles',
+    instagram: 'https://www.instagram.com/lesonglesdefia/',
+  },
   {
     name: 'Juliette',
     craft: "Les cils, les sourcils et l'épilation",
-    instagram: null as string | null,
+    instagram: 'https://www.instagram.com/joliscils30/',
   },
 ];
+
+/** « https://www.instagram.com/joliscils30/ » → « @joliscils30 » */
+export const pseudo = (url: string) =>
+  '@' + url.replace(/\/+$/, '').split('/').pop();
 
 /** Présentation du salon, reprise du texte Planity et resserrée. */
 export const about = {
