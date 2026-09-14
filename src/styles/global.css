@@ -324,6 +324,148 @@ main:focus {
   filter: none;
 }
 
+/* ── bouton et panneau du menu mobile ──
+   Sous 880 px la navigation d'en-tête disparaît ; sans ce panneau il ne
+   restait plus qu'à faire défiler 6 000 px pour atteindre les tarifs. */
+.show-sm {
+  display: none;
+}
+@media (max-width: 880px) {
+  .show-sm {
+    display: inline-flex;
+  }
+}
+.burger {
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  align-items: flex-end;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+.burger span {
+  display: block;
+  height: 1.5px;
+  background: #fff;
+  transition: background 0.35s, width 0.25s;
+}
+.burger span:nth-child(1) { width: 22px; }
+.burger span:nth-child(2) { width: 16px; }
+.burger span:nth-child(3) { width: 22px; }
+.burger:hover span:nth-child(2) { width: 22px; }
+.top.solid .burger span {
+  background: var(--ink);
+}
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  /* Les styles par défaut d'un popover imposent width/height: fit-content,
+     ce qui annule l'étirement de `inset: 0` : il faut les reprendre. */
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden auto;
+}
+.sheet:not(:popover-open) {
+  display: none;
+}
+.sheet::backdrop {
+  background: rgb(20 17 14 / 0.5);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sheet:popover-open {
+    animation: sheet-in 0.26s cubic-bezier(0.22, 0.9, 0.3, 1);
+  }
+  @keyframes sheet-in {
+    from { opacity: 0; transform: translateY(-14px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+.sheet-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px var(--gut);
+  border-bottom: 1px solid var(--line);
+}
+.sheet-brand {
+  font-family: var(--script);
+  font-size: 26px;
+  line-height: 1;
+}
+.sheet-close {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+.sheet-close span {
+  position: absolute;
+  inset: 50% 11px auto;
+  height: 1.5px;
+  background: var(--ink);
+}
+.sheet-close span:first-child { transform: rotate(45deg); }
+.sheet-close span:last-child { transform: rotate(-45deg); }
+
+.sheet-nav {
+  list-style: none;
+  margin: 0;
+  padding: 8px var(--gut) 0;
+  flex: 1;
+}
+.sheet-nav li + li {
+  border-top: 1px solid var(--line);
+}
+.sheet-nav a {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-block: 20px;
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.sheet-nav i {
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--rose-ink);
+  font-variant-numeric: tabular-nums;
+}
+.sheet-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px var(--gut) calc(18px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  background: var(--shell);
+}
+.sheet-foot .live {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
 /* ── hero plein écran ── */
 .hero {
   position: relative;

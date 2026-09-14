@@ -48,6 +48,15 @@ export const geo = { lat: 44.1055174, lon: 4.6590543 };
 export const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${geo.lat},${geo.lon}`;
 export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${geo.lat},${geo.lon}`;
 
+/** Les ancres de la page, partagées par l'en-tête, le menu mobile et le pied.
+    Une seule liste : ajouter une section ici la fait apparaître aux trois endroits. */
+export const sections = [
+  { href: '#prestations', label: 'Prestations' },
+  { href: '#tarifs', label: 'Tarifs' },
+  { href: '#horaires', label: 'Horaires' },
+  { href: '#acces', label: 'Le salon' },
+];
+
 /** Les deux praticiennes, telles que Planity les attribue aux prestations.
     `instagram` : coller l'URL complète du compte, ex. 'https://www.instagram.com/xxx/'.
     Tant qu'il vaut `null`, le lien n'apparaît pas. */

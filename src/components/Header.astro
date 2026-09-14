@@ -1,15 +1,58 @@
 ---
-import { site } from '../data/site';
+import { site, sections } from '../data/site';
 ---
 <header class="top" id="top">
   <div class="shell">
     <a class="brand" href="#haut">{site.name}</a>
+
     <nav class="nav" aria-label="Navigation principale">
-      <a href="#prestations">Prestations</a>
-      <a href="#tarifs">Tarifs</a>
-      <a href="#horaires">Horaires</a>
-      <a href="#acces">Le salon</a>
+      {sections.map((s) => <a href={s.href}>{s.label}</a>)}
     </nav>
+
     <a class="btn hide-sm" href="#reserver">Réserver</a>
+
+    {/* Sous 880 px la navigation est masquée : ce bouton la rend accessible.
+        L'API Popover fournit nativement la fermeture au clic extérieur, la
+        touche Échap et le placement au-dessus du reste. */}
+    <button
+      class="burger show-sm"
+      popovertarget="menu-mobile"
+      aria-label="Ouvrir le menu"
+      aria-expanded="false"
+    >
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<nav id="menu-mobile" popover class="sheet" aria-label="Sections du site">
+  <div class="sheet-top">
+    <span class="sheet-brand">{site.name}</span>
+    <button
+      class="sheet-close"
+      popovertarget="menu-mobile"
+      popovertargetaction="hide"
+      aria-label="Fermer le menu"
+    >
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <ul class="sheet-nav">
+    {sections.map((s, i) => (
+      <li>
+        <a href={s.href}>
+          <i aria-hidden="true">{String(i + 1).padStart(2, '0')}</i>
+          {s.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <div class="sheet-foot">
+    <span class="live" id="sheet-live" data-open="false">
+      <i></i><b id="sheet-status">Horaires</b>
+    </span>
+    <a class="btn" href="#reserver">Réserver</a>
+  </div>
+</nav>

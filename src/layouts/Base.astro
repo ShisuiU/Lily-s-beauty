@@ -113,6 +113,39 @@ const showBanner = pending.length > 0;
     <Dock />
 
     <script>
+      /* Menu mobile. L'API Popover gère Échap, le clic extérieur et le
+         placement ; il reste à refléter l'état sur aria-expanded, à fermer
+         après un saut d'ancre, et à couvrir les navigateurs sans l'API. */
+      const sheet = document.getElementById('menu-mobile');
+      const burger = document.querySelector('.burger');
+      if (sheet && burger) {
+        const natif = typeof sheet.showPopover === 'function';
+        if (!natif) {
+          sheet.removeAttribute('popover');
+          sheet.hidden = true;
+          const bascule = (ouvrir) => {
+            sheet.hidden = !ouvrir;
+            burger.setAttribute('aria-expanded', String(ouvrir));
+          };
+          burger.addEventListener('click', () => bascule(sheet.hidden));
+          sheet.querySelector('.sheet-close')?.addEventListener('click', () => bascule(false));
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !sheet.hidden) bascule(false);
+          });
+          sheet.addEventListener('click', (e) => {
+            if (e.target instanceof Element && e.target.closest('a')) bascule(false);
+          });
+        } else {
+          sheet.addEventListener('toggle', (e) => {
+            burger.setAttribute('aria-expanded', String(e.newState === 'open'));
+          });
+          // un lien d'ancre ne ferme pas le panneau tout seul
+          sheet.addEventListener('click', (e) => {
+            if (e.target instanceof Element && e.target.closest('a')) sheet.hidePopover();
+          });
+        }
+      }
+
       /* En-tête opaque dès qu'on quitte le hero. */
       const top = document.getElementById('top');
       const hero = document.querySelector('.hero');
@@ -191,6 +224,9 @@ const showBanner = pending.length > 0;
         set('st-big', open ? 'C’est ouvert.' : 'C’est fermé.');
         set('st-next', next + '.');
         set('dock-txt', (open ? 'Ouvert · ' : 'Fermé · ') + next);
+        set('sheet-status', (open ? 'Ouvert · ' : 'Fermé · ') + next);
+        var sl = document.getElementById('sheet-live');
+        if (sl) sl.setAttribute('data-open', String(open));
       })();
     </script>
   </body>
