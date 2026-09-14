@@ -1,6 +1,11 @@
 ---
 import { universes, planityUrl, pricesCheckedOn } from '../data/site';
 import { formatDuration } from '../lib/hours';
+
+const withCounts = universes.map((u) => ({
+  ...u,
+  count: u.categories.reduce((n, c) => n + c.items.length, 0),
+}));
 ---
 <section id="tarifs">
   <div class="shell">
@@ -8,34 +13,43 @@ import { formatDuration } from '../lib/hours';
       <hr class="rule" />
       <h2>Tarifs</h2>
       <p>
-        Les durées sont celles réellement bloquées dans l'agenda. Tarifs et disponibilités
-        tels qu'ils figurent sur Planity.
+        Les durées sont celles réellement bloquées dans l'agenda. Dépliez l'univers qui vous
+        intéresse.
       </p>
     </div>
 
-    {universes.map((u) => (
-      <div class="universe">
-        <h3 class="universe-title">{u.label}</h3>
-        <div class="cats">
-          {u.categories.map((c) => (
-            <div class="cat">
-              <h4>{c.title}</h4>
-              <p class="by">avec {c.by}</p>
-              <ul class="plist">
-                {c.items.map((s) => (
-                  <li>
-                    <span class="pname">{s.name}</span>
-                    <span class="pdot" aria-hidden="true"></span>
-                    <span class="pdur">{formatDuration(s.minutes)}</span>
-                    <span class="pcost">{s.price} €</span>
-                  </li>
-                ))}
-              </ul>
+    <div class="universes">
+      {withCounts.map((u, i) => (
+        <details class="universe" open={i === 0}>
+          <summary>
+            <span class="u-name">{u.label}</span>
+            <span class="u-count">{u.count} prestations</span>
+            <span class="u-mark" aria-hidden="true"></span>
+          </summary>
+          <div class="u-body">
+            <p class="u-blurb">{u.blurb}</p>
+            <div class="cats">
+              {u.categories.map((c) => (
+                <div class="cat">
+                  <h4>{c.title}</h4>
+                  <p class="by">avec {c.by}</p>
+                  <ul class="plist">
+                    {c.items.map((s) => (
+                      <li>
+                        <span class="pname">{s.name}</span>
+                        <span class="pdot" aria-hidden="true"></span>
+                        <span class="pdur">{formatDuration(s.minutes)}</span>
+                        <span class="pcost">{s.price} €</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-    ))}
+          </div>
+        </details>
+      ))}
+    </div>
 
     <p class="pnote">
       Relevé sur Planity le {pricesCheckedOn}.
