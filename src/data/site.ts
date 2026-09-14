@@ -58,8 +58,7 @@ export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination
 /** Les ancres de la page, partagées par l'en-tête, le menu mobile et le pied.
     Une seule liste : ajouter une section ici la fait apparaître aux trois endroits. */
 export const sections = [
-  { href: '#prestations', label: 'Prestations' },
-  { href: '#tarifs', label: 'Tarifs' },
+  { href: '#tarifs', label: 'Prestations et tarifs' },
   { href: '#horaires', label: 'Horaires' },
   { href: '#acces', label: 'Le salon' },
 ];

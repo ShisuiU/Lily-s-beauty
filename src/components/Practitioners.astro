@@ -1,0 +1,25 @@
+---
+import { practitioners } from '../data/site';
+import InstaLink from './InstaLink.astro';
+---
+<div class="duo">
+  <div>
+    <p class="duo-lead">
+      Un institut de village tenu par <em>deux praticiennes</em>, chacune sur sa spécialité.
+    </p>
+    <p class="duo-body">
+      Fiacrine s'occupe des ongles. Juliette des cils, des sourcils et de l'épilation. Chaque
+      prestation est réservée pour sa durée réelle — dix minutes pour un menton, près de deux
+      heures pour une pose complète — pour que personne ne soit expédié.
+    </p>
+  </div>
+  <ul class="who">
+    {practitioners.map((p) => (
+      <li>
+        <b class="who-name">{p.name}</b>
+        <span class="who-craft">{p.craft}</span>
+        {p.instagram && <InstaLink url={p.instagram} name={p.name} />}
+      </li>
+    ))}
+  </ul>
+</div>

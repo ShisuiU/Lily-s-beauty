@@ -667,6 +667,12 @@ section {
   gap: clamp(28px, 5vw, 70px);
   align-items: start;
 }
+.tarifs-intro {
+  color: var(--muted);
+  max-width: 62ch;
+  margin-top: clamp(30px, 4vw, 44px);
+  font-size: 0.98rem;
+}
 .duo-lead {
   font-family: var(--serif);
   font-size: clamp(1.5rem, 3.4vw, 2.1rem);
@@ -682,22 +688,6 @@ section {
   color: var(--muted);
   margin-top: 20px;
   max-width: 46ch;
-}
-.crafts {
-  border-top: 1px solid var(--line);
-}
-.craft {
-  padding-block: 22px;
-  border-bottom: 1px solid var(--line);
-}
-.craft h3 {
-  font-size: 1.22rem;
-  font-weight: 400;
-  margin-bottom: 5px;
-}
-.craft p {
-  font-size: 0.93rem;
-  color: var(--muted);
 }
 @media (max-width: 860px) {
   .duo {
@@ -851,7 +841,7 @@ section {
   border-right: 1.5px solid var(--rose-ink);
   border-bottom: 1.5px solid var(--rose-ink);
   transform: translateY(-3px) rotate(45deg);
-  transition: transform 0.3s ease;
+  transition: transform 0.42s cubic-bezier(0.22, 0.9, 0.28, 1);
 }
 .universe[open] > summary .u-mark {
   transform: translateY(2px) rotate(-135deg);
@@ -869,18 +859,52 @@ section {
   font-size: 0.96rem;
 }
 
-/* Repli animé là où le navigateur le sait faire ; ailleurs il s'ouvre
-   d'un coup, ce qui reste parfaitement utilisable. */
+/* Dépliage en deux temps. La hauteur seule donnait un effet de volet :
+   le contenu était découvert par découpe sans jamais apparaître. On y
+   ajoute donc une montée en opacité du contenu, légèrement décalée, et
+   un échelonnement des colonnes de catégories.
+   Là où ::details-content n'est pas animable, tout s'ouvre d'un coup —
+   parfaitement utilisable. */
 @media (prefers-reduced-motion: no-preference) {
   .universe::details-content {
     block-size: 0;
     overflow: hidden;
     transition:
-      block-size 0.36s ease,
-      content-visibility 0.36s allow-discrete;
+      block-size 0.42s cubic-bezier(0.22, 0.9, 0.28, 1),
+      content-visibility 0.42s allow-discrete;
   }
   .universe[open]::details-content {
     block-size: auto;
+  }
+
+  /* Une animation, pas une transition : ces éléments vivent dans un
+     sous-arbre `content-visibility: hidden` tant que le pli est fermé.
+     Ils ne sont donc pas rendus, une transition n'a aucun état de départ
+     à interpoler et saute directement à l'arrivée — mesuré : opacité à 1
+     dès la première image. Une animation, elle, se déclenche au moment
+     où l'élément devient rendu. `backwards` fait tenir l'état initial
+     pendant le délai. */
+  .universe[open] .u-blurb,
+  .universe[open] .cat {
+    animation: pli-apparait 0.38s cubic-bezier(0.22, 0.9, 0.28, 1) backwards;
+  }
+  .universe[open] .u-blurb { animation-delay: 0.06s; }
+  .universe[open] .cat:nth-child(1) { animation-delay: 0.12s; }
+  .universe[open] .cat:nth-child(2) { animation-delay: 0.18s; }
+  .universe[open] .cat:nth-child(3) { animation-delay: 0.24s; }
+  .universe[open] .cat:nth-child(4) { animation-delay: 0.30s; }
+  .universe[open] .cat:nth-child(5) { animation-delay: 0.36s; }
+  .universe[open] .cat:nth-child(6) { animation-delay: 0.42s; }
+
+  @keyframes pli-apparait {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 .cats {
