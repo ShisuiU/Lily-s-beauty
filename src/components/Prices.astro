@@ -22,7 +22,7 @@ const withCounts = universes.map((u) => ({
       {withCounts.map((u, i) => (
         <details class="universe" open={i === 0}>
           <summary>
-            <span class="u-name">{u.label}</span>
+            <h3 class="u-name">{u.label}</h3>
             <span class="u-count">{u.count} prestations</span>
             <span class="u-mark" aria-hidden="true"></span>
           </summary>
