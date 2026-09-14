@@ -160,5 +160,16 @@ recherche locale.
    ou SVG). Pinyon Script n'en est qu'une approximation.
 4. **Un nom de domaine en `.fr`.** Sans effet sur la vitesse, beaucoup
    sur la confiance et le référencement local.
-5. **Pages dédiées** « Ongles », « Cils », « Sourcils et épilation », pour
-   que des recherches distinctes n'atterrissent pas sur la même page.
+5. **Pages dédiées par univers** — `/ongles`, `/cils`,
+   `/sourcils-epilation`. Aujourd'hui une seule page vise tout à la fois,
+   or Google ne classe qu'une page par requête : elle est donc diluée sur
+   chaque sujet. Trois pages distinctes se présenteraient chacune sur son
+   métier et sa ville.
+
+   **À ne faire qu'après les points 1 et 2.** Techniquement c'est presque
+   gratuit — les données sont déjà groupées par univers dans `site.ts`,
+   une route dynamique suffit. Mais trois pages qui ne seraient que des
+   grilles tarifaires relèvent du contenu maigre : non seulement elles ne
+   se classeraient pas, mais elles affaibliraient l'ensemble. Il faut des
+   photos et 200 à 300 mots utiles par univers, écrits par la praticienne
+   concernée.
