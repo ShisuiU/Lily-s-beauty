@@ -34,7 +34,7 @@ export function openingHoursSpecification() {
 
 /** 45 → « 45 min », 90 → « 1 h 30 », 120 → « 2 h » */
 export function formatDuration(mins: number | null): string {
-  if (mins === null) return '—';
+  if (mins === null) return '';
   if (mins < 60) return `${mins} min`;
   const h = Math.floor(mins / 60);
   const m = mins % 60;

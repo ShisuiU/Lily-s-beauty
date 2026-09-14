@@ -15,7 +15,7 @@ const { url, name, variant = 'inline' } = Astro.props;
   href={url}
   target="_blank"
   rel="noopener"
-  aria-label={`${name ? name + ' — ' : ''}${pseudo(url)} sur Instagram (nouvel onglet)`}
+  aria-label={`${name ? name + ', ' : ''}${pseudo(url)} sur Instagram (nouvel onglet)`}
 >
   {/* Marque Instagram en monochrome : elle hérite de currentColor, donc
       elle suit le thème clair comme le sombre sans seconde version. */}

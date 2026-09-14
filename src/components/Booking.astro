@@ -4,7 +4,7 @@ import BookButton from './BookButton.astro';
 import Todo from './Todo.astro';
 
 const steps = [
-  "Choisissez la prestation — la durée et le tarif s'affichent avant de valider.",
+  "Choisissez la prestation : la durée et le tarif s'affichent avant de valider.",
   "Prenez un créneau réellement disponible dans l'agenda du salon.",
   'Laissez un numéro : le rappel SMS part automatiquement la veille.',
   "Un empêchement ? L'annulation se fait depuis le même lien, sans appeler.",
@@ -19,7 +19,7 @@ const steps = [
           <p class="rating">
             <span class="stars" aria-hidden="true">★★★★★</span>
             <span>
-              <b>{rating.value.toLocaleString('fr-FR')}</b> sur 5 — {rating.count} avis
+              <b>{rating.value.toLocaleString('fr-FR')}</b> sur 5, d'après {rating.count} avis
               vérifiés sur {rating.source}
             </span>
           </p>
@@ -27,7 +27,7 @@ const steps = [
         <h2 style="margin-top:14px">La réservation se fait sur Planity.</h2>
         <p>
           Agenda à jour en temps réel, confirmation immédiate et rappel par SMS la veille.
-          Vous choisissez la prestation, elle réserve exactement la durée qu'il faut — pas de
+          Vous choisissez la prestation, elle réserve exactement la durée qu'il faut, sans
           créneau trop court qui déborde sur la cliente suivante.
         </p>
         <div class="hero-act" style="margin-top:28px">

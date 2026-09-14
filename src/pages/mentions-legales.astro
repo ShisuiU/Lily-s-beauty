@@ -4,7 +4,7 @@ import Footer from '../components/Footer.astro';
 import Todo from '../components/Todo.astro';
 import { site, address, legal, planityUrl, practitioners, pseudo } from '../data/site';
 
-const lieu = `${address.streetNumber}, ${address.street} — ${address.postalCode} ${address.city}`;
+const lieu = `${address.streetNumber}, ${address.street}, ${address.postalCode} ${address.city}`;
 ---
 
 <Base
@@ -77,7 +77,7 @@ const lieu = `${address.streetNumber}, ${address.street} — ${address.postalCod
 
       <h2>Hébergeur</h2>
       <p>
-        {legal.hebergeur.nom} — {legal.hebergeur.adresse}<br />
+        {legal.hebergeur.nom}, {legal.hebergeur.adresse}<br />
         <a href={legal.hebergeur.site} target="_blank" rel="noopener">{legal.hebergeur.site}</a>
       </p>
 

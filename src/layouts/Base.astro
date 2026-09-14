@@ -11,8 +11,8 @@ interface Props {
 }
 const { title, description = site.description } = Astro.props;
 const pageTitle = title
-  ? `${title} — ${site.name}`
-  : `${site.name} — ${site.tagline} à ${address.city}`;
+  ? `${title} | ${site.name}`
+  : `${site.name}, ${site.tagline} à ${address.city}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
 
 /* Fiche établissement pour Google : c'est elle qui alimente la recherche
@@ -99,10 +99,10 @@ const showBanner = pending.length > 0;
       showBanner && (
         <div class="preview">
           <span class="wide-only">
-            Aperçu — {pending.slice(0, 3).join(', ')}
+            Aperçu : {pending.slice(0, 3).join(', ')}
             {pending.length > 3 ? ' et autres données' : ''} à compléter.
           </span>
-          <span class="narrow-only">Aperçu — {pending.length} données à compléter</span>
+          <span class="narrow-only">Aperçu : {pending.length} données à compléter</span>
         </div>
       )
     }
