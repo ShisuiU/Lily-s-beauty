@@ -1,5 +1,6 @@
 ---
 import { planityUrl, rating } from '../data/site';
+import BookButton from './BookButton.astro';
 import Todo from './Todo.astro';
 
 const steps = [
@@ -30,15 +31,7 @@ const steps = [
           créneau trop court qui déborde sur la cliente suivante.
         </p>
         <div class="hero-act" style="margin-top:28px">
-          {planityUrl ? (
-            <a class="btn" href={planityUrl} target="_blank" rel="noopener">
-              Réserver
-            </a>
-          ) : (
-            <span class="btn" aria-disabled="true" style="opacity:.55;cursor:not-allowed">
-              Réserver
-            </span>
-          )}
+          <BookButton />
         </div>
         {!planityUrl && (
           <p style="margin-top:16px;font-size:.86rem">

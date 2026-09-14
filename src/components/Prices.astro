@@ -19,8 +19,8 @@ const withCounts = universes.map((u) => ({
     </div>
 
     <div class="universes">
-      {withCounts.map((u, i) => (
-        <details class="universe" open={i === 0}>
+      {withCounts.map((u) => (
+        <details class="universe">
           <summary>
             <h3 class="u-name">{u.label}</h3>
             <span class="u-count">{u.count} prestations</span>

@@ -1,5 +1,6 @@
 ---
 import { site, sections } from '../data/site';
+import BookButton from './BookButton.astro';
 ---
 <header class="top" id="top">
   <div class="shell">
@@ -9,7 +10,7 @@ import { site, sections } from '../data/site';
       {sections.map((s) => <a href={s.href}>{s.label}</a>)}
     </nav>
 
-    <a class="btn hide-sm" href="#reserver">Réserver</a>
+    <BookButton class="hide-sm" />
 
     {/* Sous 880 px la navigation est masquée : ce bouton la rend accessible.
         L'API Popover fournit nativement la fermeture au clic extérieur, la
@@ -53,6 +54,6 @@ import { site, sections } from '../data/site';
     <span class="live" id="sheet-live" data-open="false">
       <i></i><b id="sheet-status">Horaires</b>
     </span>
-    <a class="btn" href="#reserver">Réserver</a>
+    <BookButton />
   </div>
 </nav>

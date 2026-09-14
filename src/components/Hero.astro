@@ -1,6 +1,7 @@
 ---
 import { getImage } from 'astro:assets';
-import { address, planityUrl, rating } from '../data/site';
+import { address, rating } from '../data/site';
+import BookButton from './BookButton.astro';
 import Todo from './Todo.astro';
 import facade from '../assets/salon-facade.jpg';
 import facadeTall from '../assets/salon-facade-portrait.jpg';
@@ -37,7 +38,7 @@ const fallback = await getImage({ src: facade, format: 'jpeg', quality: 78 });
       épilation à la cire ou au fil. Deux praticiennes, chacune sur sa spécialité.
     </p>
     <div class="hero-act">
-      <a class="btn" href={planityUrl ?? '#reserver'}>Réserver</a>
+      <BookButton />
       <a class="btn btn-ghost" href="#tarifs">Voir les tarifs</a>
     </div>
     <p class="hero-meta">

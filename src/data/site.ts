@@ -23,6 +23,13 @@ export const site = {
 export const planityUrl: string | null =
   'https://www.planity.com/lilys-beauty-30290-laudun-lardoise';
 
+/** Destination du bouton « Réserver ». On vise Planity directement : un
+    bouton d'action doit agir, pas faire défiler vers un paragraphe qui
+    explique l'action. La section #reserver reste dans le fil de la page.
+    Repli sur cette section tant que le lien Planity n'est pas renseigné. */
+export const bookHref = planityUrl ?? '#reserver';
+export const bookIsExternal = planityUrl !== null;
+
 export const contact = {
   /** Décision du salon : pas de numéro public. Tout passe par Planity.
       Renseigner ici ferait réapparaître la ligne « Téléphone ». */

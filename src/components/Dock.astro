@@ -1,7 +1,8 @@
 ---
 import { site } from '../data/site';
+import BookButton from './BookButton.astro';
 ---
 <div class="dock">
   <span id="dock-txt">{site.tagline}</span>
-  <a class="btn" href="#reserver">Réserver</a>
+  <BookButton />
 </div>

@@ -1,0 +1,18 @@
+---
+import { bookHref, bookIsExternal } from '../data/site';
+
+interface Props {
+  /** Classes supplémentaires, p. ex. 'hide-sm' pour l'en-tête. */
+  class?: string;
+}
+const { class: extra } = Astro.props;
+---
+<a
+  class:list={['btn', extra]}
+  href={bookHref}
+  {...bookIsExternal
+    ? { target: '_blank', rel: 'noopener', 'aria-label': 'Réserver sur Planity (nouvel onglet)' }
+    : {}}
+>
+  Réserver
+</a>
