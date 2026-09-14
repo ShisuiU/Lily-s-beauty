@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://lilys-beauty.vercel.app/sitemap-index.xml

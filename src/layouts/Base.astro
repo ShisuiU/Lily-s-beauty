@@ -50,7 +50,7 @@ const showBanner = pending.length > 0;
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang="fr" class={showBanner ? 'has-banner' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -77,15 +77,17 @@ const showBanner = pending.length > 0;
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
-    {showBanner && <style is:inline>{`:root{--banner:32px}`}</style>}
   </head>
 
   <body>
     {
       showBanner && (
         <div class="preview">
-          Aperçu — {pending.slice(0, 3).join(', ')}
-          {pending.length > 3 ? ' et autres données' : ''} à compléter.
+          <span class="wide-only">
+            Aperçu — {pending.slice(0, 3).join(', ')}
+            {pending.length > 3 ? ' et autres données' : ''} à compléter.
+          </span>
+          <span class="narrow-only">Aperçu — {pending.length} données à compléter</span>
         </div>
       )
     }

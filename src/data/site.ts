@@ -15,7 +15,7 @@ export const site = {
   name: "Lily's Beauty",
   tagline: 'Institut de beauté',
   /** Adresse publique du site. À corriger après le premier déploiement Vercel. */
-  url: 'https://lilys-beauty.vercel.app',
+  url: 'https://lilysbeauty.vercel.app',
   description:
     "Institut de beauté spécialisé en prothésie ongulaire et extension de cils. Pose gel, semi-permanent, cil à cil, volume russe et rehaussement. Réservation en ligne.",
 } as const;

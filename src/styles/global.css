@@ -45,6 +45,13 @@
   --banner: 0px;
 }
 
+/* Decale l'en-tete sous le bandeau d'apercu. `:root.has-banner` (0-1-1)
+   l'emporte sur `:root` (0-0-1) sans dependre de l'ordre des feuilles —
+   une balise <style> inline a la meme specificite se faisait ecraser. */
+:root.has-banner {
+  --banner: 32px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --ink: #f2eeec;
@@ -162,6 +169,18 @@ p {
   z-index: 60;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+.narrow-only {
+  display: none;
+}
+@media (max-width: 700px) {
+  .wide-only {
+    display: none;
+  }
+  .narrow-only {
+    display: inline;
+  }
 }
 
 /* ── en-tête ── */
@@ -291,13 +310,25 @@ p {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgb(30 27 24 / 0.46) 0%,
-    rgb(30 27 24 / 0.1) 26%,
-    rgb(30 27 24 / 0.38) 62%,
-    rgb(30 27 24 / 0.88) 100%
-  );
+  /* Deux couches : une bande courte et franche derrière l'en-tête — sans
+     elle le menu blanc passe sur l'enseigne blanche et tombe à 3,08:1 —
+     puis le dégradé de lecture pour le texte ancré en bas. */
+  background:
+    /* Palier, pas pente : l'en-tête descend jusqu'à ~92 px et une pente
+       simple n'y vaut plus que 0,41 d'opacité — mesuré à 2,32:1.
+       Il faut 0,57 minimum pour tenir 4,5:1 en blanc sur l'enseigne. */
+    linear-gradient(
+      to bottom,
+      rgb(20 17 14 / 0.74) 0,
+      rgb(20 17 14 / 0.62) 92px,
+      rgb(20 17 14 / 0) 240px
+    ),
+    linear-gradient(
+      to bottom,
+      rgb(30 27 24 / 0.08) 0%,
+      rgb(30 27 24 / 0.28) 52%,
+      rgb(30 27 24 / 0.86) 100%
+    );
 }
 .hero-in {
   position: relative;
@@ -365,6 +396,45 @@ p {
   background: #e08585;
   box-shadow: 0 0 0 3px rgb(224 133 133 / 0.22);
 }
+/* Sur téléphone le cadre est très étroit (~0,46) : l'enseigne tombe
+   forcément au milieu de l'image, là où atterrit le texte du hero.
+   On garde sa moitié haute lisible et on assombrit franchement sous elle,
+   et on met les deux boutons côte à côte pour raccourcir le bloc. */
+@media (max-width: 700px) {
+  .hero::after {
+    background:
+      linear-gradient(
+        to bottom,
+        rgb(20 17 14 / 0.74) 0,
+        rgb(20 17 14 / 0.5) 88px,
+        rgb(20 17 14 / 0.06) 30%,
+        rgb(20 17 14 / 0.62) 56%,
+        rgb(20 17 14 / 0.93) 100%
+      );
+  }
+  .hero h1 {
+    font-size: clamp(1.9rem, 8.6vw, 2.5rem);
+  }
+  .hero-line {
+    margin-top: 16px;
+    font-size: 0.95rem;
+  }
+  .hero-act {
+    flex-wrap: nowrap;
+    margin-top: 22px;
+  }
+  .hero-act .btn {
+    flex: 1;
+    text-align: center;
+    padding-inline: 12px;
+  }
+  .hero-meta {
+    margin-top: 24px;
+    padding-top: 16px;
+    gap: 6px 18px;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .hero-in > * {
     animation: rise 0.8s cubic-bezier(0.22, 0.9, 0.3, 1) backwards;
