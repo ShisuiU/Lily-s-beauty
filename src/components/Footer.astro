@@ -1,0 +1,30 @@
+---
+import { site, pending } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="shell">
+    <div class="foot">
+      <div>
+        <span class="brand">{site.name}</span>
+        <p class="eyebrow" style="margin-top:4px">{site.tagline}</p>
+      </div>
+      <nav class="foot-links" aria-label="Navigation de pied de page">
+        <a href="#prestations">Prestations</a>
+        <a href="#tarifs">Tarifs</a>
+        <a href="#horaires">Horaires</a>
+        <a href="#acces">Le salon</a>
+        <a href="#reserver">Réserver</a>
+      </nav>
+      <p class="foot-note">
+        © {year} {site.name}.
+        {pending.length > 0 && (
+          <> Site en cours de finalisation : {pending.join(', ')} restent à compléter.
+            Tout est regroupé dans <code>src/data/site.ts</code>.</>
+        )}
+        {' '}La calligraphie du nom est une approximation typographique, à remplacer par le
+        logo vectoriel du salon.
+      </p>
+    </div>
+  </div>
+</footer>

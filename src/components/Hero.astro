@@ -1,0 +1,54 @@
+---
+import { getImage } from 'astro:assets';
+import { address, planityUrl } from '../data/site';
+import Todo from './Todo.astro';
+import facade from '../assets/salon-facade.jpg';
+import facadeTall from '../assets/salon-facade-portrait.jpg';
+
+/* Direction artistique : cadrage large sur ordinateur, cadrage serré sur
+   la devanture en portrait. AVIF puis WebP, JPEG en dernier recours. */
+const wideAvif = await getImage({ src: facade, format: 'avif', quality: 60 });
+const wideWebp = await getImage({ src: facade, format: 'webp', quality: 72 });
+const tallAvif = await getImage({ src: facadeTall, format: 'avif', quality: 60 });
+const tallWebp = await getImage({ src: facadeTall, format: 'webp', quality: 72 });
+const fallback = await getImage({ src: facade, format: 'jpeg', quality: 78 });
+---
+<div class="hero">
+  <picture>
+    <source media="(max-width: 700px)" type="image/avif" srcset={tallAvif.src} />
+    <source media="(max-width: 700px)" type="image/webp" srcset={tallWebp.src} />
+    <source type="image/avif" srcset={wideAvif.src} />
+    <source type="image/webp" srcset={wideWebp.src} />
+    <img
+      src={fallback.src}
+      width={fallback.attributes.width}
+      height={fallback.attributes.height}
+      alt="La devanture de l'institut Lily's Beauty : enseigne blanche calligraphiée, vitrine et mur de pierre apparente"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
+
+  <div class="shell hero-in">
+    <span class="eyebrow">Institut de beauté</span>
+    <h1>Prothésie ongulaire <em>&</em> extension de cils</h1>
+    <p class="hero-line">
+      Deux spécialités, un seul salon. Des mains et un regard soignés par des
+      praticiennes qui ne font que ça.
+    </p>
+    <div class="hero-act">
+      <a class="btn" href={planityUrl ?? '#reserver'}>Réserver sur Planity</a>
+      <a class="btn btn-ghost" href="#tarifs">Voir les tarifs</a>
+    </div>
+    <p class="hero-meta">
+      <span class="live" id="live" data-open="false"><i></i><b id="live-txt">Horaires</b></span>
+      <span id="live-next">—</span>
+      <span>
+        <b>{address.streetNumber}</b>{' '}
+        {address.street && address.city
+          ? `${address.street}, ${address.city}`
+          : <Todo label="rue et ville à compléter" />}
+      </span>
+    </p>
+  </div>
+</div>

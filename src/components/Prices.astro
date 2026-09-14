@@ -1,0 +1,42 @@
+---
+import { services, pricesConfirmed } from '../data/site';
+import { formatDuration } from '../lib/hours';
+import Todo from './Todo.astro';
+---
+<section id="tarifs">
+  <div class="shell">
+    <div class="sec-top">
+      <hr class="rule" />
+      <h2>Tarifs</h2>
+      <p>
+        Durées réelles de rendez-vous, dépose comprise quand elle s'applique. Le tarif exact
+        est confirmé sur Planity au moment de la réservation.
+      </p>
+    </div>
+
+    <div class="prices">
+      {services.map((col) => (
+        <div class="price-col">
+          <h3 class="eyebrow">{col.label}</h3>
+          <ul class="plist">
+            {col.items.map((s) => (
+              <li>
+                <span class="pname">{s.name}</span>
+                <span class="pdot" aria-hidden="true"></span>
+                <span class="pdur">{formatDuration(s.minutes)}</span>
+                <span class="pcost">{s.price != null ? `${s.price} €` : '—'}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    {!pricesConfirmed && (
+      <p class="pnote">
+        <Todo label="Prix et durées donnés à titre d'exemple" /> — la grille se modifie dans
+        <code>src/data/site.ts</code>, sans toucher à la mise en page.
+      </p>
+    )}
+  </div>
+</section>

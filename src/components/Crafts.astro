@@ -1,0 +1,43 @@
+---
+import { services } from '../data/site';
+const numerals = ['i', 'ii', 'iii'];
+---
+<section id="prestations">
+  <div class="shell">
+    <div class="duo">
+      <div>
+        <hr class="rule" />
+        <p class="duo-lead">
+          Un institut qui a choisi de faire <em>deux choses</em> — et de les faire complètement.
+        </p>
+        <p class="duo-body">
+          Pas de carte à rallonge. La prothésie ongulaire et l'extension de cils demandent
+          chacune des années de main, du matériel dédié et du temps de pose qu'on ne
+          compresse pas. C'est ce temps-là qui fait la différence entre une pose qui tient
+          trois semaines et une pose qui tient trois jours.
+        </p>
+      </div>
+      <div class="crafts">
+        {services.map((s, i) => (
+          <article class="craft">
+            <span class="n" aria-hidden="true">{numerals[i]}</span>
+            <div>
+              <h3>Les {s.label.toLowerCase()}</h3>
+              <p>{s.blurb}</p>
+            </div>
+          </article>
+        ))}
+        <article class="craft">
+          <span class="n" aria-hidden="true">iii</span>
+          <div>
+            <h3>L'entretien</h3>
+            <p>
+              Remplissage toutes les trois semaines environ, dépose comprise. C'est ce qui
+              préserve l'ongle et le cil naturel.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>

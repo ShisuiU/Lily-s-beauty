@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+import { address, contact } from '../data/site';
+import Todo from './Todo.astro';
+import facade from '../assets/salon-facade.jpg';
+---
+<section id="acces">
+  <div class="shell">
+    <div class="access">
+      <Image
+        src={facade}
+        widths={[420, 760, 1100]}
+        sizes="(max-width: 860px) 100vw, 45vw"
+        format="avif"
+        quality={70}
+        loading="lazy"
+        alt="Façade de l'institut Lily's Beauty vue depuis la rue"
+      />
+      <div>
+        <hr class="rule" />
+        <p class="addr">
+          Au {address.streetNumber}, une enseigne blanche entre la pierre et la porte bleue du
+          voisin.
+        </p>
+        <p style="color:var(--muted);max-width:44ch">
+          Le salon donne directement sur la rue. Sonnez si la porte est fermée pendant une
+          pose : les séances longues se font parfois porte close.
+        </p>
+        <dl>
+          <div>
+            <dt>Adresse</dt>
+            <dd>
+              {address.street && address.postalCode && address.city ? (
+                <>
+                  {address.streetNumber}, {address.street}<br />{address.postalCode} {address.city}
+                  {address.mapsUrl && (
+                    <><br /><a href={address.mapsUrl} target="_blank" rel="noopener"
+                        style="color:var(--rose-ink)">Ouvrir dans Google Maps</a></>
+                  )}
+                </>
+              ) : (
+                <>{address.streetNumber}, <Todo label="rue à compléter" /><br />
+                  <Todo label="Code postal et ville" /></>
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>Téléphone</dt>
+            <dd>
+              {contact.phone
+                ? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
+                : <Todo label="Numéro à compléter" />}
+            </dd>
+          </div>
+          <div>
+            <dt>Accès</dt>
+            <dd>{address.directions ?? <Todo label="Stationnement et transports à préciser" />}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
