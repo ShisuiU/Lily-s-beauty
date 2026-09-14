@@ -37,8 +37,16 @@ export const address = {
   city: "Laudun-l'Ardoise",
   country: 'FR',
   directions: null as string | null,
-  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=44.1055174,4.6590543',
 };
+
+/** Coordonnées du salon, relevées sur sa fiche Planity.
+    La carte affichée est une image générée au build à partir de ces
+    coordonnées : aucun service tiers n'est appelé chez le visiteur.
+    Pour la régénérer après un déménagement : scripts/generate-map.py */
+export const geo = { lat: 44.1055174, lon: 4.6590543 };
+
+export const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${geo.lat},${geo.lon}`;
+export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${geo.lat},${geo.lon}`;
 
 /** Les deux praticiennes, telles que Planity les attribue aux prestations.
     `instagram` : coller l'URL complète du compte, ex. 'https://www.instagram.com/xxx/'.

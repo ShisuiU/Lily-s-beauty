@@ -959,6 +959,74 @@ section {
   }
 }
 
+/* ── plan ── */
+.plan {
+  margin: clamp(30px, 5vw, 56px) 0 0;
+}
+.plan img {
+  width: 100%;
+  height: auto;
+  border-radius: 14px 14px 0 0;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+}
+.plan figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  padding: 18px 22px;
+  border: 1px solid var(--line);
+  border-radius: 0 0 14px 14px;
+  background: var(--shell);
+}
+.plan-where {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.95rem;
+}
+.plan-where b {
+  font-weight: 600;
+}
+.plan-where span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.plan-acts {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.btn-quiet {
+  background: var(--ink);
+  color: var(--paper);
+}
+.plan-open {
+  font-size: 0.88rem;
+  color: var(--rose-ink);
+  border-bottom: 1px solid color-mix(in srgb, var(--rose-ink) 40%, transparent);
+}
+.plan-credit {
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  max-width: 76ch;
+}
+.plan-credit a {
+  border-bottom: 1px solid var(--hair);
+}
+@media (max-width: 560px) {
+  .plan figcaption {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .plan-acts {
+    justify-content: space-between;
+  }
+}
+
 /* ── pied ── */
 footer {
   border-top: 1px solid var(--line);

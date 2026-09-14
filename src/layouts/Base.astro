@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site, address, contact, pending, hours, universes, rating } from '../data/site';
+import { site, address, contact, pending, hours, universes, rating, geo } from '../data/site';
 import { openingHoursSpecification } from '../lib/hours';
 import Header from '../components/Header.astro';
 import Dock from '../components/Dock.astro';
@@ -47,6 +47,7 @@ if (address.street && address.city && address.postalCode) {
     addressCountry: address.country,
   };
 }
+jsonLd.geo = { '@type': 'GeoCoordinates', latitude: geo.lat, longitude: geo.lon };
 if (contact.phone) jsonLd.telephone = contact.phone;
 if (contact.email) jsonLd.email = contact.email;
 if (contact.instagram) jsonLd.sameAs = [contact.instagram];

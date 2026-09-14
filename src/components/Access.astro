@@ -1,8 +1,10 @@
 ---
 import { Image } from 'astro:assets';
-import { address, contact, practitioners, about } from '../data/site';
-import Todo from './Todo.astro';
+import { address, contact, practitioners, about, mapsUrl, directionsUrl } from '../data/site';
 import facade from '../assets/salon-facade.jpg';
+import plan from '../assets/plan-salon.jpg';
+
+const fullAddress = `${address.streetNumber}, ${address.street} — ${address.postalCode} ${address.city}`;
 ---
 <section id="acces">
   <div class="shell">
@@ -24,18 +26,8 @@ import facade from '../assets/salon-facade.jpg';
           <div>
             <dt>Adresse</dt>
             <dd>
-              {address.street && address.postalCode && address.city ? (
-                <>
-                  {address.streetNumber}, {address.street}<br />{address.postalCode} {address.city}
-                  {address.mapsUrl && (
-                    <><br /><a href={address.mapsUrl} target="_blank" rel="noopener"
-                        style="color:var(--rose-ink)">Ouvrir dans Google Maps</a></>
-                  )}
-                </>
-              ) : (
-                <>{address.streetNumber}, <Todo label="rue à compléter" /><br />
-                  <Todo label="Code postal et ville" /></>
-              )}
+              {address.streetNumber}, {address.street}<br />
+              {address.postalCode} {address.city}
             </dd>
           </div>
           {contact.phone && (
@@ -60,5 +52,31 @@ import facade from '../assets/salon-facade.jpg';
         </dl>
       </div>
     </div>
+
+    <figure class="plan">
+      <Image
+        src={plan}
+        widths={[600, 900, 1200]}
+        sizes="(max-width: 1200px) 100vw, 1160px"
+        format="avif"
+        quality={72}
+        loading="lazy"
+        alt={`Plan du centre de ${address.city} : le salon est situé rue de la République, près des halles et de l'église.`}
+      />
+      <figcaption>
+        <span class="plan-where">
+          <b>{fullAddress}</b>
+          <span>En plein centre, à deux pas des halles.</span>
+        </span>
+        <span class="plan-acts">
+          <a class="btn btn-quiet" href={directionsUrl} target="_blank" rel="noopener">Itinéraire</a>
+          <a class="plan-open" href={mapsUrl} target="_blank" rel="noopener">Ouvrir le plan</a>
+        </span>
+      </figcaption>
+      <p class="plan-credit">
+        Fond de carte <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>,
+        généré à la construction du site : aucune carte tierce n'est chargée pendant votre visite.
+      </p>
+    </figure>
   </div>
 </section>
