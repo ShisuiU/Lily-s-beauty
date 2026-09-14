@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site, address, contact, pending, hours } from '../data/site';
+import { site, address, contact, pending, hours, universes, rating } from '../data/site';
 import { openingHoursSpecification } from '../lib/hours';
 import Header from '../components/Header.astro';
 import Dock from '../components/Dock.astro';
@@ -24,14 +24,19 @@ const jsonLd: Record<string, unknown> = {
   url: site.url,
   image: new URL('/og.jpg', site.url).href,
   openingHoursSpecification: openingHoursSpecification(),
-  makesOffer: [
-    'Prothésie ongulaire',
-    'Pose de gel',
-    'Vernis semi-permanent',
-    'Extension de cils',
-    'Volume russe',
-    'Rehaussement de cils',
-  ].map((n) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: n } })),
+  makesOffer: universes.flatMap((u) =>
+    u.categories.flatMap((c) =>
+      c.items.map((s) => ({
+        '@type': 'Offer',
+        price: s.price,
+        priceCurrency: 'EUR',
+        itemOffered: { '@type': 'Service', name: s.name, category: u.label },
+      })),
+    ),
+  ),
+  aggregateRating: rating.show
+    ? { '@type': 'AggregateRating', ratingValue: rating.value, reviewCount: rating.count }
+    : undefined,
 };
 if (address.street && address.city && address.postalCode) {
   jsonLd.address = {

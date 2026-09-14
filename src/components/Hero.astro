@@ -1,6 +1,6 @@
 ---
 import { getImage } from 'astro:assets';
-import { address, planityUrl } from '../data/site';
+import { address, planityUrl, rating } from '../data/site';
 import Todo from './Todo.astro';
 import facade from '../assets/salon-facade.jpg';
 import facadeTall from '../assets/salon-facade-portrait.jpg';
@@ -30,11 +30,11 @@ const fallback = await getImage({ src: facade, format: 'jpeg', quality: 78 });
   </picture>
 
   <div class="shell hero-in">
-    <span class="eyebrow">Institut de beauté</span>
-    <h1>Prothésie ongulaire <em>&</em> extension de cils</h1>
+    <span class="eyebrow">Institut de beauté · {address.city}</span>
+    <h1>Ongles, cils <em>&</em> sourcils</h1>
     <p class="hero-line">
-      Deux spécialités, un seul salon. Des mains et un regard soignés par des
-      praticiennes qui ne font que ça.
+      Prothésie ongulaire, extensions et rehaussement de cils, teinture des sourcils,
+      épilation à la cire ou au fil. Deux praticiennes, chacune sur sa spécialité.
     </p>
     <div class="hero-act">
       <a class="btn" href={planityUrl ?? '#reserver'}>Réserver sur Planity</a>
@@ -49,6 +49,9 @@ const fallback = await getImage({ src: facade, format: 'jpeg', quality: 78 });
           ? `${address.street}, ${address.city}`
           : <Todo label="rue et ville à compléter" />}
       </span>
+      {rating.show && (
+        <span><b>{rating.value.toLocaleString('fr-FR')}/5</b> · {rating.count} avis</span>
+      )}
     </p>
   </div>
 </div>

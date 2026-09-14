@@ -1,5 +1,5 @@
 ---
-import { services } from '../data/site';
+import { universes, practitioners } from '../data/site';
 const numerals = ['i', 'ii', 'iii'];
 ---
 <section id="prestations">
@@ -8,35 +8,29 @@ const numerals = ['i', 'ii', 'iii'];
       <div>
         <hr class="rule" />
         <p class="duo-lead">
-          Un institut qui a choisi de faire <em>deux choses</em> — et de les faire complètement.
+          Un institut de village tenu par <em>deux praticiennes</em>, chacune sur sa spécialité.
         </p>
         <p class="duo-body">
-          Pas de carte à rallonge. La prothésie ongulaire et l'extension de cils demandent
-          chacune des années de main, du matériel dédié et du temps de pose qu'on ne
-          compresse pas. C'est ce temps-là qui fait la différence entre une pose qui tient
-          trois semaines et une pose qui tient trois jours.
+          Fiacrine s'occupe des ongles. Juliette des cils, des sourcils et de l'épilation.
+          Chaque prestation est réservée pour sa durée réelle — dix minutes pour un menton,
+          près de deux heures pour une pose complète — pour que personne ne soit expédié.
         </p>
+        <ul class="who">
+          {practitioners.map((p) => (
+            <li><b>{p.name}</b><span>{p.craft}</span></li>
+          ))}
+        </ul>
       </div>
       <div class="crafts">
-        {services.map((s, i) => (
+        {universes.map((u, i) => (
           <article class="craft">
             <span class="n" aria-hidden="true">{numerals[i]}</span>
             <div>
-              <h3>Les {s.label.toLowerCase()}</h3>
-              <p>{s.blurb}</p>
+              <h3>{u.label}</h3>
+              <p>{u.blurb}</p>
             </div>
           </article>
         ))}
-        <article class="craft">
-          <span class="n" aria-hidden="true">iii</span>
-          <div>
-            <h3>L'entretien</h3>
-            <p>
-              Remplissage toutes les trois semaines environ, dépose comprise. C'est ce qui
-              préserve l'ongle et le cil naturel.
-            </p>
-          </div>
-        </article>
       </div>
     </div>
   </div>

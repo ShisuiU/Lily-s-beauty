@@ -3,33 +3,30 @@
  *  LE SEUL FICHIER À MODIFIER POUR METTRE LE SITE À JOUR
  * ─────────────────────────────────────────────────────────────
  *
- *  Tout ce qui vaut `null` est considéré comme « à compléter » :
- *  le site l'affiche en pointillés roses et garde le bandeau
- *  d'aperçu en haut de page. Dès que vous remplacez un `null`
- *  par une vraie valeur, le pointillé disparaît tout seul.
+ *  Horaires et tarifs sont recopiés de la fiche Planity du salon
+ *  (relevé du 14 septembre 2026). Planity reste la source de
+ *  vérité : en cas d'écart c'est Planity qui a raison, et le site
+ *  y renvoie pour la réservation.
  *
- *  Quand plus rien ne vaut `null`, le bandeau disparaît aussi.
+ *  Tout ce qui vaut `null` est traité comme « à compléter » :
+ *  le champ est masqué ou souligné en pointillés selon le cas.
  */
 
 export const site = {
   name: "Lily's Beauty",
   tagline: 'Institut de beauté',
-  /** Adresse publique du site. À corriger après le premier déploiement Vercel. */
   url: 'https://lilysbeauty.vercel.app',
   description:
-    "Institut de beauté spécialisé en prothésie ongulaire et extension de cils. Pose gel, semi-permanent, cil à cil, volume russe et rehaussement. Réservation en ligne.",
+    "Institut de beauté à Laudun-l'Ardoise : prothésie ongulaire, extensions de cils, rehaussement, teinture et épilation des sourcils, épilation au fil. Réservation en ligne sur Planity.",
 } as const;
 
-/** Lien de réservation Planity du salon. */
 export const planityUrl: string | null =
   'https://www.planity.com/lilys-beauty-30290-laudun-lardoise';
 
 export const contact = {
-  /** Numéro affiché et cliquable. Ex. '05 46 00 00 00' */
+  /** Planity n'en publie pas. Renseignez-le pour l'afficher ; sinon la ligne est masquée. */
   phone: null as string | null,
-  /** Ex. 'contact@lilysbeauty.fr' */
   email: null as string | null,
-  /** Ex. 'https://www.instagram.com/…' */
   instagram: null as string | null,
 };
 
@@ -39,94 +36,201 @@ export const address = {
   postalCode: '30290',
   city: "Laudun-l'Ardoise",
   country: 'FR',
-  /** Stationnement, arrêt de bus, repères… */
   directions: null as string | null,
-  /** Coordonnées relevées sur la fiche Planity du salon. */
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=44.1055174,4.6590543',
+};
+
+/** Les deux praticiennes, telles que Planity les attribue aux prestations.
+    `instagram` : coller l'URL complète du compte, ex. 'https://www.instagram.com/xxx/'.
+    Tant qu'il vaut `null`, le lien n'apparaît pas. */
+export const practitioners = [
+  { name: 'Fiacrine', craft: 'Les ongles', instagram: null as string | null },
+  {
+    name: 'Juliette',
+    craft: "Les cils, les sourcils et l'épilation",
+    instagram: null as string | null,
+  },
+];
+
+/** Présentation du salon, reprise du texte Planity et resserrée. */
+export const about = {
+  lead: "Un cocon au cœur de Laudun-l'Ardoise.",
+  body: [
+    "Décoration claire, lumière douce, et deux professionnelles qui prennent le temps de faire les choses correctement.",
+    "Épilation nette, rehaussement de cils pour un regard ouvert, sourcils redessinés et teintés, extensions, pose et dépose de faux ongles, gel et remplissage : la carte est large, mais chaque prestation est tenue par celle qui en a fait sa spécialité.",
+  ],
 };
 
 /* ─────────────────────────── HORAIRES ───────────────────────────
    `day` suit la convention JavaScript : 0 = dimanche … 6 = samedi.
-   Les heures sont en minutes depuis minuit (9 h 30 → 9 * 60 + 30).
-   `null` sur `open` signifie « fermé ce jour-là ».
-   Passez `confirmed` à true quand ce sont vos vrais horaires.       */
+   Heures en minutes depuis minuit (9 h 30 → 9 * 60 + 30).
+   `open: null` = fermé ce jour-là.                                 */
 
-export const hoursConfirmed = false;
+export const hoursConfirmed = true;
 
-export type Day = {
-  day: number;
-  label: string;
-  open: number | null;
-  close: number | null;
-};
+export type Day = { day: number; label: string; open: number | null; close: number | null };
 
 export const hours: Day[] = [
-  { day: 1, label: 'lundi', open: null, close: null },
-  { day: 2, label: 'mardi', open: 9 * 60 + 30, close: 18 * 60 + 30 },
-  { day: 3, label: 'mercredi', open: 9 * 60 + 30, close: 18 * 60 + 30 },
-  { day: 4, label: 'jeudi', open: 9 * 60 + 30, close: 19 * 60 },
-  { day: 5, label: 'vendredi', open: 9 * 60 + 30, close: 19 * 60 },
-  { day: 6, label: 'samedi', open: 9 * 60, close: 17 * 60 },
+  { day: 1, label: 'lundi', open: 9 * 60, close: 20 * 60 },
+  { day: 2, label: 'mardi', open: 9 * 60, close: 20 * 60 },
+  { day: 3, label: 'mercredi', open: 9 * 60, close: 20 * 60 },
+  { day: 4, label: 'jeudi', open: 9 * 60, close: 20 * 60 },
+  { day: 5, label: 'vendredi', open: 9 * 60, close: 20 * 60 },
+  { day: 6, label: 'samedi', open: 8 * 60, close: 17 * 60 },
   { day: 0, label: 'dimanche', open: null, close: null },
 ];
 
-/* ─────────────────────────── TARIFS ─────────────────────────────
-   `minutes` sert à afficher la durée ET à indiquer au client
-   combien de temps bloquer. `price` est en euros.
-   Passez `confirmed` à true quand c'est votre vraie grille.        */
+/* ─────────────────────────── PRESTATIONS ────────────────────────
+   Intitulés recopiés mot pour mot de Planity, regroupés en trois
+   univers pour rester lisibles sur une page unique.               */
 
-export const pricesConfirmed = false;
+export const pricesConfirmed = true;
+export const pricesCheckedOn = '14 septembre 2026';
 
-export type Service = { name: string; minutes: number | null; price: number | null };
+export type Service = { name: string; minutes: number; price: number };
+export type Category = { title: string; by: string; items: Service[] };
+export type Universe = { key: string; label: string; blurb: string; categories: Category[] };
 
-export const services: { key: string; label: string; blurb: string; items: Service[] }[] = [
+export const universes: Universe[] = [
   {
     key: 'ongles',
     label: 'Ongles',
-    blurb:
-      'Pose gel sur capsule ou chablon, remplissage, semi-permanent, nail art. Séances d’une heure à une heure trente.',
-    items: [
-      { name: 'Pose gel complète', minutes: 90, price: 45 },
-      { name: 'Remplissage gel', minutes: 75, price: 35 },
-      { name: 'Vernis semi-permanent', minutes: 45, price: 25 },
-      { name: 'Beauté des mains', minutes: 45, price: 30 },
-      { name: 'Nail art, par ongle', minutes: null, price: 3 },
-      { name: 'Dépose seule', minutes: 30, price: 15 },
+    blurb: 'Pose gel avec ou sans extensions, remplissage, semi-permanent mains et pieds, nail art.',
+    categories: [
+      {
+        title: 'Ongles en gel',
+        by: 'Fiacrine',
+        items: [
+          { name: 'Pose complète popit (avec extensions)', minutes: 90, price: 45 },
+          { name: 'Gel sur ongles naturels', minutes: 60, price: 35 },
+          { name: 'Remplissage', minutes: 90, price: 38 },
+          { name: 'Nail art niv. 1', minutes: 15, price: 5 },
+          { name: 'Nail art niv. 2', minutes: 15, price: 10 },
+        ],
+      },
+      {
+        title: 'Semi permanent (mains et/ou pieds)',
+        by: 'Fiacrine',
+        items: [
+          { name: 'Vernis semi permanent mains', minutes: 45, price: 30 },
+          { name: 'Vernis semi permanent pieds', minutes: 45, price: 30 },
+          { name: 'French/baby', minutes: 15, price: 5 },
+          { name: 'Forfait mains + pieds (semi permanent uniquement)', minutes: 75, price: 40 },
+          { name: 'Dépose + repose semi permanent mains + pieds', minutes: 90, price: 50 },
+        ],
+      },
     ],
   },
   {
     key: 'cils',
     label: 'Cils',
+    blurb: 'Extensions cil à cil ou mixte, remplissage, rehaussement et teinture.',
+    categories: [
+      {
+        title: 'Extensions de cils',
+        by: 'Juliette',
+        items: [
+          { name: 'Pose complète Cil à Cil', minutes: 90, price: 50 },
+          { name: 'Remplissage 2 semaines Cil à Cil', minutes: 45, price: 30 },
+          { name: 'Remplissage 3/4 semaines Cil à Cil', minutes: 60, price: 45 },
+          { name: 'Pose complète Mixte', minutes: 105, price: 60 },
+          { name: 'Remplissage 2 semaines Mixte', minutes: 60, price: 40 },
+        ],
+      },
+      {
+        title: 'Rehaussement et teinture des cils',
+        by: 'Juliette',
+        items: [
+          { name: 'Rehaussement de cils + Teinture noir classique', minutes: 90, price: 40 },
+          { name: 'Teinture classique des cils noir', minutes: 30, price: 15 },
+        ],
+      },
+    ],
+  },
+  {
+    key: 'sourcils',
+    label: 'Sourcils et épilation',
     blurb:
-      'Extension cil à cil, volume russe, rehaussement et teinture. Comptez deux heures pour une pose complète.',
-    items: [
-      { name: 'Extension cil à cil', minutes: 120, price: 70 },
-      { name: 'Volume russe', minutes: 150, price: 90 },
-      { name: 'Remplissage cils', minutes: 75, price: 45 },
-      { name: 'Rehaussement de cils', minutes: 45, price: 50 },
-      { name: 'Rehaussement + teinture', minutes: 60, price: 60 },
-      { name: 'Dépose seule', minutes: 30, price: 15 },
+      'Browlift, teinture classique ou hybride, épilation à la cire ou au fil, forfaits, prestations homme.',
+    categories: [
+      {
+        title: 'Browlift',
+        by: 'Juliette',
+        items: [
+          { name: 'Browlift', minutes: 30, price: 40 },
+          { name: 'Browlift + Epilation', minutes: 45, price: 45 },
+          { name: 'Browlift + Teinture + Epilation', minutes: 70, price: 50 },
+        ],
+      },
+      {
+        title: 'Teintures des sourcils',
+        by: 'Juliette',
+        items: [
+          { name: 'Teinture Classique des Sourcils', minutes: 30, price: 17 },
+          { name: 'Teinture Classique des sourcils + Epilation', minutes: 60, price: 30 },
+          { name: 'Teinture hybride', minutes: 30, price: 20 },
+          { name: 'Teinture hybride + épilation', minutes: 60, price: 35 },
+        ],
+      },
+      {
+        title: 'Épilation du visage au fil',
+        by: 'Juliette',
+        items: [
+          { name: 'Sourcils au fil', minutes: 20, price: 15 },
+          { name: 'Lèvre au fil', minutes: 20, price: 10 },
+          { name: 'Menton au fil', minutes: 15, price: 7 },
+          { name: 'Joues au fil', minutes: 30, price: 12 },
+          { name: 'Sourcils + Lèvre au fil', minutes: 30, price: 20 },
+        ],
+      },
+      {
+        title: 'Épilations femme',
+        by: 'Juliette',
+        items: [
+          { name: 'Sourcils entretien', minutes: 20, price: 12 },
+          { name: 'Lèvre', minutes: 10, price: 9 },
+          { name: 'Menton', minutes: 10, price: 6 },
+          { name: 'Joues', minutes: 11, price: 8 },
+          { name: 'Aisselles', minutes: 15, price: 12 },
+        ],
+      },
+      {
+        title: 'Forfaits épilation à la cire femme',
+        by: 'Juliette',
+        items: [
+          { name: 'Sourcils + lèvres', minutes: 30, price: 17 },
+          { name: 'Lèvre + Menton', minutes: 25, price: 12 },
+          { name: 'Sourcils + lèvres + menton', minutes: 30, price: 23 },
+          { name: 'Sourcils + lèvres + menton + joues', minutes: 45, price: 32 },
+          { name: 'Aisselles + demi-jambes + maillot échancré', minutes: 45, price: 38 },
+        ],
+      },
+      {
+        title: 'Épilations homme',
+        by: 'Juliette',
+        items: [
+          { name: 'Sourcils', minutes: 20, price: 15 },
+          { name: 'Oreilles', minutes: 15, price: 10 },
+          { name: 'Nez', minutes: 10, price: 6 },
+          { name: 'Aisselles', minutes: 20, price: 14 },
+          { name: 'Torse', minutes: 30, price: 20 },
+        ],
+      },
     ],
   },
 ];
 
-/* ─────────────────── AVIS (relevés sur la fiche Planity) ───────────
-   Mettre à jour de temps en temps, ou passer `show` à false. */
+/* ─────────────────── AVIS (relevés sur la fiche Planity) ───────── */
 
-export const rating = {
-  show: true,
-  value: 4.99,
-  count: 130,
-  source: 'Planity',
-};
+export const rating = { show: true, value: 4.99, count: 130, source: 'Planity' };
 
-/* ───────────────────── CE QUI RESTE À COMPLÉTER ───────────────── */
+/* ───────────────────── CE QUI RESTE À COMPLÉTER ─────────────────
+   Le téléphone n'y figure pas : Planity n'en publie pas, la ligne
+   est simplement masquée tant qu'il vaut `null`.                   */
 
 export const pending = [
   planityUrl === null && 'le lien Planity',
   address.street === null && 'la rue',
-  address.city === null && 'la ville',
-  contact.phone === null && 'le téléphone',
   !hoursConfirmed && 'les horaires',
   !pricesConfirmed && 'les tarifs',
 ].filter(Boolean) as string[];

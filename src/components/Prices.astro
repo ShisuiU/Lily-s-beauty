@@ -1,7 +1,6 @@
 ---
-import { services, pricesConfirmed } from '../data/site';
+import { universes, planityUrl, pricesCheckedOn } from '../data/site';
 import { formatDuration } from '../lib/hours';
-import Todo from './Todo.astro';
 ---
 <section id="tarifs">
   <div class="shell">
@@ -9,34 +8,44 @@ import Todo from './Todo.astro';
       <hr class="rule" />
       <h2>Tarifs</h2>
       <p>
-        Durées réelles de rendez-vous, dépose comprise quand elle s'applique. Le tarif exact
-        est confirmé sur Planity au moment de la réservation.
+        Les durées sont celles réellement bloquées dans l'agenda. Tarifs et disponibilités
+        tels qu'ils figurent sur Planity.
       </p>
     </div>
 
-    <div class="prices">
-      {services.map((col) => (
-        <div class="price-col">
-          <h3 class="eyebrow">{col.label}</h3>
-          <ul class="plist">
-            {col.items.map((s) => (
-              <li>
-                <span class="pname">{s.name}</span>
-                <span class="pdot" aria-hidden="true"></span>
-                <span class="pdur">{formatDuration(s.minutes)}</span>
-                <span class="pcost">{s.price != null ? `${s.price} €` : '—'}</span>
-              </li>
-            ))}
-          </ul>
+    {universes.map((u) => (
+      <div class="universe">
+        <h3 class="universe-title">{u.label}</h3>
+        <div class="cats">
+          {u.categories.map((c) => (
+            <div class="cat">
+              <h4>{c.title}</h4>
+              <p class="by">avec {c.by}</p>
+              <ul class="plist">
+                {c.items.map((s) => (
+                  <li>
+                    <span class="pname">{s.name}</span>
+                    <span class="pdot" aria-hidden="true"></span>
+                    <span class="pdur">{formatDuration(s.minutes)}</span>
+                    <span class="pcost">{s.price} €</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
 
-    {!pricesConfirmed && (
-      <p class="pnote">
-        <Todo label="Prix et durées donnés à titre d'exemple" /> — la grille se modifie dans
-        <code>src/data/site.ts</code>, sans toucher à la mise en page.
-      </p>
-    )}
+    <p class="pnote">
+      Relevé sur Planity le {pricesCheckedOn}.
+      {planityUrl && (
+        <>
+          {' '}En cas d'écart,{' '}
+          <a href={planityUrl} target="_blank" rel="noopener">la fiche Planity</a>{' '}
+          fait foi : c'est elle qui porte l'agenda et les tarifs à jour.
+        </>
+      )}
+    </p>
   </div>
 </section>

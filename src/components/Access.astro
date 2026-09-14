@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { address, contact } from '../data/site';
+import { address, contact, practitioners, about } from '../data/site';
 import Todo from './Todo.astro';
 import facade from '../assets/salon-facade.jpg';
 ---
@@ -18,14 +18,8 @@ import facade from '../assets/salon-facade.jpg';
       />
       <div>
         <hr class="rule" />
-        <p class="addr">
-          Au {address.streetNumber}, une enseigne blanche entre la pierre et la porte bleue du
-          voisin.
-        </p>
-        <p style="color:var(--muted);max-width:44ch">
-          Le salon donne directement sur la rue. Sonnez si la porte est fermée pendant une
-          pose : les séances longues se font parfois porte close.
-        </p>
+        <p class="addr">{about.lead}</p>
+        {about.body.map((t) => <p class="about-p">{t}</p>)}
         <dl>
           <div>
             <dt>Adresse</dt>
@@ -44,18 +38,25 @@ import facade from '../assets/salon-facade.jpg';
               )}
             </dd>
           </div>
-          <div>
-            <dt>Téléphone</dt>
-            <dd>
-              {contact.phone
-                ? <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
-                : <Todo label="Numéro à compléter" />}
-            </dd>
-          </div>
-          <div>
-            <dt>Accès</dt>
-            <dd>{address.directions ?? <Todo label="Stationnement et transports à préciser" />}</dd>
-          </div>
+          {contact.phone && (
+            <div>
+              <dt>Téléphone</dt>
+              <dd><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></dd>
+            </div>
+          )}
+          {practitioners.some((p) => p.instagram) && (
+            <div>
+              <dt>Instagram</dt>
+              <dd class="insta">
+                {practitioners.filter((p) => p.instagram).map((p) => (
+                  <a href={p.instagram!} target="_blank" rel="noopener">{p.name}</a>
+                ))}
+              </dd>
+            </div>
+          )}
+          {address.directions && (
+            <div><dt>Accès</dt><dd>{address.directions}</dd></div>
+          )}
         </dl>
       </div>
     </div>
