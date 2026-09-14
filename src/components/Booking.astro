@@ -8,7 +8,6 @@ const steps = [
   'Laissez un numéro : le rappel SMS part automatiquement la veille.',
   "Un empêchement ? L'annulation se fait depuis le même lien, sans appeler.",
 ];
-const numerals = ['i', 'ii', 'iii', 'iv'];
 ---
 <section id="reserver">
   <div class="shell">
@@ -48,9 +47,7 @@ const numerals = ['i', 'ii', 'iii', 'iv'];
         )}
       </div>
       <ol class="book-steps">
-        {steps.map((s, i) => (
-          <li><i aria-hidden="true">{numerals[i]}</i><span>{s}</span></li>
-        ))}
+        {steps.map((s) => <li>{s}</li>)}
       </ol>
     </div>
   </div>

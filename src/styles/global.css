@@ -689,16 +689,6 @@ section {
 .craft {
   padding-block: 22px;
   border-bottom: 1px solid var(--line);
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 18px;
-  align-items: baseline;
-}
-.craft .n {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  color: var(--rose-ink);
-  font-style: italic;
 }
 .craft h3 {
   font-size: 1.22rem;
@@ -1115,20 +1105,26 @@ section {
   padding: 0;
   border-top: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
 }
+.book-steps {
+  counter-reset: etape;
+}
 .book-steps li {
   display: grid;
-  grid-template-columns: 26px 1fr;
-  gap: 14px;
+  grid-template-columns: 22px 1fr;
+  gap: 16px;
   padding-block: 14px;
   border-bottom: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
   font-size: 0.94rem;
   color: color-mix(in srgb, var(--paper) 84%, transparent);
 }
-.book-steps i {
-  font-style: italic;
-  font-family: var(--serif);
-  color: var(--rose-ink);
-  font-size: 1rem;
+.book-steps li::before {
+  counter-increment: etape;
+  content: counter(etape);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--rose);
+  font-variant-numeric: tabular-nums;
+  padding-top: 1px;
 }
 @media (max-width: 860px) {
   .book {

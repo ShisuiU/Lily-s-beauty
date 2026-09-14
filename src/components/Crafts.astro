@@ -1,7 +1,6 @@
 ---
 import { universes, practitioners } from '../data/site';
 import InstaLink from './InstaLink.astro';
-const numerals = ['i', 'ii', 'iii'];
 ---
 <section id="prestations">
   <div class="shell">
@@ -27,13 +26,10 @@ const numerals = ['i', 'ii', 'iii'];
         </ul>
       </div>
       <div class="crafts">
-        {universes.map((u, i) => (
+        {universes.map((u) => (
           <article class="craft">
-            <span class="n" aria-hidden="true">{numerals[i]}</span>
-            <div>
-              <h3>{u.label}</h3>
-              <p>{u.blurb}</p>
-            </div>
+            <h3>{u.label}</h3>
+            <p>{u.blurb}</p>
           </article>
         ))}
       </div>
