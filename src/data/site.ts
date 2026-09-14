@@ -250,6 +250,47 @@ export const universes: Universe[] = [
 
 export const rating = { show: true, value: 4.99, count: 130, source: 'Planity' };
 
+/* ─────────────────────── MENTIONS LÉGALES ───────────────────────
+   Obligatoires pour tout site professionnel (article 6-III de la LCEN).
+   Le salon réunit DEUX auto-entreprises distinctes partageant un local
+   et une enseigne : chacune doit donc apparaître avec son propre SIRET.
+
+   Les `null` s'affichent en pointillés sur /mentions-legales et doivent
+   être remplis. Le SIRET se retrouve en cherchant son nom sur
+   annuaire-entreprises.data.gouv.fr                                   */
+
+export const legal = {
+  /** Une seule personne est responsable de la publication du site. */
+  directricePublication: null as string | null,
+
+  entreprises: [
+    {
+      praticienne: 'Fiacrine',
+      /** Nom et prénom de l'exploitante, tels qu'immatriculés. */
+      denomination: null as string | null,
+      forme: 'Entrepreneur individuel (auto-entreprise)',
+      siret: null as string | null,
+      activite: 'Prothésie ongulaire',
+    },
+    {
+      praticienne: 'Juliette',
+      denomination: null as string | null,
+      forme: 'Entrepreneur individuel (auto-entreprise)',
+      siret: null as string | null,
+      activite: 'Soins des cils, des sourcils et épilation',
+    },
+  ],
+
+  /** Régime de TVA. Vrai tant que le chiffre d'affaires reste sous le seuil. */
+  franchiseTva: true,
+
+  hebergeur: {
+    nom: 'Vercel Inc.',
+    adresse: '440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis',
+    site: 'https://vercel.com',
+  },
+};
+
 /* ───────────────────── CE QUI RESTE À COMPLÉTER ─────────────────
    Le téléphone n'y figure pas : Planity n'en publie pas, la ligne
    est simplement masquée tant qu'il vaut `null`.                   */

@@ -1256,6 +1256,97 @@ section {
   }
 }
 
+/* ── page mentions légales ── */
+.legal {
+  padding-top: calc(var(--banner) + 96px);
+}
+.legal h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+.legal h2 {
+  font-size: 1.35rem;
+  margin-top: clamp(38px, 5vw, 54px);
+  margin-bottom: 12px;
+}
+.legal p {
+  color: var(--ink-2);
+  max-width: 68ch;
+  font-size: 0.97rem;
+}
+.legal p + p {
+  margin-top: 12px;
+}
+.legal a {
+  color: var(--rose-ink);
+  border-bottom: 1px solid color-mix(in srgb, var(--rose-ink) 38%, transparent);
+}
+.legal-lead {
+  margin-bottom: 22px;
+}
+.legal-note {
+  margin-top: 18px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.legal-back {
+  margin-top: clamp(44px, 6vw, 64px);
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.ent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+.ent {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  background: var(--surface, var(--paper));
+}
+.ent h3 {
+  font-size: 1.4rem;
+  margin-bottom: 2px;
+}
+.ent-act {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rose-ink);
+  margin-bottom: 16px;
+}
+.ent dl {
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+.ent dl > div {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+  padding-block: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+.ent dt {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 3px;
+}
+.ent dd {
+  margin: 0;
+  color: var(--ink-2);
+}
+@media (max-width: 460px) {
+  .ent dl > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
 /* ── pied ── */
 footer {
   border-top: 1px solid var(--line);

@@ -10,7 +10,8 @@ const year = new Date().getFullYear();
         <p class="eyebrow" style="margin-top:4px">{site.tagline}</p>
       </div>
       <nav class="foot-links" aria-label="Navigation de pied de page">
-        {sections.map((s) => <a href={s.href}>{s.label}</a>)}
+        {sections.map((s) => <a href={'/' + s.href}>{s.label}</a>)}
+        <a href="/mentions-legales">Mentions légales</a>
       </nav>
       <p class="foot-note">
         © {year} {site.name}.
