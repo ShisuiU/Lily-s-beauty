@@ -1,5 +1,6 @@
 ---
-import { universes, practitioners, pseudo } from '../data/site';
+import { universes, practitioners } from '../data/site';
+import InstaLink from './InstaLink.astro';
 const numerals = ['i', 'ii', 'iii'];
 ---
 <section id="prestations">
@@ -18,13 +19,9 @@ const numerals = ['i', 'ii', 'iii'];
         <ul class="who">
           {practitioners.map((p) => (
             <li>
-              <b>{p.name}</b>
-              <span>{p.craft}</span>
-              {p.instagram && (
-                <a class="who-ig" href={p.instagram} target="_blank" rel="noopener">
-                  {pseudo(p.instagram)}
-                </a>
-              )}
+              <b class="who-name">{p.name}</b>
+              <span class="who-craft">{p.craft}</span>
+              {p.instagram && <InstaLink url={p.instagram} name={p.name} />}
             </li>
           ))}
         </ul>

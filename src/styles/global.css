@@ -723,22 +723,36 @@ section {
   border-top: 1px solid var(--line);
 }
 .who li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 14px;
-  padding-block: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 16px;
+  padding-block: 10px;
   border-bottom: 1px solid var(--line);
 }
-.who b {
+.who .who-name {
   font-family: var(--serif);
   font-size: 1.15rem;
   font-weight: 500;
-  min-width: 96px;
 }
-.who span {
-  font-size: 0.9rem;
+.who .who-craft {
+  grid-column: 1;
+  font-size: 0.88rem;
   color: var(--muted);
+}
+.who .ig {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+@media (max-width: 540px) {
+  .who li {
+    grid-template-columns: 1fr;
+  }
+  .who .ig {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 2px;
+  }
 }
 
 .about-p {
@@ -749,34 +763,56 @@ section {
 .insta {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 26px;
+  gap: 10px;
 }
-.insta a {
+
+/* ── lien Instagram ──
+   L'icône dit de quoi il s'agit avant qu'on ait lu le pseudo. Elle hérite
+   de currentColor : une seule version pour le thème clair et le sombre. */
+.ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--rose-ink);
+  min-height: 44px;
+}
+.ig svg {
+  flex: none;
+}
+.ig-text {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  padding-block: 6px;
+  min-width: 0;
 }
-.insta b {
-  color: var(--rose-ink);
+.ig-text b {
   font-weight: 500;
-  border-bottom: 1px solid color-mix(in srgb, var(--rose-ink) 40%, transparent);
+  font-size: 0.9rem;
+  line-height: 1.25;
 }
-.insta span {
-  font-size: 0.82rem;
+.ig-text span {
+  font-size: 0.8rem;
   color: var(--muted);
+  line-height: 1.25;
+}
+.ig:hover .ig-text b {
+  border-bottom: 1px solid currentColor;
 }
 
-/* le pseudo posé en fin de ligne, dans la liste des praticiennes */
-.who-ig {
-  margin-left: auto;
-  font-size: 0.85rem;
-  color: var(--rose-ink);
-  padding-block: 8px;
-  white-space: nowrap;
+/* variante encadrée : cible franche, employée dans la section salon */
+.ig-chip {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 15px 9px 13px;
+  background: var(--paper);
+  transition: border-color 0.2s, background 0.2s;
 }
-.who-ig:hover {
-  border-bottom: 1px solid currentColor;
+.ig-chip:hover {
+  border-color: var(--rose-ink);
+  background: var(--rose-wash);
+}
+.ig-chip:hover .ig-text b {
+  border-bottom: 0;
 }
 
 /* ── tarifs ── */
