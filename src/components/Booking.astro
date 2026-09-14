@@ -1,5 +1,5 @@
 ---
-import { planityUrl } from '../data/site';
+import { planityUrl, rating } from '../data/site';
 import Todo from './Todo.astro';
 
 const steps = [
@@ -15,6 +15,15 @@ const numerals = ['i', 'ii', 'iii', 'iv'];
     <div class="book">
       <div>
         <span class="eyebrow">Rendez-vous</span>
+        {rating.show && (
+          <p class="rating">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>
+              <b>{rating.value.toLocaleString('fr-FR')}</b> sur 5 — {rating.count} avis
+              vérifiés sur {rating.source}
+            </span>
+          </p>
+        )}
         <h2 style="margin-top:14px">La réservation se fait sur Planity.</h2>
         <p>
           Agenda à jour en temps réel, confirmation immédiate et rappel par SMS la veille.

@@ -20,8 +20,9 @@ export const site = {
     "Institut de beauté spécialisé en prothésie ongulaire et extension de cils. Pose gel, semi-permanent, cil à cil, volume russe et rehaussement. Réservation en ligne.",
 } as const;
 
-/** Lien de réservation Planity du salon. Ex. https://www.planity.com/lilys-beauty-00000 */
-export const planityUrl: string | null = null;
+/** Lien de réservation Planity du salon. */
+export const planityUrl: string | null =
+  'https://www.planity.com/lilys-beauty-30290-laudun-lardoise';
 
 export const contact = {
   /** Numéro affiché et cliquable. Ex. '05 46 00 00 00' */
@@ -34,17 +35,14 @@ export const contact = {
 
 export const address = {
   streetNumber: '254',
-  /** Ex. 'rue de la République' */
-  street: null as string | null,
-  /** Ex. '17000' */
-  postalCode: null as string | null,
-  /** Ex. 'La Rochelle' */
-  city: null as string | null,
+  street: 'Rue de la République',
+  postalCode: '30290',
+  city: "Laudun-l'Ardoise",
   country: 'FR',
   /** Stationnement, arrêt de bus, repères… */
   directions: null as string | null,
-  /** Lien Google Maps du salon. */
-  mapsUrl: null as string | null,
+  /** Coordonnées relevées sur la fiche Planity du salon. */
+  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=44.1055174,4.6590543',
 };
 
 /* ─────────────────────────── HORAIRES ───────────────────────────
@@ -111,6 +109,16 @@ export const services: { key: string; label: string; blurb: string; items: Servi
     ],
   },
 ];
+
+/* ─────────────────── AVIS (relevés sur la fiche Planity) ───────────
+   Mettre à jour de temps en temps, ou passer `show` à false. */
+
+export const rating = {
+  show: true,
+  value: 4.99,
+  count: 130,
+  source: 'Planity',
+};
 
 /* ───────────────────── CE QUI RESTE À COMPLÉTER ───────────────── */
 
