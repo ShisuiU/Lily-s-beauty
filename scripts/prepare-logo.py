@@ -2,7 +2,11 @@
 """
 Prépare src/assets/logo.png à partir du logo fourni par le salon.
 
-Le fichier d'origine est un PNG sur fond crème, sans transparence, avec
+Deux formes de livraison se présentent, et le script reconnaît laquelle
+il a reçu. Un PNG **déjà transparent** n'est que rogné et réduit. Tout ce
+qui suit ne concerne que l'autre cas.
+
+Le fichier sur fond crème, sans transparence, avec
 une ligne d'adresse sous l'enseigne. Trois transformations :
 
 1. Le fond crème devient transparent, pour que le logo se pose aussi
@@ -51,6 +55,7 @@ from PIL import Image
 from scipy.ndimage import binary_dilation, distance_transform_edt, label
 
 OUT = pathlib.Path('src/assets/logo.png')
+LARGEUR_MAX = 1300   # le pied de page l'affiche à 268 px au plus
 ENCRE = 18          # distance au fond à partir de laquelle c'est du dessin
 SEUIL, RAMPE = 3.0, 14.0
 BLANC_ADRESSE = 60  # lignes vides qui détachent l'adresse de l'enseigne
@@ -126,7 +131,48 @@ def groupes(occupe, minimum):
     return out
 
 
+def deja_detoure(src: str) -> bool:
+    """Le fichier porte-t-il déjà sa transparence ?
+
+    Les livraisons alternent entre deux formes : un aplat crème opaque,
+    qu'il faut détourer, et un PNG déjà transparent. Confondre les deux
+    est destructeur — sous les pixels transparents le RGB vaut souvent
+    noir, si bien que la chaîne de détourage relèverait un « fond noir »
+    et effacerait le dessin au lieu du vide.
+    """
+    im = Image.open(src)
+    if im.mode not in ('RGBA', 'LA'):
+        return False
+    alpha = np.asarray(im.convert('RGBA'))[:, :, 3]
+    return bool((alpha < 10).mean() > 0.2)
+
+
+def reduire(im: Image.Image) -> Image.Image:
+    if im.width <= LARGEUR_MAX:
+        return im
+    return im.resize((LARGEUR_MAX, round(im.height * LARGEUR_MAX / im.width)), Image.LANCZOS)
+
+
+def enregistrer(im: Image.Image) -> None:
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    im.save(OUT, optimize=True)
+    print(f'{OUT}  {im.width}x{im.height}  {OUT.stat().st_size / 1024:.0f} Ko')
+
+
+def passer_tel_quel(src: str) -> None:
+    """Rogner et réduire, rien de plus : le fichier est déjà propre."""
+    im = Image.open(src).convert('RGBA')
+    alpha = np.asarray(im)[:, :, 3]
+    ys, xs = np.nonzero(alpha > 6)
+    im = im.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
+    print('fichier déjà transparent : rognage et réduction seulement')
+    enregistrer(reduire(im))
+
+
 def main(src: str) -> None:
+    if deja_detoure(src):
+        return passer_tel_quel(src)
+
     rgb = np.asarray(Image.open(src).convert('RGB')).astype(np.float64)
     h, w, _ = rgb.shape
 
@@ -190,9 +236,7 @@ def main(src: str) -> None:
     rgb[alpha == 0] = 0
 
     arr = np.dstack([rgb, alpha * 255]).astype(np.uint8)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(arr, 'RGBA').save(OUT, optimize=True)
-    print(f'{OUT}  {arr.shape[1]}x{arr.shape[0]}  {OUT.stat().st_size / 1024:.0f} Ko')
+    enregistrer(reduire(Image.fromarray(arr, 'RGBA')))
 
 
 if __name__ == '__main__':

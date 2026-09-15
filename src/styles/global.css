@@ -934,7 +934,12 @@ section {
 #tarifs {
   background: var(--shell);
   position: relative;
-  overflow: hidden;              /* le motif déborde volontairement */
+  /* Le motif déborde volontairement. `clip` et non `hidden` : hidden
+     ferait de la section un conteneur de défilement, et les animations
+     d'apparition de ses descendants se caleraient alors sur ce cadre,
+     qui ne défile jamais. Elles resteraient figées à leur départ. */
+  overflow: hidden;
+  overflow: clip;
 }
 
 /* Le rameau du logo, repris dans l'angle du bloc. Servi en masque plutôt
@@ -1492,5 +1497,77 @@ footer {
   }
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   APPARITIONS AU DÉFILEMENT
+
+   En CSS seul : `animation-timeline: view()` pilote l'animation par la
+   position de l'élément dans la fenêtre, sans observateur ni script.
+   Le site continue donc de ne servir aucun fichier JavaScript.
+
+   Deux garde-fous, dans cet ordre :
+
+   - `prefers-reduced-motion` d'abord. Le mouvement est une option,
+     jamais un prérequis pour lire la page.
+   - `@supports` ensuite, et c'est lui qui porte l'état de départ. Un
+     navigateur sans les animations de défilement n'applique donc
+     jamais `opacity: 0` : il affiche la page normalement plutôt que de
+     la laisser blanche. Poser l'état masqué en dehors de cette
+     condition est la faute classique du procédé.
+
+   La portée est donnée en pixels et non en pourcentages : le pourcentage
+   se calcule sur la hauteur de l'élément, si bien qu'un bloc haut se
+   révélerait sur un long défilement et une ligne sur trois fois rien.
+   En pixels, tout la page révèle au même rythme.
+
+   L'animation est rejouée à rebours si l'on remonte : une durée
+   accrochée au défilement se parcourt dans les deux sens, c'est le
+   principe même. Un déclenchement unique demanderait un observateur,
+   donc du script.
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    @keyframes monte {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    #tarifs > .shell > .sec-top,
+    .tarifs-intro,
+    .duo > div,
+    .who li,
+    .universes .universe,
+    #horaires .sec-top,
+    .hours li,
+    .status,
+    #reserver .book > *,
+    .book-steps li,
+    #acces .access > *,
+    .foot-logo {
+      /* NE PAS replier en raccourci `animation`. `animation-timeline`
+         n'y est pas admis — le raccourci le remet à `auto` — et le
+         minifieur, lui, replie volontiers les formes longues voisines
+         en `animation: linear both monte view()`, que le navigateur
+         rejette. Les animations cessent alors sans la moindre erreur.
+         Les formes longues échappent à ce repli : c'est la raison
+         d'être de leur présence ici. */
+      animation-name: monte;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      /* L'élément commence à paraître 20 px après avoir touché le bas de
+         la fenêtre, et finit 240 px plus loin. Les listes n'ont pas de
+         décalage à écrire : chaque ligne entre à son tour, le décalage
+         naît de la page elle-même. */
+      animation-range: entry 20px entry 260px;
+    }
   }
 }

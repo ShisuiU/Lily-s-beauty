@@ -79,11 +79,19 @@ python3 scripts/prepare-motif.py brand/motif-lys-original.png  # public/motif-ly
 Dépendances : `pip install Pillow fonttools brotli numpy scipy`.
 
 Les fichiers livrés par le salon sont conservés tels quels dans
-`brand/` ; les scripts en tirent les versions qu'affiche le site. Pour le
-logo : fond détouré, ligne d'adresse et feuillage débordant retirés,
-bavures effacées. Ces découpes sont **relevées sur le fichier** au lieu
-d'être codées en dur, et le script imprime ce qu'il a trouvé. Après un
-nouveau logo, lire ces nombres avant de faire confiance au résultat.
+`brand/` ; les scripts en tirent les versions qu'affiche le site.
+
+`prepare-logo.py` reconnaît deux formes de livraison. Un PNG **déjà
+transparent** n'est que rogné et réduit. Un logo posé sur un **aplat
+opaque** est détouré, et le script y retire en plus ce qui ne doit pas
+partir sur le site : ligne d'adresse, feuillage débordant, bavures de
+gomme. Ces découpes sont **relevées sur le fichier** au lieu d'être
+codées en dur, et il imprime ce qu'il a trouvé — après un nouveau logo,
+lire ces nombres avant de faire confiance au résultat.
+
+Confondre les deux formes est destructeur : sous les pixels transparents
+le RGB vaut le plus souvent noir, si bien que la chaîne de détourage
+relèverait un « fond noir » et effacerait le dessin au lieu du vide.
 
 ---
 
@@ -167,6 +175,24 @@ construction invisible aux lecteurs d'écran — ce qui est exactement son
 statut. Il est posé sur un seul bloc : répété partout, un ornement cesse
 d'en être un.
 
+**Les apparitions au défilement sont en CSS.**
+`animation-timeline: view()` accroche l'animation à la position de
+l'élément dans la fenêtre : ni observateur, ni script, ni classe posée à
+la volée. Deux précautions valent d'être dites.
+
+L'état masqué vit **à l'intérieur** du `@supports`. Un navigateur sans
+les animations de défilement n'applique donc jamais `opacity: 0` et
+affiche la page normalement ; poser l'état de départ en dehors de la
+condition est la faute classique du procédé, celle qui laisse une page
+blanche quand quelque chose manque.
+
+Et les déclarations sont en **formes longues**, délibérément.
+`animation-timeline` n'est pas admis dans le raccourci `animation`, qui
+le remet à `auto` ; or le minifieur replie volontiers deux formes longues
+voisines en `animation: linear both monte view()`, que le navigateur
+rejette en bloc. Les animations cessent alors sans erreur visible. Les
+replier « pour faire propre » suffit à tout casser.
+
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de
 Paris via `Intl`, surligne le jour courant et annonce la prochaine
@@ -186,18 +212,15 @@ recherche locale.
    convertit — et les deux comptes Instagram en regorgent.
 2. **Compléter les mentions légales** (tableau plus haut).
 3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni suffit
-   au pied de page, mais deux choses restent en suspens.
+   au pied de page, mais l'en-tête reste en Pinyon Script, une
+   approximation : à 27 px de haut, les déliés du script tombent sous le
+   demi-pixel et une image réduite y vire au gris, là où une police reste
+   nette. Un vectoriel lèverait la question.
 
-   L'en-tête est toujours en Pinyon Script, une approximation : à 27 px
-   de haut, les déliés du script tombent sous le demi-pixel et une image
-   réduite y vire au gris, là où une police reste nette. Un vectoriel
-   lèverait la question.
-
-   Et la ligne d'adresse du fichier fourni est fausse — « 30290 Rue de la
-   République Laudun » : le code postal occupe la place du numéro, le 254
-   manque, la commune est amputée de « l'Ardoise ». Le script la retire,
-   donc le site n'affiche rien d'inexact, mais le fichier reste à
-   corriger chez son auteur, enseigne et cartes de visite comprises.
+   Les livraisons précédentes portaient une ligne d'adresse fausse
+   (« 30290 Rue de la République Laudun ») ; celle en place ne porte plus
+   d'adresse du tout. Si le fichier fautif a servi à l'enseigne ou aux
+   cartes de visite, l'erreur y est toujours.
 4. **Un nom de domaine en `.fr`.** Sans effet sur la vitesse, beaucoup
    sur la confiance et le référencement local.
 5. **Pages dédiées par univers** — `/ongles`, `/cils`,
