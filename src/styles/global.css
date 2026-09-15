@@ -1080,7 +1080,7 @@ section {
   top: clamp(90px, 14vw, 150px);
   right: clamp(20px, 6vw, 110px);
   width: clamp(130px, 20vw, 250px);
-  aspect-ratio: 560 / 548;
+  aspect-ratio: 560 / 630;
   background: var(--ink);
   opacity: 0.085;
   -webkit-mask-image: url('/motif-lys-fleur.png');
@@ -1276,7 +1276,7 @@ section {
      qu'elle, décollée de son angle. C'est la hauteur seule qui règle.
      Vérifié de 360 à 2 560 px : elle tient partout, avec de la marge. */
   height: clamp(104px, 72%, 196px);
-  aspect-ratio: 560 / 548;
+  aspect-ratio: 560 / 630;
   background: var(--ink);
   opacity: 0.1;
   pointer-events: none;

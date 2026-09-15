@@ -266,13 +266,22 @@ changeant de fragment, de coin, d'échelle et de couleur qu'il reste un
 ornement.
 
 Les deux fleurs sont **posées**, pas accrochées à un bord — et c'est le
-fichier lui-même qui le permet. Un fragment prélevé dans un dessin d'un
-seul tenant est forcément coupé quelque part, et une découpe franche se
+fichier lui-même qui le permet. Un fragment prélevé au rectangle dans un
+dessin d'un seul tenant est coupé quelque part, et une coupe franche se
 voit : la première version tranchait un pétale, et le dessin avait l'air
 cassé. La fleur est donc détourée par un **halo** plutôt que par une
-boîte : pleine au centre, éteinte avant le bord. La fleur est entière ;
+boîte : pleine au centre, éteinte avant le bord. La fleur reste entière ;
 ce sont la tige et les feuilles qui se dissipent. Une tige qui s'efface
 se lit comme une tige qui continue, un pétale tranché non.
+
+Deux conditions, et la seconde a été manquée une première fois. Le halo
+travaille sur le dessin **entier**, élargi d'une marge transparente :
+découper d'abord et fondre ensuite ne sert à rien, c'est la découpe qui
+tranche et le fondu arrive trop tard. Et le dessin doit s'éteindre avant
+le bord du fichier — `prepare-motif.py` relit les quatre bords de sa
+sortie et **refuse d'écrire** si l'encre y dépasse 8 sur 255. Le contrôle
+tient de lui-même : le dessin d'origine ne touche pas son propre cadre,
+son encre s'arrête à 27 px du plus proche.
 
 Dans la carte « en ce moment », elle est réglée par sa **hauteur** et non
 par sa largeur. La carte n'a pas la même forme selon la colonne : 175 px

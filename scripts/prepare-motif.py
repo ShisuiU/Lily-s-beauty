@@ -15,13 +15,24 @@ la page affiche un rectangle plein à la place du dessin. Le décor tirant
 sa couleur de la feuille de style, les canaux de couleur du fichier ne
 servent à rien et partent à zéro.
 
-La troisième, c'est le **fondu**. Un fragment prélevé dans un dessin d'un
-seul tenant est forcément coupé quelque part, et une découpe franche se
+La troisième, c'est le **halo**. Un fragment prélevé au rectangle dans un
+dessin d'un seul tenant est coupé quelque part, et une coupe franche se
 voit : elle passe au milieu d'un pétale et le dessin a l'air cassé. La
-fleur est donc détourée non pas par une boîte mais par un halo — pleine
-au centre, éteinte avant le bord — si bien que la fleur est entière et
-que ce sont la tige et les feuilles, elles, qui se dissipent. Une tige
-qui s'efface se lit comme une tige qui continue ; un pétale tranché, non.
+fleur est donc détourée par un halo — pleine au centre, éteinte avant le
+bord — si bien que la fleur reste entière et que ce sont la tige et les
+feuilles qui se dissipent. Une tige qui s'efface se lit comme une tige
+qui continue ; un pétale tranché, non.
+
+Deux conditions pour que ça marche, et la seconde est vérifiée à la
+sortie parce qu'elle avait été manquée une première fois :
+
+  · le halo travaille sur le dessin **entier**, élargi d'une marge
+    transparente. Découper d'abord puis fondre ensuite ne sert à rien :
+    c'est la découpe qui tranche, et le fondu arrive trop tard ;
+  · le dessin doit s'éteindre **avant** le bord du fichier. Le contrôle
+    plus bas relit les quatre bords de chaque sortie et refuse d'écrire
+    si l'encre y est encore visible. Le dessin d'origine, lui, ne touche
+    pas son propre cadre : son encre s'arrête à 27 px du plus proche.
 
     pip install Pillow numpy
     python3 scripts/prepare-motif.py brand/motif-lys-original.png
@@ -39,45 +50,44 @@ from PIL import Image
 # le bas-gauche, la tige monte vers le haut-droite.
 #
 # `halo` : (cx, cy, plein, nul) en coordonnées de la source — opaque
-# jusqu'au rayon `plein`, éteint à partir de `nul`.
-# `bords` : largeur du fondu en pixels sur (haut, droite, bas, gauche),
-# pour les extrémités que le halo laisse encore vives. Le dessin d'origine
-# est lui-même coupé par son cadre en bas à gauche.
+# jusqu'au rayon `plein`, éteint à partir de `nul`. Le centre est celui
+# de la fleur, là où convergent les étamines ; `plein` couvre le pétale
+# le plus long (365 px), `nul` laisse 180 px pour se dissiper.
 DECOUPES = {
     # le rameau entier
     'motif-lys.png': dict(boite=None, largeur=620),
     # boutons et feuilles
     'motif-lys-branche.png': dict(boite=(500, 0, 1430, 430), largeur=560),
     # la fleur entière, dissipée dans sa tige
-    'motif-lys-fleur.png': dict(
-        boite=(0, 300, 1050, 1101),
-        largeur=560,
-        halo=(310, 735, 360, 600),
-        bords=(0, 0, 120, 110),
-    ),
+    'motif-lys-fleur.png': dict(boite=None, largeur=560, halo=(295, 740, 380, 560)),
 }
 SORTIE = pathlib.Path('public')
 
+# Seuil de rognage. Bas pour un fragment au halo, dont la fin du dégradé
+# est justement ce qui évite la coupe ; celui d'origine pour les autres,
+# qui n'ont pas de dégradé à préserver.
+SEUIL_HALO = 2
+SEUIL_FRANC = 6
 
-def halo(alpha: np.ndarray, boite, reglage) -> np.ndarray:
-    x0, y0 = boite[0], boite[1]
+# Au-delà, l'encre sur un bord du fichier se voit comme un trait coupé.
+# 6 sur 255, et le décor n'étant posé qu'à 10 % d'opacité, il en reste
+# deux millièmes.
+BORD_MAX = 8
+
+
+def pose_halo(alpha: np.ndarray, reglage) -> np.ndarray:
+    """Éteint le dessin autour d'un centre, sur un cadre élargi d'autant."""
     cx, cy, plein, nul = reglage
-    yy, xx = np.mgrid[y0 : y0 + alpha.shape[0], x0 : x0 + alpha.shape[1]]
-    return alpha * np.clip((nul - np.hypot(xx - cx, yy - cy)) / (nul - plein), 0, 1)
-
-
-def bords(alpha: np.ndarray, largeurs) -> np.ndarray:
+    marge = int(np.ceil(nul)) + 8
     h, w = alpha.shape
-    haut, droite, bas, gauche = largeurs
-    if haut:
-        alpha = alpha * np.clip(np.arange(h)[:, None] / haut, 0, 1)
-    if bas:
-        alpha = alpha * np.clip((h - 1 - np.arange(h))[:, None] / bas, 0, 1)
-    if gauche:
-        alpha = alpha * np.clip(np.arange(w)[None, :] / gauche, 0, 1)
-    if droite:
-        alpha = alpha * np.clip((w - 1 - np.arange(w))[None, :] / droite, 0, 1)
-    return alpha
+    large = np.zeros((h + 2 * marge, w + 2 * marge), np.float32)
+    large[marge : marge + h, marge : marge + w] = alpha
+    yy, xx = np.mgrid[-marge : h + marge, -marge : w + marge]
+    return large * np.clip((nul - np.hypot(xx - cx, yy - cy)) / (nul - plein), 0, 1)
+
+
+def bord_max(a: np.ndarray) -> float:
+    return float(max(a[0].max(), a[-1].max(), a[:, 0].max(), a[:, -1].max()))
 
 
 def main(src: str) -> None:
@@ -88,16 +98,12 @@ def main(src: str) -> None:
         a = np.asarray(source.crop(boite))[:, :, 3].astype(np.float32)
 
         if 'halo' in reglages:
-            a = halo(a, boite, reglages['halo'])
-        if 'bords' in reglages:
-            a = bords(a, reglages['bords'])
+            a = pose_halo(a, reglages['halo'])
 
         # Rogner au dessin : une découpe laisse toujours du vide autour,
-        # et une marge invisible fausserait le placement dans la page. Le
-        # seuil vaut 6 sur 255, et il rogne donc aussi la toute fin des
-        # fondus — à 2 % du trait plein, et le décor n'étant affiché qu'à
-        # 10 % d'opacité, il n'y restait de toute façon rien de visible.
-        ys, xs = np.nonzero(a > 6)
+        # et une marge invisible fausserait le placement dans la page.
+        seuil = SEUIL_HALO if 'halo' in reglages else SEUIL_FRANC
+        ys, xs = np.nonzero(a > seuil)
         a = a[ys.min() : ys.max() + 1, xs.min() : xs.max() + 1]
 
         largeur = reglages['largeur']
@@ -105,10 +111,21 @@ def main(src: str) -> None:
         im = im.resize((largeur, round(im.height * largeur / im.width)), Image.LANCZOS)
 
         fini = np.asarray(im)
+        if 'halo' in reglages and bord_max(fini) > BORD_MAX:
+            raise SystemExit(
+                f'{nom} : le dessin touche encore le bord du fichier '
+                f'({bord_max(fini):.0f} sur 255, maximum admis {BORD_MAX}). '
+                f'Élargir le halo, ou le recentrer.'
+            )
+
         out = SORTIE / nom
         Image.fromarray(np.dstack([np.zeros_like(fini), fini]), 'LA').save(out, optimize=True)
+        # Le bord n'est relevé que pour les fragments au halo. Les deux
+        # autres sont posés en débordant volontairement de leur bloc :
+        # chez eux, de l'encre au bord est le résultat cherché.
+        controle = f'   bord {bord_max(fini):.0f}/255' if 'halo' in reglages else ''
         print(f'{out}  {im.width}x{im.height}  {out.stat().st_size / 1024:.0f} Ko'
-              f'   -> aspect-ratio: {im.width} / {im.height}')
+              f'{controle}   -> aspect-ratio: {im.width} / {im.height}')
 
 
 if __name__ == '__main__':
