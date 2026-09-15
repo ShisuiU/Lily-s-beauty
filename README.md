@@ -74,7 +74,7 @@ python3 scripts/generate-map.py                    # src/assets/plan-salon.jpg
 python3 scripts/generate-og.py                     # public/og.jpg
 python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
 python3 scripts/prepare-motif.py brand/motif-lys-original.png  # public/motif-lys.png
-python3 scripts/prepare-hero.py                    # les deux photos du bandeau
+python3 scripts/prepare-hero.py                    # les deux photos du bandeau (une par orientation)
 python3 scripts/prepare-galerie.py                 # src/assets/salon-*.jpg
 ```
 
@@ -207,18 +207,48 @@ les lys montent au-dessus du mot : à 27 px les déliés viraient au gris
 pâle. La hauteur de l'en-tête ne bouge pas pour autant, elle est fixée
 par ailleurs — vérifié de 27 à 35 px.
 
-**La photo du bandeau vient de la prise large.** Le salon a fourni deux
-cadrages. Celui qui servait était le serré, recadré puis **agrandi 1,5
-fois** : d'où une enseigne qui remplissait le tiers de l'écran, coupée
-aux deux bouts, et des pleins qui bavaient. La prise large donne le mur
-de pierre, l'enseigne entière, la porte voisine et le trottoir — et,
-étant moins grossie, elle est plus piquée malgré ses 900 px.
+**Le bandeau ne montre pas la même chose selon l'écran.** Deux photos, pas
+deux cadrages : l'ordinateur reçoit la devanture, le téléphone reçoit
+l'intérieur — le poste de soin sous la guirlande. C'est une demande du
+salon.
 
-Le voile de lecture a dû être recalé dessus : elle est plus claire là où
-le texte se pose, et au réglage précédent le titre tombait à 2,51:1, le
-corps à 3,52:1. Après recalage, 4,30:1 et 7,26:1 — au-dessus des seuils
-(3:1 pour un titre de cette taille, 4,5:1 pour le corps). **Changer la
-photo du bandeau oblige à remesurer ces deux valeurs.**
+Côté devanture, le salon a fourni deux cadrages. Celui qui servait était
+le serré, recadré puis **agrandi 1,5 fois** : d'où une enseigne qui
+remplissait le tiers de l'écran, coupée aux deux bouts, et des pleins qui
+bavaient. La prise large donne le mur de pierre, l'enseigne entière, la
+porte voisine et le trottoir — et, étant moins grossie, elle est plus
+piquée malgré ses 900 px.
+
+Côté téléphone, la photo est la même prise que la deuxième du ruban, mais
+en pleine résolution et servie en trois largeurs : c'est le plus gros
+fichier de la page, et un écran à deux pixels par point n'a pas à
+télécharger celui des écrans à trois.
+
+`alt` y est **vide, et c'est voulu** : l'attribut est unique alors que la
+photo change avec la largeur d'écran ; il décrirait une devanture aux uns
+et un intérieur aux autres. Les deux sont décrites là où elles portent
+une information — la devanture dans « Accès », le poste de soin dans le
+ruban.
+
+**Le voile de lecture se remesure à chaque changement de photo.** Il l'a
+été deux fois. D'abord sur la devanture, plus claire que la photo qu'elle
+remplaçait : le titre y tombait à 2,51:1 et le corps à 3,52:1. Puis pour
+le **surtitre**, 11 px : le plus petit texte de la page, donc celui qui
+exige 4,5:1, et il n'y était nulle part — 3,29:1 à 1440, 3,12:1 à 1024.
+Le défaut datait d'avant le changement de photo ; il n'avait simplement
+jamais été mesuré. Il est passé en blanc plein, et la montée du voile a
+été avancée vers le quart haut, là où il se pose.
+
+Le téléphone a son propre réglage, la photo y étant tout autre et bien
+plus claire en haut (moyennes 114 et 124 sur les deux premiers
+cinquièmes). La fenêtre où la photo se voit vraiment est remontée entre
+l'en-tête et le texte.
+
+Mesuré au pire pixel de chaque bloc, sur six formats de 390 à 1600 de
+large ; les pires de la série : surtitre 4,84:1, accroche 7,14:1, infos
+10,15:1 (seuil 4,5) et titre 5,09:1 (seuil 3 à cette taille), logo de
+l'en-tête 9,04:1. **Changer une photo du bandeau oblige à refaire cette
+mesure.**
 
 **Le rameau du logo, décliné.** Il est servi en masque CSS et non en
 `<img>` : le fichier ne porte qu'un alpha, la couleur vient de la
@@ -277,31 +307,54 @@ ligne **dans la même fournée** : au défilement posé chacun arrive seul et
 part sans retard, au doigt rapide ou en arrivant par une ancre ils se
 suivent. Le décalage se paie là où il sert.
 
-**Le ruban défile tout seul, en CSS.** Quatre copies de la série défilent
-d'exactement une série par tour, si bien que le raccord est invisible.
-Aucun script ne pilote le mouvement.
+**Le ruban défile en poussant sa propre barre de défilement.** Ce n'est
+pas une animation posée sur une boîte fermée, mais une vraie zone
+défilable qu'un script fait avancer image par image. La différence tient
+en une phrase : on peut la prendre en main **en plein mouvement**. On
+glisse au doigt, à la souris ou aux flèches, le ruban suit, puis il
+repart de là où on l'a laissé — sans rien à mettre en pause d'abord.
+
+Quatre copies de la série se suivent. Le défilement vit dans la deuxième
+et saute d'une série entière dès qu'il en sort ; les séries étant
+identiques, le raccord ne se voit pas. Il reste ainsi une demi-série de
+marge de chaque côté, de quoi absorber un geste vif sans recaler en plein
+élan — et pendant un élan tactile, on n'écrit dans la barre qu'au moment
+du raccord, sinon l'élan s'arrêterait net.
 
 Deux détails font toute la différence entre ce motif et sa version
 cassée. L'écart entre les vignettes est une **marge**, jamais un `gap` :
 avec un `gap`, la piste mesure seize vignettes et quinze écarts, le quart
-exact ne tombe plus sur une série entière, et le ruban saute d'un quart
-d'écart à chaque tour. Et le décalage de l'animation est **calculé depuis
-le nombre de copies** (`calc(-100% / var(--series))`), pas écrit à côté :
-changer ce nombre ne peut donc pas désaccorder les deux. Vérifié de 390 à
-2 560 px de large : ce qui reste derrière après un tour couvre toujours la
-fenêtre, donc jamais de trou.
+exact ne tombe plus sur une série entière, et le raccord saute d'un écart
+à chaque tour. Et la largeur d'une série se **mesure entre deux séries
+voisines**, jamais en divisant la largeur totale : celle-ci est arrondie
+au pixel entier, et le demi-pixel d'erreur qui en résultait décalait le
+raccord d'autant. Mesuré : à 400 px de large, où la série tombe juste, les
+deux poses à une série d'écart sont identiques au canal près ; à 390 px,
+où elle vaut 913,6 px, il reste le demi-pixel d'arrondi de la barre de
+défilement elle-même, et rien de plus — la phase, elle, est gardée en
+virgule flottante et ne dérive pas.
 
-**Arrêter le ruban le rend explorable.** Le figer sur place aurait suffi
-à la lettre de la règle sur les contenus en mouvement, mais aurait
-enfermé hors de l'écran les photos qu'aucun geste ne peut alors
-atteindre — sur téléphone, une seule reste visible. Le bouton remet donc
-la piste à zéro, masque les séries de décor et rend la bande défilable au
-doigt. Le mouvement réduit produit directement cet état, et le bouton se
-retire puisqu'il n'a plus rien à arrêter. Le survol, lui, suspend le
-temps d'un regard sans rien déplacer.
+**Quatre choses l'interrompent, une seule est définitive.** Le doigt ou
+la souris pendant le geste, puis 1,2 s de temps mort le temps que l'élan
+retombe. Le survol, tant qu'on regarde. Le focus clavier — mais seulement
+le focus clavier : toucher le ruban le fait défiler et lui donne le focus
+du même geste, si bien que sans ce tri un simple effleurement l'arrêtait
+jusqu'à ce qu'on touche autre chose. Et le bouton, jusqu'à ce qu'on le
+represse.
+
+**Le bouton d'arrêt ne se montre qu'au clavier**, comme le lien
+d'évitement en haut de page. À la souris et au doigt il ne servirait à
+rien : le survol suspend déjà et un geste emmène le ruban où l'on veut.
+Au clavier ces deux gestes n'existent pas, et une image qui bouge en
+permanence doit pouvoir être arrêtée : c'est une règle, pas un avis. D'où
+un bouton réel, atteignable en tabulant, posé en absolu dans le creux sous
+le ruban pour qu'en apparaissant il ne pousse rien. Le mouvement réduit
+supprime le défilement automatique et retire le bouton, qui n'aurait plus
+rien à arrêter ; le glisser, lui, reste.
 
 Les copies portent `aria-hidden` et un `alt` vide : un lecteur d'écran
-énonce les quatre photos une fois, pas seize.
+énonce les quatre photos une fois, pas seize. La bande porte `tabindex`
+et un nom, sans quoi une zone défilable n'est atteignable qu'à la souris.
 
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de
@@ -332,9 +385,10 @@ recherche locale.
    permettrait de le poser plus petit sans que les déliés pâlissent.
 
 4. **Une photo de devanture en paysage**, prise d'où l'a été la large,
-   en 2 000 px au moins. Le bandeau se contente aujourd'hui d'une bande
-   découpée dans une photo verticale de 900 px : ça tient, mais c'est le
-   plafond de qualité de la page d'accueil.
+   en 2 000 px au moins. Le bandeau d'ordinateur se contente aujourd'hui
+   d'une bande découpée dans une photo verticale de 900 px : ça tient,
+   mais c'est le plafond de qualité de la page d'accueil. Le bandeau de
+   téléphone, lui, n'a plus ce plafond depuis qu'il montre l'intérieur.
 
    Les livraisons précédentes portaient une ligne d'adresse fausse
    (« 30290 Rue de la République Laudun ») ; celle en place ne porte plus

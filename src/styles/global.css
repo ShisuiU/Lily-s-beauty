@@ -532,18 +532,27 @@ main:focus {
       rgb(20 17 14 / 0.62) 92px,
       rgb(20 17 14 / 0) 240px
     ),
-    /* Dégradé de lecture. Recalé sur la photo large, plus claire que
-       l'ancienne là où le texte se pose : au réglage précédent le titre
-       tombait à 2,51:1 et le corps à 3,52:1, sous les seuils. Mesuré
-       ici, au pire pixel de chaque bloc : titre 4,30:1 (grand texte,
-       seuil 3:1) et corps 7,26:1 (seuil 4,5:1). C'est le plus léger des
-       réglages essayés qui tienne les deux — inutile de noircir une
-       photo qu'on a justement choisie pour qu'elle se voie. */
+    /* Dégradé de lecture, recalé sur la photo large — plus claire que
+       l'ancienne là où le texte se pose. Au réglage d'avant elle, le
+       titre tombait à 2,51:1 et le corps à 3,52:1.
+
+       Il a fallu le reprendre une seconde fois pour le surtitre, 11 px :
+       le plus petit texte de la page, donc celui qui exige 4,5:1, et il
+       n'y était nulle part (3,29:1 à 1440, 3,12:1 à 1024). La montée est
+       avancée vers le quart haut, là où il se pose.
+
+       Mesuré au pire pixel de chaque bloc, sur cinq formats de 768 à
+       1600 de large ; les pires de la série : surtitre 4,84:1, accroche
+       7,14:1, infos 10,15:1 (seuil 4,5) et titre 5,09:1 (seuil 3 à cette
+       taille). C'est le plus clair des réglages essayés qui garde une
+       marge — inutile de noircir une photo qu'on a justement choisie pour
+       qu'elle se voie. */
     linear-gradient(
       to bottom,
-      rgb(30 27 24 / 0.12) 0%,
-      rgb(30 27 24 / 0.44) 42%,
-      rgb(30 27 24 / 0.76) 68%,
+      rgb(30 27 24 / 0.14) 0%,
+      rgb(30 27 24 / 0.42) 26%,
+      rgb(30 27 24 / 0.6) 46%,
+      rgb(30 27 24 / 0.8) 68%,
       rgb(30 27 24 / 0.94) 100%
     );
 }
@@ -555,8 +564,13 @@ main:focus {
   padding-top: 120px;
   color: #fff;
 }
+/* Blanc plein, et non les 82 % du reste du site. À 11 px, c'est le plus
+   petit texte de la page : le seuil est celui du corps de texte, 4,5:1,
+   et 82 % n'y arrivaient nulle part — 3,98:1 sur téléphone, 3,29:1 sur
+   ordinateur. Le défaut était là avant le changement de photo ; il n'avait
+   simplement jamais été mesuré. */
 .hero .eyebrow {
-  color: rgb(255 255 255 / 0.82);
+  color: #fff;
 }
 .hero h1 {
   font-family: var(--serif);
@@ -613,19 +627,31 @@ main:focus {
   background: #e08585;
   box-shadow: 0 0 0 3px rgb(224 133 133 / 0.22);
 }
-/* Sur téléphone le cadre est très étroit (~0,46) : l'enseigne tombe
-   forcément au milieu de l'image, là où atterrit le texte du hero.
-   On garde sa moitié haute lisible et on assombrit franchement sous elle,
-   et on met les deux boutons côte à côte pour raccourcir le bloc. */
+/* Le téléphone ne reçoit pas la même photo que l'ordinateur : il reçoit
+   l'intérieur, plus clair en haut (moyennes 114 et 124 sur les deux
+   premiers cinquièmes, contre une devanture bien plus sombre). Le voile a
+   donc été refait pour elle.
+
+   La fenêtre où la photo se voit vraiment est remontée entre l'en-tête et
+   le texte, et la remontée du voile se fait plus tôt — à 42 % au lieu de
+   56 % — parce que c'est là que commence le surtitre, le plus petit texte
+   de la page et donc le plus exigeant. Mesuré au pire pixel de chaque
+   bloc : surtitre 5,01:1 et accroche 8,24:1 (seuil 4,5), titre 5,14:1
+   (seuil 3 à cette taille), logo de l'en-tête 9,38:1. C'est le plus clair
+   des réglages essayés qui les tienne tous ; le précédent, calé sur la
+   devanture, laissait le surtitre à 2,28:1.
+
+   Les deux boutons passent côte à côte pour raccourcir le bloc. */
 @media (max-width: 700px) {
   .hero::after {
     background:
       linear-gradient(
         to bottom,
-        rgb(20 17 14 / 0.74) 0,
-        rgb(20 17 14 / 0.5) 88px,
-        rgb(20 17 14 / 0.06) 30%,
-        rgb(20 17 14 / 0.62) 56%,
+        rgb(20 17 14 / 0.72) 0,
+        rgb(20 17 14 / 0.42) 92px,
+        rgb(20 17 14 / 0.2) 34%,
+        rgb(20 17 14 / 0.56) 42%,
+        rgb(20 17 14 / 0.7) 60%,
         rgb(20 17 14 / 0.93) 100%
       );
   }
@@ -1271,18 +1297,46 @@ section {
    Pas d'ornement ici. Les photos sont la décoration ; y ajouter un lys
    serait la surcharge qu'on évite partout ailleurs. */
 #salon {
+  position: relative;
   background: var(--shell);
 }
 
 .ruban {
   position: relative;
-  overflow: hidden;
   margin-top: clamp(26px, 4vw, 44px);
+  /* Vraie zone défilable, en permanence. Le doigt la fait glisser
+     nativement, la souris par le script, les flèches parce qu'elle peut
+     recevoir le focus — et le défilement automatique ne fait que pousser
+     cette même barre. Une animation posée sur une boîte fermée aurait
+     interdit les trois. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* La page défile en douceur ; le ruban, non. Le script pose sa position
+     image par image : une interpolation par-dessus la sienne le ferait
+     traîner puis rattraper. */
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  scroll-padding-inline: var(--gut);
+}
+.ruban::-webkit-scrollbar {
+  display: none;
+}
+/* Posée par le script : sans lui, rien ne se tire à la souris et la main
+   ouverte mentirait. */
+.ruban.js-tirable {
+  cursor: grab;
+}
+.ruban.tire {
+  cursor: grabbing;
+}
+/* Le contour par défaut se pose 4 px en dehors ; sur une bande qui touche
+   les deux bords de l'écran, il serait coupé. On le rentre. */
+.ruban:focus-visible {
+  outline-offset: -3px;
 }
 .ruban-piste {
   display: flex;
   width: max-content;
-  animation: ruban-defile 42s linear infinite;
 }
 .ruban-serie {
   display: flex;
@@ -1294,10 +1348,10 @@ section {
   flex: 0 0 auto;
   width: clamp(168px, 56vw, 240px);
   /* L'écart est une marge sur chaque vignette, jamais un `gap`. Avec un
-     `gap`, la piste mesure 12 vignettes et 11 écarts : le tiers exact ne
-     tombe plus sur une série entière et le ruban saute d'un tiers
-     d'écart à chaque tour. En marge, chaque vignette occupe la même
-     largeur et le raccord est invisible. */
+     `gap`, la piste mesure 16 vignettes et 15 écarts : le quart exact ne
+     tombe plus sur une série entière et le raccord saute d'un écart à
+     chaque tour. En marge, chaque vignette occupe la même largeur et le
+     saut est invisible. */
   margin-right: clamp(10px, 1.4vw, 18px);
 }
 .ruban img {
@@ -1306,18 +1360,14 @@ section {
   height: auto;
   aspect-ratio: 9 / 16;
   object-fit: cover;
+  /* Rien à sélectionner ici, et une image sélectionnée pendant qu'on tire
+     le ruban se met en surbrillance bleue. */
+  user-select: none;
+  -webkit-user-select: none;
   transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .ruban li:hover img {
   transform: scale(1.03);
-}
-@keyframes ruban-defile {
-  to {
-    /* Exactement une série : `--series` est posé par le composant, si
-       bien que le nombre de copies et la distance parcourue ne peuvent
-       pas se contredire. */
-    transform: translateX(calc(-100% / var(--series)));
-  }
 }
 @media (min-width: 701px) {
   .ruban-serie > li {
@@ -1325,107 +1375,63 @@ section {
   }
 }
 
-/* Survol et focus suspendent le temps d'un regard, sans rien déplacer. */
-.ruban.survol .ruban-piste {
-  animation-play-state: paused;
-}
-
-/* Arrêté, le ruban devient une bande qu'on fait défiler soi-même.
-
-   Le figer sur place aurait suffi à la lettre de la règle, mais aurait
-   enfermé hors de l'écran les photos qu'aucun geste ne peut alors
-   atteindre — sur téléphone, une seule reste visible. On remet donc la
-   piste à zéro, on masque les séries de décor, et la bande s'explore au
-   doigt du premier au dernier cliché. */
-.ruban.arrete {
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scroll-padding-inline: var(--gut);
-  scrollbar-width: none;
-}
-.ruban.arrete::-webkit-scrollbar {
-  display: none;
-}
-.ruban.arrete .ruban-piste {
-  animation: none;
-  transform: none;
-}
-.ruban.arrete .ruban-serie[aria-hidden='true'] {
-  display: none;
-}
-.ruban.arrete .ruban-serie > li {
-  scroll-snap-align: start;
-}
-
-/* Mouvement réduit : jamais de défilement automatique. Le ruban naît
-   directement sous sa forme explorable, et le bouton est retiré par le
-   script puisqu'il n'aurait plus rien à arrêter. */
+/* Mouvement réduit : jamais de défilement automatique. La bande reste
+   défilable à la main, et les séries de décor ne servent plus à rien
+   puisqu'il n'y a plus de boucle à raccorder. */
 @media (prefers-reduced-motion: reduce) {
   .ruban {
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .ruban::-webkit-scrollbar {
-    display: none;
-  }
-  .ruban-piste {
-    animation: none;
+    scroll-snap-type: x proximity;
   }
   .ruban-serie[aria-hidden='true'] {
     display: none;
   }
+  .ruban-serie > li {
+    scroll-snap-align: start;
+  }
 }
 
-/* ── commande du ruban ── */
-.ruban-cmd {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: clamp(14px, 2vw, 20px);
-}
-.ruban-cmd button {
-  display: grid;
-  place-items: center;
-  /* 40 px : bien au-dessus du minimum de 24, et la même rondeur que les
-     autres commandes du site. */
-  width: 40px;
-  height: 40px;
+/* ── arrêt du défilement ──
+   Invisible tant qu'il n'a pas le focus, comme le lien d'évitement en haut
+   de page. À la souris et au doigt il ne servirait à rien : le survol
+   suspend déjà, et un geste emmène le ruban où l'on veut. Au clavier ces
+   deux gestes n'existent pas, et une image qui bouge en permanence doit
+   pouvoir être arrêtée.
+
+   Posé en absolu dans le creux sous le ruban : en apparaissant, il ne
+   pousse rien. */
+.ruban-stop {
+  position: absolute;
+  right: var(--gut);
+  bottom: clamp(14px, 2vw, 22px);
+  z-index: 4;
+  width: 1px;
+  height: 1px;
   padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+  background: none;
+}
+/* `:focus` et non `:focus-visible` comme le lien d'évitement : ce bouton
+   ne mesure qu'un pixel, personne ne peut l'atteindre à la souris, et un
+   focus posé autrement qu'au clavier — par une aide technique — doit le
+   montrer lui aussi. */
+.ruban-stop:focus {
+  width: auto;
+  height: auto;
+  padding: 10px 18px;
+  overflow: visible;
+  clip: auto;
   border: 1px solid var(--hair);
   border-radius: 999px;
   background: var(--paper);
-  color: var(--muted);
-  cursor: pointer;
-  transition:
-    border-color 0.2s,
-    color 0.2s;
-}
-.ruban-cmd button:hover {
-  border-color: var(--rose-ink);
   color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
 }
-/* Les deux icônes occupent la même case de la grille : l'échange se fait
-   sur place, sans que le bouton bouge d'un pixel. */
-.ruban-cmd svg {
-  grid-area: 1 / 1;
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.ruban-cmd .i-play {
-  fill: currentColor;
-  stroke: currentColor;
-  stroke-width: 1.4;
-  stroke-linejoin: round;
-}
-.ruban-cmd button[aria-pressed='false'] .i-play,
-.ruban-cmd button[aria-pressed='true'] .i-pause {
-  display: none;
-}
-.ruban-cmd button[hidden] {
+.ruban-stop[hidden] {
   display: none;
 }
 

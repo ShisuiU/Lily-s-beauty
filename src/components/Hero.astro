@@ -4,27 +4,51 @@ import { address, rating } from '../data/site';
 import BookButton from './BookButton.astro';
 import Todo from './Todo.astro';
 import facade from '../assets/salon-facade.jpg';
-import facadeTall from '../assets/salon-facade-portrait.jpg';
+import poste from '../assets/salon-poste-portrait.jpg';
 
-/* Direction artistique : cadrage large sur ordinateur, cadrage serré sur
-   la devanture en portrait. AVIF puis WebP, JPEG en dernier recours. */
+/* Direction artistique : deux photos, pas deux cadrages. L'ordinateur
+   reçoit la devanture en bande large ; le téléphone reçoit l'intérieur,
+   le poste de soin sous la guirlande — demande du salon. AVIF puis WebP,
+   JPEG en dernier recours ; le repli JPEG prend la devanture, puisqu'un
+   navigateur qui l'atteint ignore aussi `media`. */
 const wideAvif = await getImage({ src: facade, format: 'avif', quality: 60 });
 const wideWebp = await getImage({ src: facade, format: 'webp', quality: 72 });
-const tallAvif = await getImage({ src: facadeTall, format: 'avif', quality: 60 });
-const tallWebp = await getImage({ src: facadeTall, format: 'webp', quality: 72 });
+/* Le portrait est servi en trois largeurs : c'est le plus gros fichier
+   de la page et il tombe sur des téléphones, où la densité d'écran va du
+   simple au triple. Sans cela, un écran à deux pixels par point
+   téléchargeait le fichier des écrans à trois. */
+const TAILLES = [420, 800, 1200];
+const tallAvif = await getImage({ src: poste, format: 'avif', quality: 60, widths: TAILLES });
+const tallWebp = await getImage({ src: poste, format: 'webp', quality: 72, widths: TAILLES });
 const fallback = await getImage({ src: facade, format: 'jpeg', quality: 78 });
 ---
 <div class="hero">
+  {/* Texte de remplacement vide, et c'est voulu : l'attribut `alt` est
+      unique alors que la photo, elle, change avec la largeur d'écran — il
+      décrirait une devanture aux uns et un intérieur aux autres. Les deux
+      photos sont décrites là où elles portent une information : la
+      devanture dans la section « Accès », le poste de soin dans le ruban.
+      Ici elles ne font que planter le décor. */}
   <picture>
-    <source media="(max-width: 700px)" type="image/avif" srcset={tallAvif.src} />
-    <source media="(max-width: 700px)" type="image/webp" srcset={tallWebp.src} />
+    <source
+      media="(max-width: 700px)"
+      type="image/avif"
+      sizes="100vw"
+      srcset={tallAvif.srcSet.attribute}
+    />
+    <source
+      media="(max-width: 700px)"
+      type="image/webp"
+      sizes="100vw"
+      srcset={tallWebp.srcSet.attribute}
+    />
     <source type="image/avif" srcset={wideAvif.src} />
     <source type="image/webp" srcset={wideWebp.src} />
     <img
       src={fallback.src}
       width={fallback.attributes.width}
       height={fallback.attributes.height}
-      alt="La devanture de l'institut Lily's Beauty : enseigne blanche calligraphiée, vitrine et mur de pierre apparente"
+      alt=""
       fetchpriority="high"
       decoding="async"
     />

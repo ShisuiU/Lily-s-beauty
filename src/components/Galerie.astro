@@ -15,13 +15,11 @@ const photos = galerie.map((p) => {
 });
 
 /* Le ruban défile sans fin : il faut donc plus de photos que l'écran n'en
-   montre. Un tour avance d'une série ; ce qui reste derrière, soit
-   (SERIES - 1) séries, doit encore couvrir la fenêtre. Avec quatre, cela
-   fait 3 680 px de marge : large pour n'importe quel écran.
-
-   Le décalage de l'animation est calculé depuis ce nombre, pas écrit à
-   côté : changer SERIES ne peut donc pas désaccorder les deux et faire
-   sauter le raccord à chaque tour.
+   montre. Le défilement reste dans la deuxième série et saute d'une série
+   entière quand il en sort — un saut invisible, puisque la série suivante
+   est identique. Avec quatre séries, il reste toujours au moins une série
+   de marge de chaque côté, soit de quoi couvrir n'importe quel écran et
+   n'importe quel geste un peu vif.
 
    Seule la première série est lue par les lecteurs d'écran ; les autres
    sont du décor et le disent. */
@@ -37,8 +35,19 @@ const SERIES = 4;
     </div>
   </div>
 
-  <div class="ruban monte" data-ruban>
-    <div class="ruban-piste" style={`--series: ${SERIES}`}>
+  {/* Bande défilable pour de vrai, pas une animation posée sur une boîte
+      fermée : le doigt la fait glisser nativement, la souris par le
+      script, et les flèches du clavier parce qu'elle peut recevoir le
+      focus. Le défilement automatique ne fait que pousser cette même
+      barre de défilement. */}
+  <div
+    class="ruban monte"
+    data-ruban
+    tabindex="0"
+    role="group"
+    aria-label="Photos du salon"
+  >
+    <div class="ruban-piste" data-series={SERIES}>
       {Array.from({ length: SERIES }).map((_, serie) => (
         <ul class="ruban-serie" aria-hidden={serie > 0 ? 'true' : undefined}>
           {photos.map((p) => (
@@ -51,6 +60,7 @@ const SERIES = 4;
                 format="avif"
                 quality={62}
                 loading="lazy"
+                draggable={false}
               />
             </li>
           ))}
@@ -59,68 +69,166 @@ const SERIES = 4;
     </div>
   </div>
 
-  {/* Icône seule : le nom accessible passe donc par `aria-label`, que le
-      script tient à jour en même temps que l'icône. Sans lui le bouton
-      serait muet pour un lecteur d'écran. */}
-  <div class="shell ruban-cmd">
-    <button type="button" data-ruban-pause aria-pressed="false" aria-label="Arrêter le défilement">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="i-pause">
-        <path d="M9.5 5.5v13M14.5 5.5v13" />
-      </svg>
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="i-play">
-        <path d="M8.5 5.6v12.8L18.4 12z" />
-      </svg>
-    </button>
-  </div>
+  {/* Le seul vrai bouton d'arrêt, et il ne se montre qu'au clavier — même
+      procédé que le lien d'évitement en haut de page.
+
+      À la souris et au doigt, arrêter ne sert à rien : le survol suspend
+      déjà, et un geste fait avancer le ruban où l'on veut. Au clavier, ces
+      deux gestes n'existent pas, et une image qui bouge en permanence doit
+      pouvoir être arrêtée — c'est une règle, pas un avis. D'où un bouton
+      réel, atteignable en tabulant, invisible tant qu'on n'en a pas
+      besoin. */}
+  <button type="button" class="ruban-stop" data-ruban-stop aria-pressed="false">
+    Arrêter le défilement des photos
+  </button>
 </section>
 
 <script is:inline>
-  /* Le ruban défile en CSS seul. Ce script ne sert qu'au bouton.
+  /* Le ruban avance en poussant sa propre barre de défilement, image par
+     image. C'est plus coûteux qu'une animation CSS, mais c'est ce qui
+     permet au visiteur de reprendre la main en plein mouvement : on
+     glisse, le ruban suit, et il repart de là où on l'a laissé.
 
-     Arrêter ne fige pas seulement l'animation : ça rend aussi le ruban
-     **défilable à la main**. Sans quoi mettre en pause enfermerait les
-     photos hors écran, qu'aucun geste ne pourrait plus atteindre. Même
-     raison pour le mouvement réduit, traité en CSS : là le ruban est une
-     bande qu'on fait défiler soi-même, du premier au dernier cliché. */
+     Quatre choses l'interrompent, et une seule est définitive :
+       · le doigt ou la souris pendant le geste, puis un temps mort le
+         temps que l'élan retombe ;
+       · le survol à la souris, tant qu'on regarde ;
+       · le focus clavier, tant qu'on est dedans ;
+       · le bouton, jusqu'à ce qu'on le represse. */
   (function () {
     var ruban = document.querySelector('[data-ruban]');
-    var bouton = document.querySelector('[data-ruban-pause]');
-    if (!ruban || !bouton) return;
+    var piste = ruban && ruban.querySelector('.ruban-piste');
+    var bouton = document.querySelector('[data-ruban-stop]');
+    if (!ruban || !piste) return;
 
+    var series = parseInt(piste.getAttribute('data-series'), 10) || 4;
+    var TOUR = 42000; /* millisecondes pour parcourir une série */
+    var ELAN = 1200; /* temps mort après un geste, le temps que l'élan retombe */
+
+    /* Le glisser vaut dans tous les cas : c'est la façon normale de
+       parcourir le ruban. Seul le défilement automatique dépend du
+       réglage de mouvement — et sans lui le bouton n'a rien à arrêter. */
     var doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!doux) {
-      /* Le CSS a déjà transformé le ruban en bande défilable ; le bouton
-         n'aurait rien à arrêter. */
-      bouton.hidden = true;
-      return;
+    if (!doux && bouton) bouton.hidden = true;
+    ruban.classList.add('js-tirable');
+
+    var arrete = false; /* décidé au bouton */
+    var survol = false;
+    var dedans = false; /* focus clavier */
+    var doigt = false;
+    var tire = false;
+    var attendre = 0; /* horodatage : pas de reprise avant */
+    var pos = 0;
+    var horloge = 0;
+    var unite = 0; /* largeur d'une série, mesurée une fois puis au redimensionnement */
+
+    /* La largeur d'une série se prend entre deux séries voisines, et non
+       en divisant la largeur totale : celle-ci est arrondie au pixel
+       entier, et l'erreur d'un demi-pixel qui en résultait décalait le
+       raccord d'autant. Invisible sur un grand écran, nette sur un
+       téléphone où les vignettes font 56 % de la largeur. */
+    var lots = piste.querySelectorAll('.ruban-serie');
+    function mesure() {
+      var u = 0;
+      if (lots.length > 1 && lots[1].getBoundingClientRect().width > 0) {
+        u = lots[1].getBoundingClientRect().left - lots[0].getBoundingClientRect().left;
+      }
+      unite = u > 1 ? u : ruban.scrollWidth / series;
     }
 
-    function etat(arrete) {
-      ruban.classList.toggle('arrete', arrete);
-      bouton.setAttribute('aria-pressed', arrete ? 'true' : 'false');
-      bouton.setAttribute(
-        'aria-label',
-        arrete ? 'Relancer le défilement' : 'Arrêter le défilement',
-      );
+    /* Le ruban vit dans la deuxième série. Dès qu'il en sort, on le
+       ramène d'une série en arrière ou en avant : les séries étant
+       identiques, rien ne se voit. La marge d'une demi-série de chaque
+       côté laisse passer les gestes vifs sans recalage en plein élan —
+       et pendant un élan tactile, on n'écrit dans la barre que là, sinon
+       l'élan s'arrêterait net. */
+    function tour(t) {
+      requestAnimationFrame(tour);
+      var ecart = horloge ? Math.min(t - horloge, 50) : 0;
+      horloge = t;
+      if (unite < 1) return;
+
+      var actuel = ruban.scrollLeft;
+      if (Math.abs(actuel - pos) > 1) pos = actuel; /* quelqu'un a fait glisser */
+
+      if (!arrete && !survol && !dedans && !doigt && !tire && t >= attendre) {
+        pos += (unite / TOUR) * ecart;
+      }
+      if (pos > unite * 2.5) pos -= unite;
+      else if (pos < unite * 0.5) pos += unite;
+
+      if (pos !== actuel) ruban.scrollLeft = pos;
     }
 
-    bouton.addEventListener('click', function () {
-      etat(!ruban.classList.contains('arrete'));
-    });
+    function patiente() {
+      attendre = performance.now() + ELAN;
+    }
 
-    /* Survol et focus suspendent sans toucher au bouton : on regarde,
-       puis ça repart. Le bouton, lui, décide pour de bon. */
-    ruban.addEventListener('pointerenter', function () {
-      if (!ruban.classList.contains('arrete')) ruban.classList.add('survol');
+    mesure();
+    window.addEventListener('resize', mesure);
+    if (doux) {
+      ruban.scrollLeft = unite;
+      pos = ruban.scrollLeft;
+      requestAnimationFrame(tour);
+    }
+
+    /* Le doigt : rien à faire, le navigateur fait défiler tout seul. On
+       s'écarte le temps du geste et de l'élan qui le suit. */
+    ruban.addEventListener('touchstart', function () { doigt = true; }, { passive: true });
+    ruban.addEventListener('touchend', function () { doigt = false; patiente(); }, { passive: true });
+    ruban.addEventListener('touchcancel', function () { doigt = false; patiente(); }, { passive: true });
+    ruban.addEventListener('wheel', patiente, { passive: true });
+
+    /* La souris, elle, ne fait rien glisser toute seule : on transpose le
+       geste nous-mêmes. Uniquement pour la souris — capturer le pointeur
+       tactile désactiverait le défilement natif, qui est meilleur. */
+    var depart = 0;
+    var departScroll = 0;
+    ruban.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      e.preventDefault(); /* sinon la souris emporte l'image elle-même */
+      tire = true;
+      depart = e.clientX;
+      departScroll = ruban.scrollLeft;
+      ruban.classList.add('tire');
+      ruban.setPointerCapture(e.pointerId);
     });
-    ruban.addEventListener('pointerleave', function () {
-      ruban.classList.remove('survol');
+    ruban.addEventListener('pointermove', function (e) {
+      if (!tire) return;
+      ruban.scrollLeft = departScroll - (e.clientX - depart);
     });
+    function lache() {
+      if (!tire) return;
+      tire = false;
+      ruban.classList.remove('tire');
+      patiente();
+    }
+    ruban.addEventListener('pointerup', lache);
+    ruban.addEventListener('pointercancel', lache);
+
+    ruban.addEventListener('pointerenter', function (e) {
+      if (e.pointerType === 'mouse') survol = true;
+    });
+    ruban.addEventListener('pointerleave', function (e) {
+      if (e.pointerType === 'mouse') survol = false;
+    });
+    /* Le focus clavier suspend ; le focus reçu d'un doigt, non. Toucher
+       le ruban le fait défiler et lui donne le focus du même geste — sans
+       ce tri, un simple effleurement l'arrêtait jusqu'à ce qu'on touche
+       autre chose. */
     ruban.addEventListener('focusin', function () {
-      ruban.classList.add('survol');
+      dedans = ruban.matches(':focus-visible');
     });
-    ruban.addEventListener('focusout', function () {
-      ruban.classList.remove('survol');
-    });
+    ruban.addEventListener('focusout', function () { dedans = false; });
+
+    if (bouton) {
+      bouton.addEventListener('click', function () {
+        arrete = !arrete;
+        bouton.setAttribute('aria-pressed', arrete ? 'true' : 'false');
+        bouton.textContent = arrete
+          ? 'Relancer le défilement des photos'
+          : 'Arrêter le défilement des photos';
+      });
+    }
   })();
 </script>
