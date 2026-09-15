@@ -981,19 +981,45 @@ section {
   overflow: clip;
 }
 
-/* Le rameau du logo, repris dans l'angle du bloc. Servi en masque plutôt
-   qu'en <img> : le fichier ne porte qu'un alpha, la couleur vient d'ici
-   — donc de la palette — et un pseudo-élément est par construction
-   invisible aux lecteurs d'écran, ce qui est exactement son statut.
-   Retourné, parce que le logo le pose à gauche d'un texte qui part vers
-   la droite ; ici le titre occupe déjà ce côté. */
-#tarifs > .shell {
+/* ═══════════════════════════════════════════════════════════════
+   LE RAMEAU DU LOGO, DÉCLINÉ
+
+   Servi en masque plutôt qu'en <img> : le fichier ne porte qu'un alpha,
+   la couleur vient de la palette, et un pseudo-élément est par
+   construction invisible aux lecteurs d'écran — ce qui est exactement
+   son statut.
+
+   Trois emplois, jamais le même deux fois : chacun change de fragment,
+   de coin, d'échelle et de couleur. Le rameau entier en haut à droite du
+   bloc crème, ses feuilles seules en bas à gauche du bloc sombre, sa
+   pointe sur les pages de texte. Répété à l'identique, un ornement
+   devient un tampon.
+
+   Un élément positionné se peint après le texte courant : les deux plans
+   ci-dessous le maintiennent derrière les mots.
+   ═══════════════════════════════════════════════════════════════ */
+#tarifs::before,
+#reserver::before,
+.legal::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+#tarifs > .shell,
+#reserver > .shell,
+.legal > .shell {
   position: relative;
   z-index: 1;
 }
+
+/* Le rameau entier. Retourné, parce que le logo le pose à gauche d'un
+   texte qui part vers la droite ; ici le titre occupe déjà ce côté. */
 #tarifs::before {
-  content: '';
-  position: absolute;
   top: clamp(-52px, -4vw, -18px);
   right: clamp(-58px, -4.5vw, -20px);
   width: clamp(196px, 26vw, 340px);
@@ -1001,20 +1027,58 @@ section {
   background: var(--ink);
   opacity: 0.1;
   transform: scaleX(-1);
-  pointer-events: none;
-  /* Un élément positionné se peint après le texte courant : sans ces
-     deux plans, le décor passerait par-dessus les mots. */
-  z-index: 0;
-  -webkit-mask: url('/motif-lys.png') no-repeat center / contain;
-  mask: url('/motif-lys.png') no-repeat center / contain;
+  -webkit-mask-image: url('/motif-lys.png');
+  mask-image: url('/motif-lys.png');
 }
-/* Sur téléphone, l'angle du bloc passe sous l'en-tête collant : sans ce
-   décalage le rameau s'y cache et ne sert à rien. */
+
+/* Les feuilles seules, en bas à gauche du bloc sombre : l'angle opposé
+   du précédent, pour que les deux tracent une diagonale dans la page au
+   lieu de se répéter. Clair sur l'encre, l'inverse du bloc crème. */
+#reserver::before {
+  bottom: clamp(-30px, -2.4vw, -12px);
+  left: clamp(-52px, -4vw, -22px);
+  width: clamp(190px, 24vw, 310px);
+  aspect-ratio: 560 / 249;
+  background: var(--paper);
+  opacity: 0.14;
+  -webkit-mask-image: url('/motif-lys-branche.png');
+  mask-image: url('/motif-lys-branche.png');
+}
+
+/* La pointe seule sur les pages de texte, mentions légales et erreur :
+   elles n'ont ni photo ni couleur, et une brindille suffit à les
+   rattacher au reste. La plus discrète des trois. */
+.legal::before {
+  top: 16px;
+  right: clamp(-44px, -3vw, -16px);
+  width: clamp(150px, 20vw, 250px);
+  aspect-ratio: 460 / 194;
+  background: var(--ink);
+  opacity: 0.09;
+  -webkit-mask-image: url('/motif-lys-brindille.png');
+  mask-image: url('/motif-lys-brindille.png');
+}
+
+/* Sur téléphone, l'angle haut des blocs passe sous l'en-tête collant :
+   sans ce décalage le dessin s'y cache et ne sert à rien. */
 @media (max-width: 720px) {
   #tarifs::before {
     top: 12px;
     right: -40px;
     width: 208px;
+  }
+  .legal::before {
+    top: 10px;
+    right: -30px;
+    width: 160px;
+  }
+  /* Le bas du bloc sombre croise la barre de réservation fixée en pied
+     d'écran : on remonte le dessin dans le bloc plutôt que de le laisser
+     déborder sous elle. */
+  #reserver::before {
+    width: 200px;
+    left: -36px;
+    bottom: 18px;
   }
 }
 .plist {
@@ -1162,6 +1226,9 @@ section {
 #reserver {
   background: var(--ink);
   color: var(--paper);
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
 }
 #reserver h2 {
   font-size: clamp(2.1rem, 5.6vw, 3.6rem);
@@ -1355,6 +1422,9 @@ section {
 
 /* ── page mentions légales ── */
 .legal {
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
   padding-top: calc(var(--banner) + 96px);
 }
 .legal h1 {

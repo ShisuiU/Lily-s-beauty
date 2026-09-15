@@ -25,21 +25,37 @@ import sys
 import numpy as np
 from PIL import Image
 
-OUT = pathlib.Path('public/motif-lys.png')
-LARGEUR = 620
+# Trois découpes du même dessin. Reprendre le motif entier à chaque bloc
+# le transformerait en tampon ; on prélève donc des fragments, et chaque
+# emploi change en plus de coin, d'échelle et de couleur. Les boîtes sont
+# relevées sur la source, dont la structure est stable : la fleur occupe
+# le bas-gauche, la tige monte vers le haut-droite.
+DECOUPES = {
+    'motif-lys.png':           (None,                 620),   # le rameau entier
+    'motif-lys-branche.png':   ((500, 0, 1430, 430),  560),   # boutons et feuilles
+    'motif-lys-brindille.png': ((760, 0, 1430, 300),  460),   # la pointe, la plus légère
+}
+SORTIE = pathlib.Path('public')
 
 
 def main(src: str) -> None:
-    im = Image.open(src).convert('RGBA')
-    alpha = np.asarray(im)[:, :, 3]
+    source = Image.open(src).convert('RGBA')
 
-    ys, xs = np.nonzero(alpha > 6)
-    im = im.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
-    im = im.resize((LARGEUR, round(im.height * LARGEUR / im.width)), Image.LANCZOS)
+    for nom, (boite, largeur) in DECOUPES.items():
+        im = source.crop(boite) if boite else source.copy()
 
-    a = np.asarray(im)[:, :, 3]
-    Image.fromarray(np.dstack([np.zeros_like(a), a]), 'LA').save(OUT, optimize=True)
-    print(f'{OUT}  {im.width}x{im.height}  {OUT.stat().st_size / 1024:.0f} Ko')
+        # Rogner au dessin : une découpe laisse toujours du vide autour,
+        # et une marge invisible fausserait le placement dans la page.
+        a = np.asarray(im)[:, :, 3]
+        ys, xs = np.nonzero(a > 6)
+        im = im.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
+        im = im.resize((largeur, round(im.height * largeur / im.width)), Image.LANCZOS)
+
+        a = np.asarray(im)[:, :, 3]
+        out = SORTIE / nom
+        Image.fromarray(np.dstack([np.zeros_like(a), a]), 'LA').save(out, optimize=True)
+        print(f'{out}  {im.width}x{im.height}  {out.stat().st_size / 1024:.0f} Ko'
+              f'   -> aspect-ratio: {im.width} / {im.height}')
 
 
 if __name__ == '__main__':

@@ -219,12 +219,20 @@ corps à 3,52:1. Après recalage, 4,30:1 et 7,26:1 — au-dessus des seuils
 (3:1 pour un titre de cette taille, 4,5:1 pour le corps). **Changer la
 photo du bandeau oblige à remesurer ces deux valeurs.**
 
-**Le rameau du logo, une fois.** Le motif de l'angle de « Prestations et
-tarifs » est servi en masque CSS et non en `<img>` : le fichier ne porte
-qu'un alpha, la couleur vient de la palette, et un pseudo-élément est par
-construction invisible aux lecteurs d'écran — ce qui est exactement son
-statut. Il est posé sur un seul bloc : répété partout, un ornement cesse
-d'en être un.
+**Le rameau du logo, décliné.** Il est servi en masque CSS et non en
+`<img>` : le fichier ne porte qu'un alpha, la couleur vient de la
+palette, et un pseudo-élément est par construction invisible aux lecteurs
+d'écran — ce qui est exactement son statut.
+
+Trois emplois, jamais le même deux fois. Le rameau entier en haut à
+droite du bloc crème ; ses feuilles seules, en clair, en bas à gauche du
+bloc sombre, l'angle opposé, pour que les deux tracent une diagonale dans
+la page ; sa pointe sur les pages de texte, qui n'ont ni photo ni
+couleur. Les trois fichiers sortent du **même dessin**, découpé par
+`scripts/prepare-motif.py` — aucune image supplémentaire n'a été
+demandée. Répété à l'identique, un ornement devient un tampon ; c'est en
+changeant de fragment, de coin, d'échelle et de couleur qu'il reste un
+ornement.
 
 **Les apparitions au défilement.** Les blocs concernés portent la classe
 `monte` dans leur composant ; un script en tête de page les confie à un
