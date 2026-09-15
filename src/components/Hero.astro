@@ -4,11 +4,11 @@ import { address, rating } from '../data/site';
 import BookButton from './BookButton.astro';
 import Todo from './Todo.astro';
 import facade from '../assets/salon-facade.jpg';
-import poste from '../assets/salon-poste-portrait.jpg';
+import attente from '../assets/salon-attente-portrait.jpg';
 
 /* Direction artistique : deux photos, pas deux cadrages. L'ordinateur
    reçoit la devanture en bande large ; le téléphone reçoit l'intérieur,
-   le poste de soin sous la guirlande — demande du salon. AVIF puis WebP,
+   le coin d'attente et son canapé — demande du salon. AVIF puis WebP,
    JPEG en dernier recours ; le repli JPEG prend la devanture, puisqu'un
    navigateur qui l'atteint ignore aussi `media`. */
 const wideAvif = await getImage({ src: facade, format: 'avif', quality: 60 });
@@ -18,8 +18,8 @@ const wideWebp = await getImage({ src: facade, format: 'webp', quality: 72 });
    simple au triple. Sans cela, un écran à deux pixels par point
    téléchargeait le fichier des écrans à trois. */
 const TAILLES = [420, 800, 1200];
-const tallAvif = await getImage({ src: poste, format: 'avif', quality: 60, widths: TAILLES });
-const tallWebp = await getImage({ src: poste, format: 'webp', quality: 72, widths: TAILLES });
+const tallAvif = await getImage({ src: attente, format: 'avif', quality: 60, widths: TAILLES });
+const tallWebp = await getImage({ src: attente, format: 'webp', quality: 72, widths: TAILLES });
 const fallback = await getImage({ src: facade, format: 'jpeg', quality: 78 });
 ---
 <div class="hero">
@@ -27,7 +27,7 @@ const fallback = await getImage({ src: facade, format: 'jpeg', quality: 78 });
       unique alors que la photo, elle, change avec la largeur d'écran — il
       décrirait une devanture aux uns et un intérieur aux autres. Les deux
       photos sont décrites là où elles portent une information : la
-      devanture dans la section « Accès », le poste de soin dans le ruban.
+      devanture dans la section « Accès », le coin d'attente dans le ruban.
       Ici elles ne font que planter le décor. */}
   <picture>
     <source

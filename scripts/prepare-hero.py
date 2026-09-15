@@ -25,20 +25,21 @@ n'est pas qu'une affaire de cadrage : ce sont deux photos différentes.
     version paysage était un agrandissement 1,5× de la prise serrée, et
     ce grossissement est ce qui faisait baver les pleins de l'enseigne.
 
-  · Téléphone — l'intérieur : le poste de soin sous la guirlande. Le
-    salon l'a demandé ainsi. C'est la même prise que la deuxième photo
-    du ruban, mais en pleine résolution : le ruban travaille sur des
-    vignettes de 900 px, trop courtes pour un fond plein écran sur un
-    téléphone à trois pixels physiques par pixel CSS.
+  · Téléphone — l'intérieur : le coin d'attente, le canapé sous la
+    lampe. Le salon l'a demandé ainsi. C'est la même prise que la
+    première photo du ruban, mais en pleine résolution : le ruban
+    travaille sur des vignettes de 900 px, trop courtes pour un fond
+    plein écran sur un téléphone à trois pixels physiques par pixel CSS.
 
     Le format d'origine (0,56) est plus large qu'un écran de téléphone
     (~0,46) : l'image est donc rognée sur les côtés, jamais en hauteur.
     Rien à régler.
 
-    Attention : cette photo est nettement plus claire en haut que la
-    devanture (moyenne 114 et 124 sur les deux premiers cinquièmes).
-    Le voile du bandeau a été remesuré pour elle ; toute nouvelle photo
-    de téléphone demande la même vérification.
+    Attention : chaque photo a son propre profil de lumière, et le voile
+    du bandeau se remesure à chaque changement. Celle-ci est sombre en
+    haut (moyenne 70 sur le premier cinquième) mais claire en bas
+    (101 sur le dernier), là justement où se pose le texte — l'inverse
+    de la précédente.
 
     pip install Pillow
     python3 scripts/prepare-hero.py
@@ -48,10 +49,10 @@ import pathlib
 from PIL import Image
 
 FACADE = pathlib.Path('brand/devanture-large.jpg')
-POSTE = pathlib.Path('brand/salon-2-poste-guirlande.jpg')
+CANAPE = pathlib.Path('brand/salon-1-attente.jpg')
 
 PAYSAGE = pathlib.Path('src/assets/salon-facade.jpg')
-PORTRAIT = pathlib.Path('src/assets/salon-poste-portrait.jpg')
+PORTRAIT = pathlib.Path('src/assets/salon-attente-portrait.jpg')
 
 RAPPORT = 1.31    # celui d'un écran d'ordinateur courant
 DEPART = 430      # hauteur où commence la bande : le seul curseur de cadrage
@@ -71,7 +72,7 @@ def main() -> None:
     facade.crop((0, depart, w, depart + bande)).save(PAYSAGE, quality=QUALITE, optimize=True)
     print(f'{PAYSAGE}          {w}x{bande}  depuis y={depart}  {poids(PAYSAGE)}')
 
-    poste = Image.open(POSTE)
+    poste = Image.open(CANAPE)
     if poste.width > LARGEUR:
         poste = poste.resize(
             (LARGEUR, round(poste.height * LARGEUR / poste.width)), Image.LANCZOS

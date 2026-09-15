@@ -628,18 +628,38 @@ main:focus {
   box-shadow: 0 0 0 3px rgb(224 133 133 / 0.22);
 }
 /* Le téléphone ne reçoit pas la même photo que l'ordinateur : il reçoit
-   l'intérieur, plus clair en haut (moyennes 114 et 124 sur les deux
-   premiers cinquièmes, contre une devanture bien plus sombre). Le voile a
-   donc été refait pour elle.
+   l'intérieur, le coin d'attente. Son voile est donc le sien, et il se
+   remesure à chaque changement de photo — c'est la troisième fois.
 
-   La fenêtre où la photo se voit vraiment est remontée entre l'en-tête et
-   le texte, et la remontée du voile se fait plus tôt — à 42 % au lieu de
-   56 % — parce que c'est là que commence le surtitre, le plus petit texte
-   de la page et donc le plus exigeant. Mesuré au pire pixel de chaque
-   bloc : surtitre 5,01:1 et accroche 8,24:1 (seuil 4,5), titre 5,14:1
-   (seuil 3 à cette taille), logo de l'en-tête 9,38:1. C'est le plus clair
-   des réglages essayés qui les tienne tous ; le précédent, calé sur la
-   devanture, laissait le surtitre à 2,28:1.
+   Celle-ci est sombre en haut (moyenne 70 sur le premier cinquième) et
+   claire en bas (101 sur le dernier). Elle demande donc moins de voile
+   sous l'en-tête que la précédente, et autant en bas. Il est au total
+   plus clair d'un cran partout, ce qui laisse enfin voir le mur rose et
+   la lampe — une photo qu'on assombrit entièrement n'avait pas besoin
+   d'être choisie.
+
+   Deux couches, et surtout **deux ancrages**. Le palier d'en-tête part du
+   haut, en pixels. Le voile de lecture part du **bas**, en pixels lui
+   aussi, et non en pourcentages de la hauteur : c'est la correction d'un
+   vrai défaut. En pourcentages, le voile était calé sur une seule taille
+   d'écran — celle où il avait été mesuré. Le texte du bandeau, lui, est
+   ancré en bas et garde la même hauteur partout : son sommet se tient
+   entre 443 et 499 px du bas, de 320x700 à 700x1000. Un pourcentage,
+   sur ces mêmes écrans, se promenait entre 52 % et 67 % de la hauteur.
+   Mesuré avant correction : le titre tombait à 2,70:1 sur un 360x640 et
+   le surtitre à 1,89:1 sur un 390x700, alors que tout passait à
+   390x844.
+
+   Mesuré après, au pire pixel de chaque bloc et sur dix formats de
+   téléphone : surtitre 5,34:1 et accroche 6,30:1 (seuil 4,5), titre
+   5,74:1 (seuil 3 à cette taille), infos 10,37:1, logo de l'en-tête
+   7,78:1. C'est le plus clair des réglages essayés qui les tienne tous
+   sur les dix — le cran en dessous laissait le surtitre à 4,69:1, une
+   marge trop courte pour une photo qu'on pourrait rechanger.
+
+   La zone couverte par la barre fixe du bas est exclue de la mesure :
+   elle est opaque et passe par-dessus, y comparer du texte reviendrait à
+   comparer du blanc à du blanc.
 
    Les deux boutons passent côte à côte pour raccourcir le bloc. */
 @media (max-width: 700px) {
@@ -647,12 +667,18 @@ main:focus {
     background:
       linear-gradient(
         to bottom,
-        rgb(20 17 14 / 0.72) 0,
-        rgb(20 17 14 / 0.42) 92px,
-        rgb(20 17 14 / 0.2) 34%,
-        rgb(20 17 14 / 0.56) 42%,
-        rgb(20 17 14 / 0.7) 60%,
-        rgb(20 17 14 / 0.93) 100%
+        rgb(20 17 14 / 0.68) 0,
+        rgb(20 17 14 / 0.36) 92px,
+        rgb(20 17 14 / 0) 240px
+      ),
+      linear-gradient(
+        to top,
+        rgb(20 17 14 / 0.92) 0,
+        rgb(20 17 14 / 0.7) 320px,
+        rgb(20 17 14 / 0.64) 430px,
+        rgb(20 17 14 / 0.56) 540px,
+        rgb(20 17 14 / 0.2) 620px,
+        rgb(20 17 14 / 0) 700px
       );
   }
   .hero h1 {

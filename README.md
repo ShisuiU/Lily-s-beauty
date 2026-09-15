@@ -220,10 +220,10 @@ bavaient. La prise large donne le mur de pierre, l'enseigne entière, la
 porte voisine et le trottoir — et, étant moins grossie, elle est plus
 piquée malgré ses 900 px.
 
-Côté téléphone, la photo est la même prise que la deuxième du ruban, mais
-en pleine résolution et servie en trois largeurs : c'est le plus gros
-fichier de la page, et un écran à deux pixels par point n'a pas à
-télécharger celui des écrans à trois.
+Côté téléphone, la photo est la même prise que la première du ruban — le
+coin d'attente et son canapé — mais en pleine résolution et servie en
+trois largeurs : c'est le plus gros fichier de la page, et un écran à
+deux pixels par point n'a pas à télécharger celui des écrans à trois.
 
 `alt` y est **vide, et c'est voulu** : l'attribut est unique alors que la
 photo change avec la largeur d'écran ; il décrirait une devanture aux uns
@@ -245,11 +245,25 @@ plus claire en haut (moyennes 114 et 124 sur les deux premiers
 cinquièmes). La fenêtre où la photo se voit vraiment est remontée entre
 l'en-tête et le texte.
 
-Mesuré au pire pixel de chaque bloc, sur six formats de 390 à 1600 de
-large ; les pires de la série : surtitre 4,84:1, accroche 7,14:1, infos
-10,15:1 (seuil 4,5) et titre 5,09:1 (seuil 3 à cette taille), logo de
-l'en-tête 9,04:1. **Changer une photo du bandeau oblige à refaire cette
-mesure.**
+**Le voile du téléphone s'ancre en bas, en pixels — pas en
+pourcentages.** C'était un vrai défaut, trouvé en changeant de photo : le
+réglage était calé sur une seule taille d'écran, celle où il avait été
+mesuré. Le texte du bandeau, lui, est ancré en bas et garde la même
+hauteur partout — son sommet se tient entre 443 et 499 px du bas, de
+320x700 à 700x1000 — alors qu'un pourcentage se promène, sur ces mêmes
+écrans, entre 52 % et 67 % de la hauteur. Avant correction : le titre
+tombait à 2,70:1 sur un 360x640 et le surtitre à 1,89:1 sur un 390x700,
+alors que tout passait à 390x844. **Mesurer sur une seule taille ne prouve
+rien.**
+
+Mesuré au pire pixel de chaque bloc — sur dix formats de téléphone pour
+le voile du bas, sur six formats de 390 à 1600 de large pour celui de
+l'ordinateur. Les pires de chaque série : téléphone, surtitre 5,34:1,
+accroche 6,30:1, titre 5,74:1, infos 10,37:1, logo 7,78:1 ; ordinateur,
+surtitre 4,84:1, accroche 7,14:1, infos 10,15:1, titre 5,09:1, logo
+9,04:1. La bande couverte par la barre fixe du bas est exclue : elle est
+opaque et passe par-dessus. **Changer une photo du bandeau oblige à
+refaire cette mesure.**
 
 **Le rameau du logo, décliné.** Il est servi en masque CSS et non en
 `<img>` : le fichier ne porte qu'un alpha, la couleur vient de la
