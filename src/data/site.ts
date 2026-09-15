@@ -169,42 +169,62 @@ export const hours: Day[] = [
 ];
 
 /* ─────────────────────────── PRESTATIONS ────────────────────────
-   Intitulés recopiés mot pour mot de Planity, regroupés en trois
-   univers pour rester lisibles sur une page unique.               */
+   Intitulés, durées et prix relevés sur Planity, regroupés en quatre
+   univers pour rester lisibles sur une page unique. `note` reprend la
+   précision que Planity affiche sous certaines prestations.
+
+   La liste complète tient dans la page Planity, mais **le HTML livré
+   n'en montre que les cinq premières par catégorie** — le reste attend
+   un clic sur « voir les N autres ». Une première reprise s'était donc
+   arrêtée à 44 prestations sur 77. `scripts/verifie-tarifs.py` relit la
+   source et signale tout écart : le lancer plutôt que recopier à la
+   main.                                                            */
 
 export const pricesConfirmed = true;
-export const pricesCheckedOn = '14 septembre 2026';
+export const pricesCheckedOn = '15 septembre 2026';
 
-export type Service = { name: string; minutes: number; price: number };
-export type Category = { title: string; by: string; items: Service[] };
-export type Universe = { key: string; label: string; blurb: string; categories: Category[] };
+export type Service = { name: string; minutes: number; price: number; note?: string };
+export type Category = { title: string; items: Service[] };
+/** Chaque univers est tenu par une seule praticienne : `by` est donc
+    porté ici, et non répété sur chaque catégorie. */
+export type Universe = {
+  key: string;
+  label: string;
+  by: string;
+  blurb: string;
+  categories: Category[];
+};
 
 export const universes: Universe[] = [
   {
     key: 'ongles',
     label: 'Ongles',
-    blurb: 'Pose gel avec ou sans extensions, remplissage, semi-permanent mains et pieds, nail art.',
+    by: 'Fiacrine',
+    blurb:
+      'Pose gel avec ou sans extensions, remplissage, semi-permanent mains et pieds, nail art, dépose et réparation.',
     categories: [
       {
         title: 'Ongles en gel',
-        by: 'Fiacrine',
         items: [
-          { name: 'Pose complète popit (avec extensions)', minutes: 90, price: 45 },
-          { name: 'Gel sur ongles naturels', minutes: 60, price: 35 },
-          { name: 'Remplissage', minutes: 90, price: 38 },
-          { name: 'Nail art niv. 1', minutes: 15, price: 5 },
-          { name: 'Nail art niv. 2', minutes: 15, price: 10 },
+          { name: 'Pose complète popit (avec extensions)', minutes: 90, price: 45, note: 'Rallongement en gel' },
+          { name: 'Gel sur ongles naturels', minutes: 60, price: 35, note: 'Pose de gel (Sans extensions, sans dépose)' },
+          { name: 'Remplissage', minutes: 90, price: 38, note: 'Dépose + repose de gel' },
+          { name: 'Nail art niv. 1', minutes: 15, price: 5, note: 'French/baby/chrome' },
+          { name: 'Nail art niv. 2', minutes: 15, price: 10, note: 'Double nail art (French + chrome/ French + baby)' },
+          { name: 'Nail art niv. 3', minutes: 30, price: 15, note: 'Nail art technique (citron, 3D, dessins)' },
+          { name: 'Dépose gel + soin', minutes: 45, price: 15 },
+          { name: 'Réparation ongle cassé', minutes: 15, price: 2, note: 'par ongle' },
         ],
       },
       {
-        title: 'Semi permanent (mains et/ou pieds)',
-        by: 'Fiacrine',
+        title: 'Semi-permanent, mains et pieds',
         items: [
-          { name: 'Vernis semi permanent mains', minutes: 45, price: 30 },
-          { name: 'Vernis semi permanent pieds', minutes: 45, price: 30 },
+          { name: 'Vernis semi permanent mains', minutes: 45, price: 30, note: 'Pas de gel (couleur uniquement)' },
+          { name: 'Vernis semi permanent pieds', minutes: 45, price: 30, note: 'Pas de gel' },
           { name: 'French/baby', minutes: 15, price: 5 },
-          { name: 'Forfait mains + pieds (semi permanent uniquement)', minutes: 75, price: 40 },
+          { name: 'Forfait mains + pieds (semi permanent uniquement)', minutes: 75, price: 40, note: 'Sans gel' },
           { name: 'Dépose + repose semi permanent mains + pieds', minutes: 90, price: 50 },
+          { name: 'Dépose semi permanent + soin', minutes: 30, price: 10 },
         ],
       },
     ],
@@ -212,38 +232,44 @@ export const universes: Universe[] = [
   {
     key: 'cils',
     label: 'Cils',
-    blurb: 'Extensions cil à cil ou mixte, remplissage, rehaussement et teinture.',
+    by: 'Juliette',
+    blurb:
+      'Extensions cil à cil, mixte ou volume russe, remplissages, dépose, rehaussement et teinture.',
     categories: [
       {
         title: 'Extensions de cils',
-        by: 'Juliette',
         items: [
-          { name: 'Pose complète Cil à Cil', minutes: 90, price: 50 },
+          { name: 'Pose complète Cil à Cil', minutes: 90, price: 50, note: 'une extension sur un cil naturel sur l\'intégralité de l\'œil' },
           { name: 'Remplissage 2 semaines Cil à Cil', minutes: 45, price: 30 },
           { name: 'Remplissage 3/4 semaines Cil à Cil', minutes: 60, price: 45 },
-          { name: 'Pose complète Mixte', minutes: 105, price: 60 },
+          { name: 'Pose complète Mixte', minutes: 105, price: 60, note: 'une extension sur un cil naturel et un bouquet sur un cil naturel pour donner un peu plus de volume sur l\'intégralité de l\'œil' },
           { name: 'Remplissage 2 semaines Mixte', minutes: 60, price: 40 },
+          { name: 'Remplissage 3/4 semaines Mixte', minutes: 75, price: 55 },
+          { name: 'Pose complète Volume Russe', minutes: 120, price: 70, note: 'un bouquet sur un cil naturel sur l\'intégralité de l\'œil' },
+          { name: 'Remplissage 2 semaines Volume Russe', minutes: 70, price: 50 },
+          { name: 'Remplissage 3/4 semaines Volume Russe', minutes: 90, price: 65 },
+          { name: 'Dépose Extensions de cils de ma pose (rajout selon la durée)', minutes: 30, price: 10 },
+          { name: 'Dépose Extensions de cils d\'une autre Technicienne de cils (rajout selon la durée)', minutes: 30, price: 15 },
         ],
       },
       {
         title: 'Rehaussement et teinture des cils',
-        by: 'Juliette',
         items: [
-          { name: 'Rehaussement de cils + Teinture noir classique', minutes: 90, price: 40 },
+          { name: 'Rehaussement de cils + Teinture noir classique', minutes: 90, price: 40, note: 'Recourbement des cils naturel sur une durée de 5 à 6 semaines' },
           { name: 'Teinture classique des cils noir', minutes: 30, price: 15 },
         ],
       },
     ],
   },
   {
-    key: 'sourcils',
-    label: 'Sourcils et épilation',
+    key: 'visage',
+    label: 'Sourcils et visage',
+    by: 'Juliette',
     blurb:
-      'Browlift, teinture classique ou hybride, épilation à la cire ou au fil, forfaits, prestations homme.',
+      'Browlift, teinture classique ou hybride, épilation du visage au fil.',
     categories: [
       {
         title: 'Browlift',
-        by: 'Juliette',
         items: [
           { name: 'Browlift', minutes: 30, price: 40 },
           { name: 'Browlift + Epilation', minutes: 45, price: 45 },
@@ -252,56 +278,83 @@ export const universes: Universe[] = [
       },
       {
         title: 'Teintures des sourcils',
-        by: 'Juliette',
         items: [
-          { name: 'Teinture Classique des Sourcils', minutes: 30, price: 17 },
+          { name: 'Teinture Classique des Sourcils', minutes: 30, price: 17, note: 'Teint la peau pendant quelques jours et les poils jusqu\'à 3 semaines' },
           { name: 'Teinture Classique des sourcils + Epilation', minutes: 60, price: 30 },
-          { name: 'Teinture hybride', minutes: 30, price: 20 },
-          { name: 'Teinture hybride + épilation', minutes: 60, price: 35 },
+          { name: 'Teinture hybride', minutes: 30, price: 20, note: 'Teint la peau et le poil' },
+          { name: 'Teinture hybride + épilation', minutes: 60, price: 35, note: 'Teint la peau et le poil' },
         ],
       },
       {
         title: 'Épilation du visage au fil',
-        by: 'Juliette',
         items: [
           { name: 'Sourcils au fil', minutes: 20, price: 15 },
           { name: 'Lèvre au fil', minutes: 20, price: 10 },
           { name: 'Menton au fil', minutes: 15, price: 7 },
           { name: 'Joues au fil', minutes: 30, price: 12 },
           { name: 'Sourcils + Lèvre au fil', minutes: 30, price: 20 },
+          { name: 'Sourcils + Lèvre + Menton au fil', minutes: 35, price: 27 },
+          { name: 'Menton + Joues au fil', minutes: 40, price: 15 },
         ],
       },
+    ],
+  },
+  {
+    key: 'epilation',
+    label: 'Épilation à la cire',
+    by: 'Juliette',
+    blurb:
+      'Du sourcil aux jambes complètes, à l\'unité ou en forfait, pour elle et pour lui.',
+    categories: [
       {
-        title: 'Épilations femme',
-        by: 'Juliette',
+        title: 'Femme, à l’unité',
         items: [
           { name: 'Sourcils entretien', minutes: 20, price: 12 },
           { name: 'Lèvre', minutes: 10, price: 9 },
           { name: 'Menton', minutes: 10, price: 6 },
           { name: 'Joues', minutes: 11, price: 8 },
           { name: 'Aisselles', minutes: 15, price: 12 },
+          { name: 'Demi-bras', minutes: 15, price: 16 },
+          { name: 'Bras complet', minutes: 18, price: 18 },
+          { name: 'Bas du dos', minutes: 15, price: 8 },
+          { name: 'Nombril', minutes: 10, price: 5 },
+          { name: 'Maillot Simple', minutes: 15, price: 12 },
+          { name: 'Maillot échancré', minutes: 20, price: 15 },
+          { name: 'Maillot brésilien', minutes: 30, price: 18 },
+          { name: 'Maillot brésilien + sif', minutes: 45, price: 23 },
+          { name: 'Maillot Intégral', minutes: 40, price: 22 },
+          { name: 'Maillot intégral + sif', minutes: 50, price: 25 },
+          { name: 'Cuisses', minutes: 25, price: 18 },
+          { name: 'Demi-jambes', minutes: 20, price: 15 },
+          { name: 'Jambes complètes', minutes: 35, price: 28 },
         ],
       },
       {
-        title: 'Forfaits épilation à la cire femme',
-        by: 'Juliette',
+        title: 'Femme, forfaits',
         items: [
           { name: 'Sourcils + lèvres', minutes: 30, price: 17 },
           { name: 'Lèvre + Menton', minutes: 25, price: 12 },
           { name: 'Sourcils + lèvres + menton', minutes: 30, price: 23 },
           { name: 'Sourcils + lèvres + menton + joues', minutes: 45, price: 32 },
           { name: 'Aisselles + demi-jambes + maillot échancré', minutes: 45, price: 38 },
+          { name: 'Aisselles + jambes complètes + maillot échancré', minutes: 60, price: 48 },
+          { name: 'Aisselles + demi-jambes + maillot intégral + sif', minutes: 80, price: 48 },
+          { name: 'Aisselles + jambes complètes + maillot intégral + sif', minutes: 90, price: 58 },
         ],
       },
       {
-        title: 'Épilations homme',
-        by: 'Juliette',
+        title: 'Homme',
         items: [
           { name: 'Sourcils', minutes: 20, price: 15 },
           { name: 'Oreilles', minutes: 15, price: 10 },
           { name: 'Nez', minutes: 10, price: 6 },
           { name: 'Aisselles', minutes: 20, price: 14 },
           { name: 'Torse', minutes: 30, price: 20 },
+          { name: 'Nombril', minutes: 10, price: 7 },
+          { name: 'Dos', minutes: 30, price: 25 },
+          { name: 'Demi-jambes', minutes: 25, price: 18 },
+          { name: 'Jambes complètes', minutes: 30, price: 30 },
+          { name: 'Torse + Dos + Nombril', minutes: 60, price: 48 },
         ],
       },
     ],

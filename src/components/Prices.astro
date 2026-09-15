@@ -7,6 +7,7 @@ const withCounts = universes.map((u) => ({
   ...u,
   count: u.categories.reduce((n, c) => n + c.items.length, 0),
 }));
+const total = withCounts.reduce((n, u) => n + u.count, 0);
 ---
 <section id="tarifs">
   <div class="shell">
@@ -18,36 +19,47 @@ const withCounts = universes.map((u) => ({
     <Practitioners />
 
     <p class="tarifs-intro monte">
-      Les durées sont celles réellement bloquées dans l'agenda. Dépliez l'univers qui vous
-      intéresse.
+      {total} prestations, les durées sont celles réellement bloquées dans l'agenda.
+      Dépliez l'univers qui vous intéresse.
     </p>
 
     <div class="universes">
       {withCounts.map((u) => (
         <details class="universe monte">
+          {/* Trois niveaux, trois traitements. L'univers est un titre au
+              serif, sur sa propre ligne repliable ; la catégorie est une
+              carte blanche posée sur le fond crème ; la prestation est une
+              ligne dans cette carte. Avant, catégorie et prestation
+              partageaient la même graisse à deux dixièmes de point près,
+              et la liste se lisait comme un seul bloc. */}
           <summary>
-            <h3 class="u-name">{u.label}</h3>
-            <span class="u-count">{u.count} prestations</span>
+            <span class="u-head">
+              <h3 class="u-name">{u.label}</h3>
+              <span class="u-by">avec {u.by}</span>
+            </span>
+            <span class="u-count">{u.count}<i>prestations</i></span>
             <span class="u-mark" aria-hidden="true"></span>
           </summary>
           <div class="u-body">
             <p class="u-blurb">{u.blurb}</p>
             <div class="cats">
               {u.categories.map((c) => (
-                <div class="cat">
-                  <h4>{c.title}</h4>
-                  <p class="by">avec {c.by}</p>
+                <section class="cat">
+                  <header class="cat-head">
+                    <h4>{c.title}</h4>
+                    <span class="cat-count">{c.items.length}</span>
+                  </header>
                   <ul class="plist">
                     {c.items.map((s) => (
                       <li>
                         <span class="pname">{s.name}</span>
-                        <span class="pdot" aria-hidden="true"></span>
-                        <span class="pdur">{formatDuration(s.minutes)}</span>
                         <span class="pcost">{s.price} €</span>
+                        {s.note && <span class="pdetail">{s.note}</span>}
+                        <span class="pdur">{formatDuration(s.minutes)}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </section>
               ))}
             </div>
           </div>

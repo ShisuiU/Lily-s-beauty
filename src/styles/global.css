@@ -883,12 +883,28 @@ section {
   outline: 2px solid var(--rose-ink);
   outline-offset: 3px;
 }
+/* Niveau 1. Le nom et la praticienne vont ensemble : l'univers entier
+   est tenu par une seule personne, ce qui évite de le répéter sous
+   chacune de ses catégories — dix lignes « avec Juliette » de moins. */
+.u-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
 .u-name {
   font-family: var(--serif);
   font-size: clamp(1.5rem, 3.4vw, 2.1rem);
   font-weight: 300;
   line-height: 1.1;
   letter-spacing: -0.01em;
+}
+.u-by {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rose-ink);
 }
 .u-count {
   font-size: 11px;
@@ -897,6 +913,10 @@ section {
   text-transform: uppercase;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+.u-count i {
+  font-style: normal;
+  margin-left: 0.5em;
 }
 .u-mark {
   margin-left: auto;
@@ -974,23 +994,48 @@ section {
 }
 .cats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  gap: clamp(26px, 4vw, 52px);
+  /* `min(330px, 100%)` et non `330px` : sur un écran plus étroit que la
+     piste minimale, une grille `auto-fit` ne rétrécit pas, elle déborde.
+     Mesuré à 320 px de large, les cartes sortaient de 30 px. */
+  grid-template-columns: repeat(auto-fit, minmax(min(330px, 100%), 1fr));
+  gap: clamp(14px, 1.8vw, 22px);
   align-items: start;
+}
+/* Niveau 2. Une carte blanche sur le fond crème de la section : c'est la
+   séparation la plus nette qu'on puisse donner sans ajouter ni trait ni
+   couleur. Avant, la catégorie n'était qu'un titre de 1,02 rem en gras
+   au-dessus de prestations de 1 rem — deux centièmes d'écart, et tout se
+   lisait comme une seule liste. */
+.cat {
+  background: var(--paper);
+  border: 1px solid var(--hair);
+  padding: clamp(15px, 2vw, 22px) clamp(15px, 2vw, 24px);
+}
+.cat-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
 }
 .cat h4 {
   margin: 0;
-  font-size: 1.02rem;
-  font-weight: 600;
+  font-family: var(--serif);
+  font-size: clamp(1.14rem, 1.6vw, 1.3rem);
+  font-weight: 400;
+  line-height: 1.2;
   letter-spacing: -0.01em;
 }
-.cat .by {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+/* Le compte sert de repère de longueur : on sait avant de lire si la
+   carte tient en cinq lignes ou en dix-huit. Un simple nombre, sans
+   pastille : les angles de ce bloc sont vifs. */
+.cat-count {
+  margin-left: auto;
+  flex: none;
   color: var(--rose-ink);
-  margin-block: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 #tarifs {
@@ -1124,37 +1169,51 @@ section {
   margin: 0;
   padding: 0;
 }
+/* Niveau 3. Deux lignes et deux colonnes : l'intitulé et son prix en
+   haut, la précision de Planity et la durée en dessous. Le repère en
+   pointillés a disparu avec la mise en deux lignes — il reliait deux
+   choses qui ne sont plus sur la même. */
 .plist li {
   display: grid;
-  grid-template-columns: auto minmax(16px, 1fr) auto auto;
+  grid-template-columns: 1fr auto;
   align-items: baseline;
-  gap: 10px;
-  padding-block: 13px;
+  column-gap: 14px;
+  padding-block: 11px;
   border-bottom: 1px solid var(--hair);
 }
 .plist li:last-child {
   border-bottom: 0;
+  padding-bottom: 0;
 }
 .pname {
-  font-size: 1rem;
-}
-.pdot {
-  border-bottom: 1px dotted var(--hair);
-  transform: translateY(-4px);
-  min-width: 14px;
-}
-.pdur {
-  font-size: 0.8rem;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  grid-column: 1;
+  font-size: 0.98rem;
+  line-height: 1.35;
 }
 .pcost {
+  grid-column: 2;
+  grid-row: 1;
   font-size: 1rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  min-width: 52px;
+  text-align: right;
+}
+.pdetail {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.pdur {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
   text-align: right;
 }
 .pnote {
@@ -1166,20 +1225,6 @@ section {
 @media (max-width: 780px) {
   .prices {
     grid-template-columns: 1fr;
-  }
-  .plist li {
-    grid-template-columns: 1fr auto;
-  }
-  .pdot {
-    display: none;
-  }
-  .pcost {
-    grid-column: 2;
-  }
-  .pdur {
-    grid-column: 1;
-    grid-row: 2;
-    margin-top: -6px;
   }
 }
 

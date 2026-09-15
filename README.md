@@ -76,6 +76,7 @@ python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
 python3 scripts/prepare-motif.py brand/motif-lys-original.png  # src/assets/motif-lys*.png
 python3 scripts/prepare-hero.py                    # les deux photos du bandeau (une par orientation)
 python3 scripts/prepare-galerie.py                 # src/assets/salon-*.jpg
+python3 scripts/verifie-tarifs.py                  # compare la grille du site à Planity
 ```
 
 Dépendances : `pip install Pillow fonttools brotli numpy scipy`.
@@ -394,13 +395,56 @@ Les copies portent `aria-hidden` et un `alt` vide : un lecteur d'écran
 énonce les quatre photos une fois, pas seize. La bande porte `tabindex`
 et un nom, sans quoi une zone défilable n'est atteignable qu'à la souris.
 
+**La grille venait de Planity, mais tronquée.** La page Planity n'affiche
+que **les cinq premières prestations de chaque catégorie** ; le reste
+attend un clic sur « voir les N autres », et ces lignes-là ne sont pas
+dans le HTML livré. Une première reprise s'est donc arrêtée à 44
+prestations sur 77 sans que rien ne le signale : chaque catégorie
+paraissait complète, et sept d'entre elles comptaient exactement cinq
+lignes — le seul indice, et il n'a pas été vu.
+
+La liste entière est pourtant dans la page, ailleurs : un objet JSON
+`"services"` dans l'état de l'application, celui qui sert justement à
+déplier la suite. `scripts/verifie-tarifs.py` lit celui-là, écarte ce qui
+est supprimé ou masqué — au dernier relevé, 167 entrées stockées pour 77
+réellement proposées, le salon gardant ses anciennes grilles — et
+compare à `src/data/site.ts` : manquantes, en trop, tarifs et durées
+différents. Sortie non nulle s'il y a un écart. **Relancer ce script
+plutôt que recopier.**
+
+Les comparaisons se font sur des **listes**, pas sur des valeurs uniques :
+le même intitulé existe des deux côtés du catalogue avec des tarifs
+différents — « Aisselles » vaut 12 € en 15 min chez la femme, 14 € en
+20 min chez l'homme. Écrasées sur une seule clé, ces paires s'annulent et
+un écart passe.
+
+**Trois niveaux, trois traitements.** Univers, catégorie, prestation
+partageaient presque la même graisse : la catégorie était un titre de
+1,02 rem en gras posé sur des prestations de 1 rem, et la liste se lisait
+comme un seul bloc. Désormais l'univers est un grand titre au serif sur
+sa ligne repliable, avec sa praticienne et son compte ; la catégorie est
+une carte blanche sur le fond crème de la section, avec son propre compte
+en rose ; la prestation est une ligne dans cette carte, intitulé et prix
+sur la première ligne, précision et durée sur la seconde.
+
+La praticienne est portée par l'**univers** et non par chaque catégorie :
+chacun n'est tenu que par une personne, et la mention se répétait dix
+fois. La précision que Planity affiche sous certaines prestations est
+reprise telle quelle : elle donne à la fois une information utile et un
+troisième niveau de texte.
+
+Quatre univers, contre trois auparavant : « Sourcils et épilation »
+réunissait à lui seul cinquante prestations. Il est coupé en « Sourcils
+et visage » (browlift, teintures, fil) et « Épilation à la cire » (femme
+à l'unité, forfaits femme, homme).
+
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de
 Paris via `Intl`, surligne le jour courant et annonce la prochaine
 ouverture.
 
 **Fiche établissement.** Un bloc JSON-LD `BeautySalon` est généré depuis
-les mêmes données — 44 prestations avec leurs prix, horaires, note,
+les mêmes données — 77 prestations avec leurs prix, horaires, note,
 adresse, coordonnées, comptes Instagram. C'est lui qui alimente la
 recherche locale.
 
