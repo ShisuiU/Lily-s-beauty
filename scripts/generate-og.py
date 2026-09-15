@@ -79,7 +79,7 @@ def main() -> None:
     # La preuve sociale ferme l'image : c'est elle qui fait cliquer.
     for i in range(5):
         etoile(d, x0 + 10 + i * 26, 552, 10, ROSE)
-    d.text((x0 + 152, 540), '4,99 sur 5 — 130 avis vérifiés',
+    d.text((x0 + 152, 540), '4,99 sur 5, 130 avis vérifiés',
            font=charger('instrument-sans-500-lat', 24), fill=(240, 235, 232))
 
     img.save(OUT, 'JPEG', quality=86, optimize=True, progressive=True)

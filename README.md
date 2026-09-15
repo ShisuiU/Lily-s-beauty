@@ -64,17 +64,25 @@ npm run preview  # sert dist/ localement
 
 ### Scripts de génération
 
-Trois scripts produisent des fichiers versionnés dans le dépôt. Ils ne
+Quatre scripts produisent des fichiers versionnés dans le dépôt. Ils ne
 tournent **pas** au build : on les relance à la main quand la source
 change.
 
 ```bash
-python3 scripts/fetch-fonts.py    # public/fonts/ + src/styles/fonts.css
-python3 scripts/generate-map.py   # src/assets/plan-salon.jpg
-python3 scripts/generate-og.py    # public/og.jpg
+python3 scripts/fetch-fonts.py                     # public/fonts/ + src/styles/fonts.css
+python3 scripts/generate-map.py                    # src/assets/plan-salon.jpg
+python3 scripts/generate-og.py                     # public/og.jpg
+python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
 ```
 
-Dépendances : `pip install Pillow fonttools brotli`.
+Dépendances : `pip install Pillow fonttools brotli numpy scipy`.
+
+Le logo livré par le salon est conservé tel quel dans `brand/`. Le script
+en tire la version qu'affiche le site : fond détouré, ligne d'adresse et
+feuillage débordant retirés, bavure effacée. Il **relève** ces découpes
+sur le fichier au lieu de les coder en dur, et imprime ce qu'il a trouvé
+— après un nouveau logo, lire ces nombres avant de faire confiance au
+résultat.
 
 ---
 
@@ -133,10 +141,13 @@ Google Fonts, pas d'iframe Maps, donc pas de cookie ni de transfert d'IP
 à consentir. C'est ce qui permet à la page de mentions légales de
 l'affirmer sans réserve.
 
-**Éléments natifs d'abord.** Les tarifs se replient avec `<details>`, le
-menu mobile s'ouvre avec l'API Popover. Le clavier, les lecteurs d'écran,
-la touche Échap et la fermeture au clic extérieur viennent gratuitement ;
-le script ne fait que ce que la plateforme ne fait pas.
+**Éléments natifs d'abord.** Les tarifs se replient avec `<details>` :
+le clavier, les lecteurs d'écran et le repli viennent gratuitement. Le
+menu mobile a d'abord utilisé l'API Popover, abandonnée depuis — ses
+styles par défaut imposent `width: fit-content`, ce qui annulait
+l'`inset: 0` du panneau et le laissait couvrir 60 % de l'écran. Il est
+désormais tenu par un script court, qui ne fait que ce que la plateforme
+ne fait pas : `inert`, la touche Échap et le retour du focus.
 
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de
@@ -156,8 +167,19 @@ recherche locale.
    plan, jamais un ongle ni un regard. Sur ce métier, c'est ce qui
    convertit — et les deux comptes Instagram en regorgent.
 2. **Compléter les mentions légales** (tableau plus haut).
-3. **Remplacer la calligraphie par le logo vectoriel** du salon (AI, EPS
-   ou SVG). Pinyon Script n'en est qu'une approximation.
+3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni suffit
+   au pied de page, mais deux choses restent en suspens.
+
+   L'en-tête est toujours en Pinyon Script, une approximation : à 27 px
+   de haut, les déliés du script tombent sous le demi-pixel et une image
+   réduite y vire au gris, là où une police reste nette. Un vectoriel
+   lèverait la question.
+
+   Et la ligne d'adresse du fichier fourni est fausse — « 30290 Rue de la
+   République Laudun » : le code postal occupe la place du numéro, le 254
+   manque, la commune est amputée de « l'Ardoise ». Le script la retire,
+   donc le site n'affiche rien d'inexact, mais le fichier reste à
+   corriger chez son auteur, enseigne et cartes de visite comprises.
 4. **Un nom de domaine en `.fr`.** Sans effet sur la vitesse, beaucoup
    sur la confiance et le référencement local.
 5. **Pages dédiées par univers** — `/ongles`, `/cils`,

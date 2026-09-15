@@ -1370,9 +1370,13 @@ footer {
   gap: 24px;
   align-items: flex-end;
 }
-.foot .brand {
-  color: var(--ink);
-  font-size: 32px;
+/* Le vrai logo du salon, détouré par scripts/prepare-logo.py. Il est
+   posé ici et nulle part ailleurs : dans l'en-tête il serait réduit à
+   27 px de haut, où les déliés du script tombent sous le demi-pixel et
+   virent au gris. À cette taille, la police tient mieux que l'image. */
+.foot-logo {
+  width: clamp(208px, 27vw, 268px);
+  height: auto;
 }
 .foot-links {
   display: flex;
