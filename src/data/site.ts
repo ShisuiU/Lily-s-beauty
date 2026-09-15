@@ -112,6 +112,43 @@ export const about = {
   ],
 };
 
+/* ─────────────────────────── LA GALERIE ─────────────────────────
+   Photos de l'intérieur, dans l'ordre d'affichage. La clé correspond au
+   nom du fichier dans src/assets/ ; les images sont préparées par
+   scripts/prepare-galerie.py depuis les originaux de brand/.
+
+   `alt` n'est pas un titre : c'est la description lue à voix haute par
+   un lecteur d'écran, et ce qui s'affiche si l'image ne charge pas.
+   On y décrit ce qu'on voit, pas ce qu'on voudrait vendre.            */
+
+export const galerie = [
+  {
+    fichier: 'salon-1-attente.jpg',
+    alt: "Le coin d'attente : un canapé en bouclette crème avec un plaid rose, "
+      + "une grande lampe à abat-jour de lin, un mur framboise et un bahut peint en rose.",
+  },
+  {
+    fichier: 'salon-2-cabine-guirlande.jpg',
+    alt: 'Une cabine de soin : table d\'esthétique, lampe loupe en demi-lune, '
+      + 'rideau de guirlandes lumineuses au mur et suspension en rotin.',
+  },
+  {
+    fichier: 'salon-3-cabine-fenetre.jpg',
+    alt: 'La seconde cabine, près de la fenêtre : voilages clairs, mur rose, '
+      + 'miroir rond lumineux et commode blanche.',
+  },
+  {
+    fichier: 'salon-4-manucure.jpg',
+    alt: 'Le poste de manucure : plan de travail en bois clair, deux lampes '
+      + "d'architecte, lampes UV, et l'enseigne au néon « Les ongles de Fia ».",
+  },
+];
+
+export const galerieIntro = {
+  titre: 'Le salon',
+  lead: 'Deux cabines, un poste de manucure, et un canapé pour attendre.',
+};
+
 /* ─────────────────────────── HORAIRES ───────────────────────────
    `day` suit la convention JavaScript : 0 = dimanche … 6 = samedi.
    Heures en minutes depuis minuit (9 h 30 → 9 * 60 + 30).
@@ -122,12 +159,12 @@ export const hoursConfirmed = true;
 export type Day = { day: number; label: string; open: number | null; close: number | null };
 
 export const hours: Day[] = [
-  { day: 1, label: 'lundi', open: 9 * 60, close: 20 * 60 },
-  { day: 2, label: 'mardi', open: 9 * 60, close: 20 * 60 },
-  { day: 3, label: 'mercredi', open: 9 * 60, close: 20 * 60 },
-  { day: 4, label: 'jeudi', open: 9 * 60, close: 20 * 60 },
-  { day: 5, label: 'vendredi', open: 9 * 60, close: 20 * 60 },
-  { day: 6, label: 'samedi', open: 8 * 60, close: 17 * 60 },
+  { day: 1, label: 'lundi', open: 9 * 60 + 30, close: 19 * 60 + 30 },
+  { day: 2, label: 'mardi', open: 9 * 60 + 30, close: 19 * 60 + 30 },
+  { day: 3, label: 'mercredi', open: 9 * 60 + 30, close: 19 * 60 + 30 },
+  { day: 4, label: 'jeudi', open: 9 * 60 + 30, close: 19 * 60 + 30 },
+  { day: 5, label: 'vendredi', open: 9 * 60 + 30, close: 19 * 60 + 30 },
+  { day: 6, label: 'samedi', open: 8 * 60, close: 12 * 60 },
   { day: 0, label: 'dimanche', open: null, close: null },
 ];
 

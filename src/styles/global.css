@@ -967,12 +967,6 @@ section {
   margin-block: 5px 12px;
 }
 
-#horaires {
-  position: relative;
-  overflow: hidden;
-  overflow: clip;
-}
-
 #tarifs {
   background: var(--shell);
   position: relative;
@@ -1006,7 +1000,6 @@ section {
    ═══════════════════════════════════════════════════════════════ */
 #tarifs::before,
 #reserver::before,
-#horaires::before,
 .legal::before {
   content: '';
   position: absolute;
@@ -1019,7 +1012,6 @@ section {
 }
 #tarifs > .shell,
 #reserver > .shell,
-#horaires > .shell,
 .legal > .shell {
   position: relative;
   z-index: 1;
@@ -1053,21 +1045,6 @@ section {
   mask-image: url('/motif-lys-branche.png');
 }
 
-/* La fleur seule, dans le bloc des horaires. Seul emploi qui ne déborde
-   pas d'un bord : la grille des jours est haute à gauche, la carte « en
-   ce moment » courte à droite, et il reste dessous un vide franc que
-   rien ne remplit. L'ornement y est posé, pas accroché à un angle. */
-#horaires::before {
-  right: clamp(24px, 6vw, 96px);
-  bottom: clamp(18px, 4vw, 54px);
-  width: clamp(150px, 22vw, 290px);
-  aspect-ratio: 520 / 426;
-  background: var(--ink);
-  opacity: 0.085;
-  -webkit-mask-image: url('/motif-lys-fleur.png');
-  mask-image: url('/motif-lys-fleur.png');
-}
-
 /* La fleur encore, sur les pages de texte — mentions légales et erreur.
    Elles n'ont ni photo ni couleur, et leur droite est vide à côté du
    titre. Une première version y posait la pointe du rameau, débordée
@@ -1084,19 +1061,10 @@ section {
   mask-image: url('/motif-lys-fleur.png');
 }
 
-/* Deux ornements ne survivent pas au passage en colonne, et c'est
-   logique : ils comblaient un vide que la mise en page large créait.
-
-   Les horaires empilent leur grille et leur carte sous 860 px ; le
-   quart bas-droit n'existe plus et la fleur se poserait en travers de
-   « c'est ouvert ». Les pages de texte deviennent une colonne dense
-   sans marge à droite. Dans les deux cas on retire plutôt qu'on
-   déplace : un ornement qui gêne la lecture a cessé d'en être un. */
-@media (max-width: 860px) {
-  #horaires::before {
-    display: none;
-  }
-}
+/* Les pages de texte deviennent une colonne dense sans marge à droite :
+   sous 1000 px le paragraphe d'introduction venait se poser sur la fleur
+   et tombait à 4,56:1, à six centièmes du seuil. On retire plutôt qu'on
+   déplace — un ornement qui gêne la lecture a cessé d'en être un. */
 /* Sous 1000 px, la colonne de texte des pages légales rejoint la fleur :
    mesuré, le paragraphe d'introduction passait dessus et son contraste
    tombait à 4,56:1, à six centièmes du seuil. Le paragraphe est déjà
@@ -1194,7 +1162,11 @@ section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(30px, 6vw, 84px);
-  align-items: start;
+  /* `stretch` et non `start` : la liste des sept jours fait 383 px, la
+     carte 175, et celle-ci flottait en haut d'une colonne aux deux tiers
+     vide. Étirée, elle devient un vrai panneau et le vide passe à
+     l'intérieur, là où on peut en faire quelque chose. */
+  align-items: stretch;
 }
 .hours {
   list-style: none;
@@ -1246,6 +1218,32 @@ section {
   border-radius: 14px;
   padding: 26px;
   background: var(--paper);
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
+}
+/* La fleur du logo, posée dans la carte plutôt qu'à côté. Le texte y est
+   court — « C'est ouvert. » fait 156 px dans une carte qui en fait 350
+   au plus étroit — et ce vide-là ne disparaît pas quand la page passe en
+   colonne, contrairement à celui qui entourait la carte. L'ornement
+   tient donc aussi sur téléphone, sans rallonger la page d'un pixel. */
+.status::before {
+  content: '';
+  position: absolute;
+  right: -14px;
+  bottom: -10px;
+  width: clamp(122px, 46%, 260px);
+  aspect-ratio: 520 / 426;
+  background: var(--ink);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask: url('/motif-lys-fleur.png') no-repeat center / contain;
+  mask: url('/motif-lys-fleur.png') no-repeat center / contain;
+}
+.status > * {
+  position: relative;
+  z-index: 1;
 }
 .status .big {
   font-family: var(--serif);
@@ -1263,6 +1261,40 @@ section {
 @media (max-width: 860px) {
   .hours-wrap {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── galerie : l'intérieur du salon ──
+   Posée entre les horaires et la réservation, et pas plus bas : on
+   montre l'endroit juste avant de demander de réserver, pas après.
+
+   Pas d'ornement ici. Les photos sont la décoration ; y ajouter un lys
+   serait la surcharge qu'on évite partout ailleurs. */
+#salon {
+  background: var(--shell);
+}
+.galerie {
+  list-style: none;
+  margin: clamp(28px, 4.5vw, 46px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(10px, 1.5vw, 20px);
+}
+.galerie img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Les quatre photos sortent du même téléphone et partagent donc le
+     même format. Le cadre l'impose quand même : une photo re-livrée en
+     carré ne doit pas casser l'alignement de la rangée. */
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border-radius: 12px;
+}
+@media (max-width: 860px) {
+  .galerie {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

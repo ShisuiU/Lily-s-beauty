@@ -1,0 +1,46 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { galerie, galerieIntro } from '../data/site';
+
+/* Les fichiers sont nommés dans site.ts, pas importés un à un : ajouter
+   une photo se fait donc en déposant le fichier et en écrivant sa
+   description, sans toucher à ce composant. `eager` parce qu'Astro doit
+   optimiser les images au build, pas à l'exécution. */
+const fichiers = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/salon-*.jpg',
+  { eager: true },
+);
+
+const photos = galerie.map((p) => {
+  const trouve = fichiers[`../assets/${p.fichier}`];
+  if (!trouve) throw new Error(`galerie : src/assets/${p.fichier} est introuvable`);
+  return { src: trouve.default, alt: p.alt };
+});
+---
+
+<section id="salon">
+  <div class="shell">
+    <div class="sec-top monte">
+      <hr class="rule" />
+      <h2>{galerieIntro.titre}</h2>
+      <p>{galerieIntro.lead}</p>
+    </div>
+
+    <ul class="galerie">
+      {photos.map((p) => (
+        <li class="monte">
+          <Image
+            src={p.src}
+            alt={p.alt}
+            widths={[280, 560, 840]}
+            sizes="(max-width: 560px) 44vw, (max-width: 980px) 30vw, 22vw"
+            format="avif"
+            quality={62}
+            loading="lazy"
+          />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

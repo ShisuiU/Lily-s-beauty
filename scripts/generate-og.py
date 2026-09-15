@@ -70,7 +70,7 @@ def main() -> None:
 
     d.line([(x0, 404), (x0 + 72, 404)], fill=ROSE, width=2)
 
-    d.text((x0, 432), 'Ongles · Cils · Sourcils · Épilation',
+    d.text((x0, 432), 'Ongles · Beauté du visage · Épilation',
            font=charger('instrument-sans-500-lat', 33), fill=(255, 255, 255))
 
     d.text((x0, 484), "254 Rue de la République, Laudun-l'Ardoise",

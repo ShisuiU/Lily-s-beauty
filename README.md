@@ -64,7 +64,7 @@ npm run preview  # sert dist/ localement
 
 ### Scripts de génération
 
-Six scripts produisent des fichiers versionnés dans le dépôt. Ils ne
+Sept scripts produisent des fichiers versionnés dans le dépôt. Ils ne
 tournent **pas** au build : on les relance à la main quand la source
 change.
 
@@ -75,6 +75,7 @@ python3 scripts/generate-og.py                     # public/og.jpg
 python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
 python3 scripts/prepare-motif.py brand/motif-lys-original.png  # public/motif-lys.png
 python3 scripts/prepare-hero.py                    # les deux photos du bandeau
+python3 scripts/prepare-galerie.py                 # src/assets/salon-*.jpg
 ```
 
 Dépendances : `pip install Pillow fonttools brotli numpy scipy`.
@@ -290,9 +291,13 @@ recherche locale.
 
 ## À faire ensuite
 
-1. **Photographies du travail réalisé.** Le site montre une façade et un
-   plan, jamais un ongle ni un regard. Sur ce métier, c'est ce qui
-   convertit — et les deux comptes Instagram en regorgent.
+1. **Photographies du travail réalisé.** La galerie montre désormais
+   l'intérieur — deux cabines, le poste de manucure, le coin d'attente —
+   mais toujours pas un ongle ni un regard. Sur ce métier, c'est ce qui
+   convertit, et les deux comptes Instagram en regorgent. Les déposer
+   dans `brand/` sous le nom `salon-*.jpg` et relancer
+   `scripts/prepare-galerie.py` suffit ; leur description s'écrit dans
+   `galerie` de `src/data/site.ts`.
 2. **Compléter les mentions légales** (tableau plus haut).
 3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni tient
    partout où il sert — en-tête et pied de page. Un vectoriel resterait
