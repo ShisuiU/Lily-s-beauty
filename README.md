@@ -419,10 +419,15 @@ différents — « Aisselles » vaut 12 € en 15 min chez la femme, 14 € en
 un écart passe.
 
 **Les deux sœurs, en encre.** Le bloc qui les présente en haut de la
-section est passé d'une liste à filets à deux cartes à fond encre, une
-par praticienne — le salon réunit deux auto-entreprises distinctes, et
-deux cartes le disent mieux que deux lignes d'un même tableau. Le fond
-reprend celui de la bande « réserver » : le vocabulaire existait déjà.
+section est passé d'une liste à filets à un seul panneau à fond encre,
+partagé par les deux praticiennes. Le fond reprend celui de la bande
+« réserver » : le vocabulaire existait déjà.
+
+Le filet qui les sépare est le fond du bloc qui transparaît dans un
+écart d'un pixel, et non une bordure. L'écart d'une grille se place tout
+seul entre les colonnes quand il y a la place pour deux, et entre les
+lignes quand il n'y en a plus ; une bordure aurait fallu la déplacer d'un
+côté à l'autre à chaque changement de disposition.
 
 Deux autres fonds ont été essayés et écartés. Le blanc est pris plus bas
 par les cartes de prestations, et l'employer ici aurait laissé croire au

@@ -761,35 +761,42 @@ section {
 }
 
 /* ── qui fait quoi ──
-   Deux blocs, et non deux lignes d'un même tableau : le salon réunit deux
-   auto-entreprises distinctes, et deux cartes séparées le disent mieux
-   qu'une liste à filets.
+   Un seul bloc encre, et non deux cartes côte à côte : les deux sœurs
+   tiennent le même institut, et deux rectangles séparés les posaient en
+   vis-à-vis plutôt qu'ensemble. Elles partagent maintenant un même fond,
+   séparées par un simple filet.
+
+   Ce filet est le fond du bloc qui transparaît dans un écart d'un
+   pixel, et non une bordure : l'écart d'une grille se place tout seul
+   entre les colonnes quand il y en a deux, et entre les lignes quand la
+   place manque. Une bordure, elle, aurait fallu la déplacer d'un côté à
+   l'autre au changement de disposition.
 
    Fond encre, comme la bande « réserver » plus bas — le vocabulaire
-   existe déjà sur la page. Deux autres fonds ont été essayés et écartés :
-   le blanc, qui est pris plus bas par les cartes de prestations et aurait
-   laissé croire au même niveau de lecture ; le rosé pâle, qui ne se
-   détache pas du crème de la section (#fbf5f7 sur #f6f3f1, on ne voyait
-   que la bordure). L'encre, elle, fait de ce bloc le point d'appui du
-   haut de section — ce sont les personnes, pas les tarifs.
+   existe déjà sur la page. Deux autres fonds ont été essayés et
+   écartés : le blanc, qui est pris plus bas par les cartes de
+   prestations et aurait laissé croire au même niveau de lecture ; le
+   rosé pâle, qui ne se détache pas du crème de la section (#fbf5f7 sur
+   #f6f3f1, on ne voyait que la bordure).
 
    Tout est en jetons de thème : si la palette sombre était un jour
-   servie, la carte s'inverserait d'elle-même, comme la bande. */
+   servie, le bloc s'inverserait de lui-même, comme la bande. */
 .who {
   list-style: none;
   margin: 26px 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 1px;
+  background: color-mix(in srgb, var(--paper) 18%, var(--ink));
+  color: var(--paper);
 }
 .who li {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: clamp(15px, 1.9vw, 20px) clamp(15px, 1.9vw, 22px);
+  padding: clamp(16px, 2vw, 22px);
   background: var(--ink);
-  color: var(--paper);
 }
 .who .who-name {
   font-family: var(--serif);
