@@ -432,6 +432,25 @@ différents — « Aisselles » vaut 12 € en 15 min chez la femme, 14 € en
 20 min chez l'homme. Écrasées sur une seule clé, ces paires s'annulent et
 un écart passe.
 
+**« Le travail », posé juste après les tarifs.** On vient de lire le prix
+d'une pose complète : on veut voir à quoi elle ressemble. Fond blanc et
+non crème, contrairement aux tarifs juste au-dessus — les photos y
+ressortent mieux, et le changement marque le chapitre. Deux groupes, un
+par praticienne, quatre photos chacun, en carré et à angles vifs.
+
+Les originaux sont des captures d'Instagram et portent l'interface de
+l'application **par-dessus la photo** : le compteur du carrousel en haut
+à droite des ongles (« 1/3 », « 3/3 »), la barre de défilement au bord
+droit des cils. `prepare-galerie.py` coupe ces bandes avant de réduire,
+puis ramène l'image au carré par son centre. Ce n'est pas de la retouche :
+c'est l'écran du téléphone qu'on retire, pas la photo qu'on arrange.
+
+Les fichiers de cils sont numérotés, pas nommés par technique : on ne
+distingue pas à l'œil une pose cil à cil d'une mixte ou d'un volume
+russe, et deviner aurait fini par écrire une bêtise dans un texte de
+remplacement. Les descriptions disent ce qu'on voit, pas ce qui a été
+fait.
+
 **Les deux sœurs, en encre.** Le bloc qui les présente en haut de la
 section est passé d'une liste à filets à un seul panneau à fond encre,
 partagé par les deux praticiennes. Le fond reprend celui de la bande
@@ -485,14 +504,18 @@ recherche locale.
 
 ## À faire ensuite
 
-1. **Photographies du travail réalisé.** La galerie montre désormais
-   l'intérieur — le poste de soin sous deux angles, le coin manucure,
-   celui d'attente —
-   mais toujours pas un ongle ni un regard. Sur ce métier, c'est ce qui
-   convertit, et les deux comptes Instagram en regorgent. Les déposer
-   dans `brand/` sous le nom `salon-*.jpg` et relancer
-   `scripts/prepare-galerie.py` suffit ; leur description s'écrit dans
-   `galerie` de `src/data/site.ts`.
+1. **Plus de photographies du travail.** La section « Le travail » en
+   montre huit, quatre par praticienne. C'est ce qui convertit sur ce
+   métier, et les deux comptes Instagram en regorgent : en ajouter est
+   la chose la plus rentable qui reste à faire. Les déposer dans
+   `brand/` sous le nom `ongles-*.jpg` ou `cils-*.jpg`, relancer
+   `scripts/prepare-galerie.py`, et décrire chacune dans `travail` de
+   `src/data/site.ts`.
+
+   **À confirmer** : que ces photos sont bien celles du salon et non des
+   modèles trouvés ailleurs, et que les clientes photographiées sont
+   d'accord pour figurer sur le site. Ni l'un ni l'autre ne se vérifie
+   depuis le fichier.
 2. **Compléter les mentions légales** (tableau plus haut).
 3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni tient
    partout où il sert — en-tête et pied de page. Un vectoriel resterait

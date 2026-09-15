@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Prépare les photos de l'intérieur du salon pour la galerie d'accueil.
+Prépare les photos livrées par le salon : l'intérieur pour le ruban
+d'accueil, les réalisations pour la section « Le travail ».
 
-Les originaux sont les fichiers `brand/salon-*.jpg` livrés par le salon :
-des photos de téléphone en 1450 x 2576. On les réduit à la taille utile
-et on les réenregistre **sans métadonnées**.
+Les originaux sont les fichiers `brand/salon-*.jpg`, `brand/ongles-*.jpg`
+et `brand/cils-*.jpg`. On les réduit à la taille utile — qui n'est pas la
+même selon l'emploi, d'où le tableau plus bas — et on les réenregistre
+**sans métadonnées**.
 
 Ce second point n'est pas une précaution de principe. Un fichier sorti
 d'un téléphone embarque le modèle de l'appareil, la date de la prise et,
@@ -22,17 +24,45 @@ from PIL import Image
 
 SOURCE = pathlib.Path('brand')
 SORTIE = pathlib.Path('src/assets')
-LARGEUR = 900      # affichée à 280 px au plus, écrans à forte densité compris
 QUALITE = 84
+
+# Largeur de sortie par famille, réglée sur la taille d'affichage la plus
+# grande, doublée pour les écrans à forte densité.
+#
+# `rogne_haut` et `rogne_droite` retirent une bande avant tout le reste.
+# Les réalisations sont des captures d'Instagram et portent l'interface de
+# l'application par-dessus la photo : le compteur du carrousel en haut à
+# droite des ongles (« 1/3 », « 3/3 »), la barre de défilement au bord
+# droit des cils. Ce n'est pas la photo, c'est l'écran du téléphone : on
+# le coupe. L'image est ensuite ramenée au carré en prenant le centre de
+# ce qui reste, pour que les huit gardent le même format.
+FAMILLES = {
+    'salon-*.jpg': dict(largeur=900),   # le ruban : 290 px au plus
+    'ongles-*.jpg': dict(largeur=900, rogne_haut=0.09, carre=True),
+    'cils-*.jpg': dict(largeur=900, rogne_droite=0.025, carre=True),
+}
 
 
 def main() -> None:
-    fichiers = sorted(SOURCE.glob('salon-*.jpg'))
+    fichiers = [(f, reglages) for motif, reglages in FAMILLES.items()
+                for f in sorted(SOURCE.glob(motif))]
     if not fichiers:
-        raise SystemExit('aucun brand/salon-*.jpg')
+        raise SystemExit('aucune photo dans brand/')
 
-    for f in fichiers:
+    for f, reglages in fichiers:
         im = Image.open(f)
+
+        haut = reglages.get('rogne_haut', 0)
+        droite = reglages.get('rogne_droite', 0)
+        if haut or droite:
+            im = im.crop((0, round(im.height * haut),
+                          im.width - round(im.width * droite), im.height))
+        if reglages.get('carre'):
+            cote = min(im.width, im.height)
+            gauche = (im.width - cote) // 2
+            im = im.crop((gauche, 0, gauche + cote, cote))
+
+        LARGEUR = reglages['largeur']
         if im.width > LARGEUR:
             im = im.resize((LARGEUR, round(im.height * LARGEUR / im.width)), Image.LANCZOS)
 

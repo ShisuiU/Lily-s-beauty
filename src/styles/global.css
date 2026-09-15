@@ -1402,6 +1402,63 @@ section {
   }
 }
 
+/* ── le travail : les réalisations ──
+   Posée juste après les tarifs, et pas ailleurs : on vient de lire le
+   prix d'une pose complète, on veut voir à quoi elle ressemble. Fond
+   blanc et non crème, contrairement aux tarifs juste au-dessus — les
+   photos y ressortent mieux, et le changement marque le chapitre.
+
+   Deux groupes, un par praticienne, chacun avec son en-tête. Pas
+   d'ornement ici non plus : les photos sont la décoration. */
+#travail {
+  background: var(--paper);
+}
+.trav-groupe {
+  margin-top: clamp(28px, 4vw, 46px);
+}
+.trav-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.trav-head h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-weight: 400;
+  line-height: 1.15;
+}
+.trav-by {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rose-ink);
+}
+.trav-grille {
+  list-style: none;
+  margin: clamp(12px, 1.6vw, 18px) 0 0;
+  padding: 0;
+  display: grid;
+  /* `min(210px, 45%)` : sur un téléphone la piste minimale doit pouvoir
+     descendre sous 210 px, sinon la grille déborde au lieu de rétrécir.
+     Les 45 % gardent deux colonnes tant que la place le permet. */
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 45%), 1fr));
+  gap: clamp(10px, 1.3vw, 16px);
+}
+.trav-grille img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Les originaux sont carrés ; le rapport est écrit ici pour que la
+     place soit réservée avant le chargement, sans saut de mise en page. */
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
 /* ── galerie : l'intérieur du salon, en ruban défilant ──
    Posée entre les horaires et la réservation, et pas plus bas : on
    montre l'endroit juste avant de demander de réserver, pas après.

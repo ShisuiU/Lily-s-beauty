@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { travail, travailIntro } from '../data/site';
+
+const fichiers = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/{ongles,cils}-*.jpg',
+  { eager: true },
+);
+
+const groupes = travail.map((g) => ({
+  ...g,
+  photos: g.photos.map((p) => {
+    const trouve = fichiers[`../assets/${p.fichier}`];
+    if (!trouve) throw new Error(`travail : src/assets/${p.fichier} est introuvable`);
+    return { src: trouve.default, alt: p.alt };
+  }),
+}));
+---
+<section id="travail">
+  <div class="shell">
+    <div class="sec-top monte">
+      <hr class="rule" />
+      <h2>{travailIntro.titre}</h2>
+      <p>{travailIntro.lead}</p>
+    </div>
+
+    {groupes.map((g) => (
+      <div class="trav-groupe monte">
+        <header class="trav-head">
+          <h3>{g.titre}</h3>
+          <span class="trav-by">avec {g.by}</span>
+        </header>
+        <ul class="trav-grille">
+          {g.photos.map((p) => (
+            <li>
+              <Image
+                src={p.src}
+                alt={p.alt}
+                widths={[280, 440, 620]}
+                sizes="(max-width: 620px) 45vw, (max-width: 1000px) 30vw, 22vw"
+                format="avif"
+                quality={64}
+                loading="lazy"
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>

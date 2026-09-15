@@ -149,6 +149,56 @@ export const galerieIntro = {
   lead: 'Un poste de soin, un coin manucure, et un canapé pour attendre.',
 };
 
+/* ───────────────────── LE TRAVAIL (réalisations) ─────────────────
+   Photos fournies par le salon. Les noms de fichiers des cils sont
+   volontairement neutres : on ne distingue pas à l'œil une pose cil à
+   cil d'une mixte ou d'un volume russe, et nommer au hasard aurait fini
+   par écrire une bêtise dans le texte de remplacement. Les descriptions
+   ci-dessous disent ce qu'on voit, pas la technique employée — si le
+   salon précise laquelle est laquelle, c'est ici qu'on l'écrit.        */
+
+export type Realisation = { fichier: string; alt: string };
+
+export const travailIntro = {
+  titre: 'Le travail',
+  lead: 'Quelques poses faites ici, par chacune sur sa spécialité.',
+};
+
+export const travail: { titre: string; by: string; photos: Realisation[] }[] = [
+  {
+    titre: 'Ongles',
+    by: 'Fiacrine',
+    photos: [
+      {
+        fichier: 'ongles-1-fleur-strass.jpg',
+        alt: "Ongles amande nude ornés de strass roses, de perles dorées et d'une fleur rose en relief.",
+      },
+      {
+        fichier: 'ongles-2-leopard-fleur.jpg',
+        alt: 'Ongles nude aux pointes mouchetées de noir et fleur rose peinte, devant un laurier-rose.',
+      },
+      {
+        fichier: 'ongles-3-french-couleurs.jpg',
+        alt: 'Deux mains aux ongles rosés, pointes colorées et motifs en strass.',
+      },
+      {
+        fichier: 'ongles-4-pois-petales.jpg',
+        alt: 'Ongles rose pâle à pois framboise, pétales peints et dégradé nacré.',
+      },
+    ],
+  },
+  {
+    titre: 'Cils et sourcils',
+    by: 'Juliette',
+    photos: [
+      { fichier: 'cils-1.jpg', alt: "Gros plan d'un œil aux cils allongés et recourbés, sourcil net." },
+      { fichier: 'cils-2.jpg', alt: "Gros plan d'un œil aux cils fournis et au sourcil brossé vers le haut." },
+      { fichier: 'cils-3.jpg', alt: "Gros plan d'un œil aux cils longs et courbés, sourcil dessiné." },
+      { fichier: 'cils-4.jpg', alt: "Gros plan de profil d'un œil aux cils longs et recourbés." },
+    ],
+  },
+];
+
 /* ─────────────────────────── HORAIRES ───────────────────────────
    `day` suit la convention JavaScript : 0 = dimanche … 6 = samedi.
    Heures en minutes depuis minuit (9 h 30 → 9 * 60 + 30).
