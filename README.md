@@ -438,23 +438,36 @@ non crème, contrairement aux tarifs juste au-dessus — les photos y
 ressortent mieux, et le changement marque le chapitre. Deux groupes, un
 par praticienne, quatre photos chacun, en carré et à angles vifs.
 
-Certains originaux sont des captures d'Instagram et portent l'interface
-de l'application **par-dessus la photo** : le compteur du carrousel en
-haut à droite (« 1/3 », « 3/3 »), la barre de défilement au bord droit.
-`prepare-galerie.py` coupe ces bandes avant de réduire, puis ramène
-l'image au carré par son centre. Ce n'est pas de la retouche : c'est
-l'écran du téléphone qu'on retire, pas la photo qu'on arrange.
+**Le script ne recadre pas.** Une version précédente rognait les bandes
+d'interface qu'Instagram laisse sur les captures — le compteur du
+carrousel, la barre de défilement. C'était fragile et de trop : le salon
+recadre lui-même ce qu'il veut recadrer, et il l'a fait. `prepare-galerie.py`
+réduit et retire les métadonnées, rien d'autre ; le cadrage carré de
+l'affichage est l'affaire de la feuille de style.
 
-Le réglage se fait **fichier par fichier**, pas par famille : la plupart
-n'ont rien à retirer, et rogner les quatre pour le compte d'une seule
-aurait mangé le cadrage des trois autres sans raison.
+**Sur téléphone, un appui agrandit la photo à la taille des quatre.** La
+grille fait deux colonnes sur deux lignes, donc un carré : la photo
+ouverte se pose en absolu sur toute la grille et occupe exactement leur
+place. Les trois autres gardent leur place dans le flux — la hauteur de
+la section ne bouge pas d'un pixel — mais passent en `visibility:
+hidden`, ce qui les retire du même coup de la tabulation et des lecteurs
+d'écran le temps de la vue. Un second appui referme, Échap aussi.
 
-Cette table se périme, et deux garde-fous s'en occupent. Le script refuse
-de tourner si elle vise un fichier qui n'existe plus. Et il **annonce en
-sortie la bande qu'il a coupée**, fichier par fichier — parce que le cas
-courant n'est pas le fichier disparu mais la photo renvoyée corrigée sous
-le même nom, que le premier contrôle ne voit pas : une bande annoncée sur
-une photo qu'on vient de corriger, elle, se remarque.
+Le nombre de colonnes est **écrit**, deux puis quatre, et non laissé à un
+`auto-fit` : tout l'agrandissement repose sur le fait que la grille est
+un carré de quatre, ce qu'un nombre de colonnes variable ne garantit pas.
+Au-delà de deux colonnes, il n'y a plus de carré à remplir et le bouton
+n'agrandit rien.
+
+L'animation est un **FLIP** : on relève la position de départ, on applique
+l'état d'arrivée, on relève la position finale, et on rejoue l'écart à
+l'envers. C'est le seul moyen d'animer un passage en `position: absolute`,
+qui ne se transitionne pas. Sous mouvement réduit, l'état change sans
+animation — vérifié, zéro animation en cours.
+
+Chaque photo est dans un **vrai bouton**, pas dans une image qu'on
+écoute : atteignable au clavier, annoncée comme une commande, et l'état
+porté par `aria-expanded` plutôt que par une classe que personne ne lit.
 
 Les fichiers de cils sont numérotés, pas nommés par technique : on ne
 distingue pas à l'œil une pose cil à cil d'une mixte ou d'un volume

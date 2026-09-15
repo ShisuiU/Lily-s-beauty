@@ -31,18 +31,25 @@ const groupes = travail.map((g) => ({
           <h3>{g.titre}</h3>
           <span class="trav-by">avec {g.by}</span>
         </header>
-        <ul class="trav-grille">
+        {/* Chaque photo est dans un vrai bouton, pas dans une image qu'on
+            écoute : c'est ce qui la rend atteignable au clavier, annoncée
+            comme une commande, et ce qui fait porter l'état par
+            `aria-expanded` plutôt que par une classe que personne ne lit.
+            Le nom du bouton est le texte de remplacement de la photo. */}
+        <ul class="trav-grille" data-zoom>
           {g.photos.map((p) => (
             <li>
-              <Image
-                src={p.src}
-                alt={p.alt}
-                widths={[280, 440, 620]}
-                sizes="(max-width: 620px) 45vw, (max-width: 1000px) 30vw, 22vw"
-                format="avif"
-                quality={64}
-                loading="lazy"
-              />
+              <button type="button" class="trav-zoom" aria-expanded="false">
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  widths={[280, 440, 620, 860]}
+                  sizes="(max-width: 759px) 90vw, 22vw"
+                  format="avif"
+                  quality={64}
+                  loading="lazy"
+                />
+              </button>
             </li>
           ))}
         </ul>
@@ -50,3 +57,83 @@ const groupes = travail.map((g) => ({
     ))}
   </div>
 </section>
+
+<script is:inline>
+  /* Agrandir une photo au doigt, et la refermer d'un second appui.
+
+     La photo ouverte se pose en absolu sur toute la grille — qui fait
+     justement deux colonnes sur deux lignes, donc un carré : ouverte,
+     elle occupe exactement la place des quatre. Les trois autres restent
+     dans le flux (la hauteur ne bouge pas) mais passent en
+     `visibility: hidden`, ce qui les retire aussi du clavier et des
+     lecteurs d'écran le temps de la vue.
+
+     L'animation est un FLIP : on relève la position de départ, on
+     applique l'état d'arrivée, on relève la position finale, et on
+     rejoue l'écart à l'envers. C'est le seul moyen d'animer un passage
+     en `position: absolute`, qui ne se transitionne pas.
+
+     Au-delà de deux colonnes — ordinateur, tablette large — il n'y a
+     plus de carré de quatre à remplir : le bouton n'agrandit rien et se
+     comporte comme une image ordinaire. */
+  (function () {
+    var grilles = document.querySelectorAll('[data-zoom]');
+    if (!grilles.length || !document.body.animate) return;
+
+    var DUREE = 340;
+    var COURBE = 'cubic-bezier(0.22, 0.9, 0.28, 1)';
+    var deuxColonnes = window.matchMedia('(max-width: 759px)');
+    var douceur = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function bascule(li, ouvrir) {
+      var grille = li.parentElement;
+      var avant = li.getBoundingClientRect();
+
+      li.classList.toggle('ouvert', ouvrir);
+      grille.classList.toggle('zoome', ouvrir);
+      li.querySelector('.trav-zoom').setAttribute('aria-expanded', ouvrir ? 'true' : 'false');
+
+      if (douceur.matches) return;
+      var apres = li.getBoundingClientRect();
+      if (!apres.width || !avant.width) return;
+      li.animate(
+        [
+          {
+            transformOrigin: 'top left',
+            transform:
+              'translate(' + (avant.left - apres.left) + 'px, ' + (avant.top - apres.top) + 'px)' +
+              ' scale(' + avant.width / apres.width + ', ' + avant.height / apres.height + ')',
+          },
+          { transformOrigin: 'top left', transform: 'none' },
+        ],
+        { duration: DUREE, easing: COURBE },
+      );
+    }
+
+    function ferme(grille) {
+      var ouvert = grille.querySelector('li.ouvert');
+      if (ouvert) bascule(ouvert, false);
+    }
+
+    grilles.forEach(function (grille) {
+      grille.addEventListener('click', function (e) {
+        var bouton = e.target.closest('.trav-zoom');
+        if (!bouton || !deuxColonnes.matches) return;
+        var li = bouton.parentElement;
+        var etait = li.classList.contains('ouvert');
+        ferme(grille);
+        if (!etait) bascule(li, true);
+      });
+    });
+
+    /* Échap ferme, comme partout ailleurs. Et si l'écran s'élargit au
+       point de sortir de la grille en deux colonnes, la photo ouverte
+       n'aurait plus de carré à occuper : on referme. */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') grilles.forEach(ferme);
+    });
+    deuxColonnes.addEventListener('change', function (e) {
+      if (!e.matches) grilles.forEach(ferme);
+    });
+  })();
+</script>
