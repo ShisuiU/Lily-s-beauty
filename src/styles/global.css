@@ -1264,7 +1264,7 @@ section {
   }
 }
 
-/* ── galerie : l'intérieur du salon ──
+/* ── galerie : l'intérieur du salon, en carrousel ──
    Posée entre les horaires et la réservation, et pas plus bas : on
    montre l'endroit juste avant de demander de réserver, pas après.
 
@@ -1273,15 +1273,36 @@ section {
 #salon {
   background: var(--shell);
 }
-.galerie {
+
+/* La piste déborde volontairement de la colonne de texte : une photo
+   coupée au bord droit dit « il y en a d'autres » mieux qu'une flèche. */
+.car {
   list-style: none;
-  margin: clamp(28px, 4.5vw, 46px) 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(10px, 1.5vw, 20px);
+  margin: clamp(26px, 4vw, 44px) 0 0;
+  padding: 0 var(--gut);
+  display: flex;
+  gap: clamp(10px, 1.4vw, 18px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gut);
+  overscroll-behavior-x: contain;
+  /* La barre est masquée mais le défilement reste : c'est le conteneur
+     lui-même qui porte l'accessibilité au clavier, pas les boutons. */
+  scrollbar-width: none;
 }
-.galerie img {
+.car::-webkit-scrollbar {
+  display: none;
+}
+.car > li {
+  flex: 0 0 auto;
+  /* Assez large pour qu'il reste toujours de quoi défiler. À l'essai
+     précédent les quatre photos tenaient presque dans la fenêtre : il
+     restait 120 px de course, et les flèches comme les points ne
+     servaient plus à rien. Un carrousel montre peu et grand. */
+  width: clamp(230px, 76vw, 320px);
+  scroll-snap-align: start;
+}
+.car img {
   display: block;
   width: 100%;
   height: auto;
@@ -1290,12 +1311,101 @@ section {
      carré ne doit pas casser l'alignement de la rangée. */
   aspect-ratio: 9 / 16;
   object-fit: cover;
-  border-radius: 12px;
 }
-@media (max-width: 860px) {
-  .galerie {
-    grid-template-columns: repeat(2, 1fr);
+@media (min-width: 701px) {
+  .car > li {
+    width: clamp(280px, 40vw, 400px);
   }
+}
+@media (min-width: 1101px) {
+  .car > li {
+    width: clamp(320px, 33vw, 460px);
+  }
+}
+.car:focus-visible {
+  outline: 2px solid var(--rose-ink);
+  outline-offset: 4px;
+}
+
+/* ── commandes du carrousel ── */
+.car-cmd {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: clamp(16px, 2.4vw, 24px);
+}
+.car-btn {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.car-btn:hover {
+  border-color: var(--rose-ink);
+}
+.car-btn[hidden] {
+  display: none;
+}
+.car-btn svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.car-pause {
+  margin-left: auto;
+}
+.car-pts {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+/* 11 px à l'œil, 28 au doigt. La pastille est dessinée par un
+   pseudo-élément et c'est le **bouton** qui fait 28 : dimensionner
+   l'enveloppe ne servait à rien, la zone cliquable restait celle du
+   bouton, soit 11 px — sous le minimum de 24. */
+.car-pt {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.car-pt::before {
+  content: '';
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  transition:
+    background 0.25s,
+    border-color 0.25s;
+}
+.car-pt[aria-current='true']::before {
+  background: var(--rose-ink);
+  border-color: var(--rose-ink);
+}
+.car-pt:hover::before {
+  border-color: var(--rose-ink);
 }
 
 /* ── réserver (bande inversée dans les deux thèmes) ── */

@@ -277,6 +277,30 @@ ligne **dans la même fournée** : au défilement posé chacun arrive seul et
 part sans retard, au doigt rapide ou en arrivant par une ancre ils se
 suivent. Le décalage se paie là où il sert.
 
+**Le carrousel défile tout seul, mais pas longtemps.** La piste des
+photos est un simple conteneur à défilement avec `scroll-snap` : le
+balayage, l'inertie, la molette et les touches fléchées viennent du
+navigateur. Le script n'ajoute que les flèches, le point actif et
+l'avance automatique.
+
+Celle-ci s'arrête **définitivement** dès qu'on touche au carrousel —
+flèche, point ou balayage. Une photo qui glisse toute seule pendant qu'on
+la regarde est une nuisance, et un carrousel qui s'immobilise dès qu'on
+s'en occupe dit mieux que n'importe quel réglage qu'il est au service de
+la visiteuse. Elle ne démarre pas du tout si le système demande moins de
+mouvement, et le bouton pause disparaît alors puisqu'il n'a plus d'objet.
+
+La photo courante se **déduit de la position de défilement** plutôt que
+d'être mémorisée. Un premier essai suivait la photo la plus visible :
+quand plusieurs tiennent à l'écran, c'était toujours la première et les
+points ne bougeaient jamais. Deux autres pièges du même essai, tous deux
+attrapés à la mesure et non à l'œil : les vignettes étaient trop petites,
+si bien que les quatre tenaient presque dans la fenêtre et qu'il ne
+restait que 120 px de course — flèches et points ne servaient à rien ; et
+les pastilles faisaient 28 px d'enveloppe mais 11 px de bouton, donc
+11 px de zone cliquable, sous le minimum de 24. Un carrousel montre peu
+et grand.
+
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de
 Paris via `Intl`, surligne le jour courant et annonce la prochaine

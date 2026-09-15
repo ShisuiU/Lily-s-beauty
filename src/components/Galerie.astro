@@ -26,15 +26,22 @@ const photos = galerie.map((p) => {
       <h2>{galerieIntro.titre}</h2>
       <p>{galerieIntro.lead}</p>
     </div>
+  </div>
 
-    <ul class="galerie">
-      {photos.map((p) => (
-        <li class="monte">
+  {/* La piste est un conteneur à défilement, pas un empilement de calques
+      animés : le balayage, la molette, les touches fléchées et le clavier
+      fonctionnent donc sans une ligne de script. Ce qui suit ne fait
+      qu'ajouter ce que la plateforme ne donne pas — les flèches, les
+      points, la lecture automatique. */}
+  <div class="car-zone monte" aria-roledescription="carrousel" aria-label={galerieIntro.titre}>
+    <ul class="car" tabindex="0" aria-label="Photos, faites défiler horizontalement">
+      {photos.map((p, i) => (
+        <li aria-label={`Photo ${i + 1} sur ${photos.length}`}>
           <Image
             src={p.src}
             alt={p.alt}
-            widths={[280, 560, 840]}
-            sizes="(max-width: 560px) 44vw, (max-width: 980px) 30vw, 22vw"
+            widths={[320, 640, 900]}
+            sizes="(max-width: 700px) 76vw, (max-width: 1100px) 38vw, 27vw"
             format="avif"
             quality={62}
             loading="lazy"
@@ -42,5 +49,155 @@ const photos = galerie.map((p) => {
         </li>
       ))}
     </ul>
+
+    <div class="car-cmd shell">
+      <button type="button" class="car-btn" data-car="prev" aria-label="Photo précédente">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M15 5 8 12l7 7" />
+        </svg>
+      </button>
+
+      <ul class="car-pts">
+        {photos.map((_, i) => (
+          <li>
+            <button type="button" class="car-pt" data-car-go={i} aria-label={`Aller à la photo ${i + 1}`}>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <button type="button" class="car-btn" data-car="next" aria-label="Photo suivante">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="m9 5 7 7-7 7" />
+        </svg>
+      </button>
+
+      <button type="button" class="car-btn car-pause" data-car="pause" aria-label="Mettre le défilement en pause">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9 5v14M15 5v14" />
+        </svg>
+      </button>
+    </div>
   </div>
 </section>
+
+<script is:inline>
+  /* Carrousel.
+
+     Le défilement, l'inertie et l'accrochage sont faits par le navigateur
+     (`scroll-snap`). Ce script n'ajoute que trois choses : les boutons,
+     le point actif, et l'avance automatique.
+
+     La photo courante se **déduit de la position de défilement**, elle
+     n'est pas mémorisée à part. Un premier essai suivait la photo la plus
+     visible : quand plusieurs tiennent à l'écran, c'était toujours la
+     première, et les points ne bougeaient jamais. Lire le défilement
+     donne la même réponse que le navigateur, y compris après un balayage
+     à la main ou un arrêt entre deux vignettes.
+
+     L'avance automatique s'arrête **définitivement** à la première action
+     de la visiteuse. Une photo qui glisse toute seule pendant qu'on la
+     regarde est une nuisance ; rien n'est plus éloquent qu'un carrousel
+     qui cesse de bouger dès qu'on s'en occupe. Elle ne démarre pas si le
+     système demande moins de mouvement, et se suspend quand l'onglet
+     passe en arrière-plan. */
+  (function () {
+    var zone = document.querySelector('.car-zone');
+    if (!zone) return;
+    var piste = zone.querySelector('.car');
+    var vues = Array.prototype.slice.call(piste.children);
+    var points = Array.prototype.slice.call(zone.querySelectorAll('.car-pt'));
+    var pause = zone.querySelector('[data-car="pause"]');
+    if (vues.length < 2) return;
+
+    var doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var minuteur = null;
+    var arrete = false;
+
+    function bout() {
+      return piste.scrollWidth - piste.clientWidth;
+    }
+
+    function courante() {
+      var x = piste.scrollLeft;
+      var choix = 0;
+      var ecart = Infinity;
+      for (var i = 0; i < vues.length; i++) {
+        var d = Math.abs(vues[i].offsetLeft - piste.offsetLeft - x);
+        if (d < ecart) { ecart = d; choix = i; }
+      }
+      /* Au bout de la course, les dernières vignettes ne peuvent plus être
+         amenées à gauche : c'est la dernière qui est « courante ». */
+      if (x >= bout() - 2) choix = vues.length - 1;
+      return choix;
+    }
+
+    function aller(i, manuel) {
+      var n = (i + vues.length) % vues.length;
+      piste.scrollTo({
+        left: Math.min(vues[n].offsetLeft - piste.offsetLeft, bout()),
+        behavior: doux ? 'smooth' : 'auto',
+      });
+      if (manuel) stopper();
+    }
+
+    var enAttente = false;
+    function marquer() {
+      if (enAttente) return;
+      enAttente = true;
+      requestAnimationFrame(function () {
+        enAttente = false;
+        var i = courante();
+        for (var n = 0; n < points.length; n++) {
+          points[n].setAttribute('aria-current', n === i ? 'true' : 'false');
+        }
+      });
+    }
+    piste.addEventListener('scroll', marquer, { passive: true });
+    window.addEventListener('resize', marquer);
+    marquer();
+
+    function stopper() {
+      arrete = true;
+      clearInterval(minuteur);
+      minuteur = null;
+      if (pause) pause.hidden = true;
+    }
+    function lancer() {
+      if (arrete || !doux || minuteur) return;
+      minuteur = setInterval(function () {
+        aller(piste.scrollLeft >= bout() - 2 ? 0 : courante() + 1);
+      }, 5200);
+    }
+    function suspendre() {
+      clearInterval(minuteur);
+      minuteur = null;
+    }
+
+    zone.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('[data-car], [data-car-go]') : null;
+      if (!b) return;
+      var go = b.getAttribute('data-car-go');
+      if (go !== null) return aller(parseInt(go, 10), true);
+      var quoi = b.getAttribute('data-car');
+      if (quoi === 'prev') aller(courante() - 1, true);
+      else if (quoi === 'next') aller(courante() + 1, true);
+      else if (quoi === 'pause') stopper();
+    });
+
+    /* Un balayage compte comme une prise en main. */
+    piste.addEventListener('pointerdown', stopper, { once: true });
+    piste.addEventListener('keydown', stopper, { once: true });
+
+    zone.addEventListener('pointerenter', suspendre);
+    zone.addEventListener('pointerleave', lancer);
+    zone.addEventListener('focusin', suspendre);
+    zone.addEventListener('focusout', lancer);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) suspendre(); else lancer();
+    });
+
+    if (!doux && pause) pause.hidden = true;
+    lancer();
+  })();
+</script>
