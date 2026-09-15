@@ -277,29 +277,32 @@ ligne **dans la même fournée** : au défilement posé chacun arrive seul et
 part sans retard, au doigt rapide ou en arrivant par une ancre ils se
 suivent. Le décalage se paie là où il sert.
 
-**Le carrousel défile tout seul, mais pas longtemps.** La piste des
-photos est un simple conteneur à défilement avec `scroll-snap` : le
-balayage, l'inertie, la molette et les touches fléchées viennent du
-navigateur. Le script n'ajoute que les flèches, le point actif et
-l'avance automatique.
+**Le ruban défile tout seul, en CSS.** Les photos glissent en continu
+derrière un fondu sur les bords : quatre copies de la série défilent
+d'exactement une série par tour, si bien que le raccord est invisible.
+Aucun script ne pilote le mouvement.
 
-Celle-ci s'arrête **définitivement** dès qu'on touche au carrousel —
-flèche, point ou balayage. Une photo qui glisse toute seule pendant qu'on
-la regarde est une nuisance, et un carrousel qui s'immobilise dès qu'on
-s'en occupe dit mieux que n'importe quel réglage qu'il est au service de
-la visiteuse. Elle ne démarre pas du tout si le système demande moins de
-mouvement, et le bouton pause disparaît alors puisqu'il n'a plus d'objet.
+Deux détails font toute la différence entre ce motif et sa version
+cassée. L'écart entre les vignettes est une **marge**, jamais un `gap` :
+avec un `gap`, la piste mesure seize vignettes et quinze écarts, le quart
+exact ne tombe plus sur une série entière, et le ruban saute d'un quart
+d'écart à chaque tour. Et le décalage de l'animation est **calculé depuis
+le nombre de copies** (`calc(-100% / var(--series))`), pas écrit à côté :
+changer ce nombre ne peut donc pas désaccorder les deux. Vérifié de 390 à
+2 560 px de large : ce qui reste derrière après un tour couvre toujours la
+fenêtre, donc jamais de trou.
 
-La photo courante se **déduit de la position de défilement** plutôt que
-d'être mémorisée. Un premier essai suivait la photo la plus visible :
-quand plusieurs tiennent à l'écran, c'était toujours la première et les
-points ne bougeaient jamais. Deux autres pièges du même essai, tous deux
-attrapés à la mesure et non à l'œil : les vignettes étaient trop petites,
-si bien que les quatre tenaient presque dans la fenêtre et qu'il ne
-restait que 120 px de course — flèches et points ne servaient à rien ; et
-les pastilles faisaient 28 px d'enveloppe mais 11 px de bouton, donc
-11 px de zone cliquable, sous le minimum de 24. Un carrousel montre peu
-et grand.
+**Arrêter le ruban le rend explorable.** Le figer sur place aurait suffi
+à la lettre de la règle sur les contenus en mouvement, mais aurait
+enfermé hors de l'écran les photos qu'aucun geste ne peut alors
+atteindre — sur téléphone, une seule reste visible. Le bouton remet donc
+la piste à zéro, masque les séries de décor et rend la bande défilable au
+doigt. Le mouvement réduit produit directement cet état, et le bouton se
+retire puisqu'il n'a plus rien à arrêter. Le survol, lui, suspend le
+temps d'un regard sans rien déplacer.
+
+Les copies portent `aria-hidden` et un `alt` vide : un lecteur d'écran
+énonce les quatre photos une fois, pas seize.
 
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de

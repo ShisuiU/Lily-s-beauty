@@ -3,10 +3,6 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { galerie, galerieIntro } from '../data/site';
 
-/* Les fichiers sont nommés dans site.ts, pas importés un à un : ajouter
-   une photo se fait donc en déposant le fichier et en écrivant sa
-   description, sans toucher à ce composant. `eager` parce qu'Astro doit
-   optimiser les images au build, pas à l'exécution. */
 const fichiers = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/salon-*.jpg',
   { eager: true },
@@ -17,6 +13,19 @@ const photos = galerie.map((p) => {
   if (!trouve) throw new Error(`galerie : src/assets/${p.fichier} est introuvable`);
   return { src: trouve.default, alt: p.alt };
 });
+
+/* Le ruban défile sans fin : il faut donc plus de photos que l'écran n'en
+   montre. Un tour avance d'une série ; ce qui reste derrière, soit
+   (SERIES - 1) séries, doit encore couvrir la fenêtre. Avec quatre, cela
+   fait 3 680 px de marge : large pour n'importe quel écran.
+
+   Le décalage de l'animation est calculé depuis ce nombre, pas écrit à
+   côté : changer SERIES ne peut donc pas désaccorder les deux et faire
+   sauter le raccord à chaque tour.
+
+   Seule la première série est lue par les lecteurs d'écran ; les autres
+   sont du décor et le disent. */
+const SERIES = 4;
 ---
 
 <section id="salon">
@@ -28,176 +37,86 @@ const photos = galerie.map((p) => {
     </div>
   </div>
 
-  {/* La piste est un conteneur à défilement, pas un empilement de calques
-      animés : le balayage, la molette, les touches fléchées et le clavier
-      fonctionnent donc sans une ligne de script. Ce qui suit ne fait
-      qu'ajouter ce que la plateforme ne donne pas — les flèches, les
-      points, la lecture automatique. */}
-  <div class="car-zone monte" aria-roledescription="carrousel" aria-label={galerieIntro.titre}>
-    <ul class="car" tabindex="0" aria-label="Photos, faites défiler horizontalement">
-      {photos.map((p, i) => (
-        <li aria-label={`Photo ${i + 1} sur ${photos.length}`}>
-          <Image
-            src={p.src}
-            alt={p.alt}
-            widths={[320, 640, 900]}
-            sizes="(max-width: 700px) 76vw, (max-width: 1100px) 38vw, 27vw"
-            format="avif"
-            quality={62}
-            loading="lazy"
-          />
-        </li>
+  <div class="ruban monte" data-ruban>
+    <div class="ruban-piste" style={`--series: ${SERIES}`}>
+      {Array.from({ length: SERIES }).map((_, serie) => (
+        <ul class="ruban-serie" aria-hidden={serie > 0 ? 'true' : undefined}>
+          {photos.map((p) => (
+            <li>
+              <Image
+                src={p.src}
+                alt={serie === 0 ? p.alt : ''}
+                widths={[240, 480, 640]}
+                sizes="(max-width: 700px) 56vw, (max-width: 1100px) 30vw, 22vw"
+                format="avif"
+                quality={62}
+                loading="lazy"
+              />
+            </li>
+          ))}
+        </ul>
       ))}
-    </ul>
-
-    <div class="car-cmd shell">
-      <button type="button" class="car-btn" data-car="prev" aria-label="Photo précédente">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M15 5 8 12l7 7" />
-        </svg>
-      </button>
-
-      <ul class="car-pts">
-        {photos.map((_, i) => (
-          <li>
-            <button type="button" class="car-pt" data-car-go={i} aria-label={`Aller à la photo ${i + 1}`}>
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <button type="button" class="car-btn" data-car="next" aria-label="Photo suivante">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="m9 5 7 7-7 7" />
-        </svg>
-      </button>
-
-      <button type="button" class="car-btn car-pause" data-car="pause" aria-label="Mettre le défilement en pause">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M9 5v14M15 5v14" />
-        </svg>
-      </button>
     </div>
+  </div>
+
+  <div class="shell ruban-cmd">
+    <button type="button" data-ruban-pause aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="i-pause">
+        <path d="M9 5v14M15 5v14" />
+      </svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="i-play">
+        <path d="M8 5l11 7-11 7z" />
+      </svg>
+      <span data-ruban-mot>Arrêter le défilement</span>
+    </button>
   </div>
 </section>
 
 <script is:inline>
-  /* Carrousel.
+  /* Le ruban défile en CSS seul. Ce script ne sert qu'au bouton.
 
-     Le défilement, l'inertie et l'accrochage sont faits par le navigateur
-     (`scroll-snap`). Ce script n'ajoute que trois choses : les boutons,
-     le point actif, et l'avance automatique.
-
-     La photo courante se **déduit de la position de défilement**, elle
-     n'est pas mémorisée à part. Un premier essai suivait la photo la plus
-     visible : quand plusieurs tiennent à l'écran, c'était toujours la
-     première, et les points ne bougeaient jamais. Lire le défilement
-     donne la même réponse que le navigateur, y compris après un balayage
-     à la main ou un arrêt entre deux vignettes.
-
-     L'avance automatique s'arrête **définitivement** à la première action
-     de la visiteuse. Une photo qui glisse toute seule pendant qu'on la
-     regarde est une nuisance ; rien n'est plus éloquent qu'un carrousel
-     qui cesse de bouger dès qu'on s'en occupe. Elle ne démarre pas si le
-     système demande moins de mouvement, et se suspend quand l'onglet
-     passe en arrière-plan. */
+     Arrêter ne fige pas seulement l'animation : ça rend aussi le ruban
+     **défilable à la main**. Sans quoi mettre en pause enfermerait les
+     photos hors écran, qu'aucun geste ne pourrait plus atteindre. Même
+     raison pour le mouvement réduit, traité en CSS : là le ruban est une
+     bande qu'on fait défiler soi-même, du premier au dernier cliché. */
   (function () {
-    var zone = document.querySelector('.car-zone');
-    if (!zone) return;
-    var piste = zone.querySelector('.car');
-    var vues = Array.prototype.slice.call(piste.children);
-    var points = Array.prototype.slice.call(zone.querySelectorAll('.car-pt'));
-    var pause = zone.querySelector('[data-car="pause"]');
-    if (vues.length < 2) return;
+    var ruban = document.querySelector('[data-ruban]');
+    var bouton = document.querySelector('[data-ruban-pause]');
+    if (!ruban || !bouton) return;
 
+    var mot = bouton.querySelector('[data-ruban-mot]');
     var doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var minuteur = null;
-    var arrete = false;
-
-    function bout() {
-      return piste.scrollWidth - piste.clientWidth;
+    if (!doux) {
+      /* Le CSS a déjà transformé le ruban en bande défilable ; le bouton
+         n'aurait rien à arrêter. */
+      bouton.hidden = true;
+      return;
     }
 
-    function courante() {
-      var x = piste.scrollLeft;
-      var choix = 0;
-      var ecart = Infinity;
-      for (var i = 0; i < vues.length; i++) {
-        var d = Math.abs(vues[i].offsetLeft - piste.offsetLeft - x);
-        if (d < ecart) { ecart = d; choix = i; }
-      }
-      /* Au bout de la course, les dernières vignettes ne peuvent plus être
-         amenées à gauche : c'est la dernière qui est « courante ». */
-      if (x >= bout() - 2) choix = vues.length - 1;
-      return choix;
+    function etat(arrete) {
+      ruban.classList.toggle('arrete', arrete);
+      bouton.setAttribute('aria-pressed', arrete ? 'true' : 'false');
+      mot.textContent = arrete ? 'Relancer le défilement' : 'Arrêter le défilement';
     }
 
-    function aller(i, manuel) {
-      var n = (i + vues.length) % vues.length;
-      piste.scrollTo({
-        left: Math.min(vues[n].offsetLeft - piste.offsetLeft, bout()),
-        behavior: doux ? 'smooth' : 'auto',
-      });
-      if (manuel) stopper();
-    }
-
-    var enAttente = false;
-    function marquer() {
-      if (enAttente) return;
-      enAttente = true;
-      requestAnimationFrame(function () {
-        enAttente = false;
-        var i = courante();
-        for (var n = 0; n < points.length; n++) {
-          points[n].setAttribute('aria-current', n === i ? 'true' : 'false');
-        }
-      });
-    }
-    piste.addEventListener('scroll', marquer, { passive: true });
-    window.addEventListener('resize', marquer);
-    marquer();
-
-    function stopper() {
-      arrete = true;
-      clearInterval(minuteur);
-      minuteur = null;
-      if (pause) pause.hidden = true;
-    }
-    function lancer() {
-      if (arrete || !doux || minuteur) return;
-      minuteur = setInterval(function () {
-        aller(piste.scrollLeft >= bout() - 2 ? 0 : courante() + 1);
-      }, 5200);
-    }
-    function suspendre() {
-      clearInterval(minuteur);
-      minuteur = null;
-    }
-
-    zone.addEventListener('click', function (e) {
-      var b = e.target.closest ? e.target.closest('[data-car], [data-car-go]') : null;
-      if (!b) return;
-      var go = b.getAttribute('data-car-go');
-      if (go !== null) return aller(parseInt(go, 10), true);
-      var quoi = b.getAttribute('data-car');
-      if (quoi === 'prev') aller(courante() - 1, true);
-      else if (quoi === 'next') aller(courante() + 1, true);
-      else if (quoi === 'pause') stopper();
+    bouton.addEventListener('click', function () {
+      etat(!ruban.classList.contains('arrete'));
     });
 
-    /* Un balayage compte comme une prise en main. */
-    piste.addEventListener('pointerdown', stopper, { once: true });
-    piste.addEventListener('keydown', stopper, { once: true });
-
-    zone.addEventListener('pointerenter', suspendre);
-    zone.addEventListener('pointerleave', lancer);
-    zone.addEventListener('focusin', suspendre);
-    zone.addEventListener('focusout', lancer);
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) suspendre(); else lancer();
+    /* Survol et focus suspendent sans toucher au bouton : on regarde,
+       puis ça repart. Le bouton, lui, décide pour de bon. */
+    ruban.addEventListener('pointerenter', function () {
+      if (!ruban.classList.contains('arrete')) ruban.classList.add('survol');
     });
-
-    if (!doux && pause) pause.hidden = true;
-    lancer();
+    ruban.addEventListener('pointerleave', function () {
+      ruban.classList.remove('survol');
+    });
+    ruban.addEventListener('focusin', function () {
+      ruban.classList.add('survol');
+    });
+    ruban.addEventListener('focusout', function () {
+      ruban.classList.remove('survol');
+    });
   })();
 </script>
