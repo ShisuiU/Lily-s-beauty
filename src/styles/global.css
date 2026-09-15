@@ -760,44 +760,61 @@ section {
   }
 }
 
-/* ── qui fait quoi ── */
+/* ── qui fait quoi ──
+   Deux blocs, et non deux lignes d'un même tableau : le salon réunit deux
+   auto-entreprises distinctes, et deux cartes séparées le disent mieux
+   qu'une liste à filets.
+
+   Fond encre, comme la bande « réserver » plus bas — le vocabulaire
+   existe déjà sur la page. Deux autres fonds ont été essayés et écartés :
+   le blanc, qui est pris plus bas par les cartes de prestations et aurait
+   laissé croire au même niveau de lecture ; le rosé pâle, qui ne se
+   détache pas du crème de la section (#fbf5f7 sur #f6f3f1, on ne voyait
+   que la bordure). L'encre, elle, fait de ce bloc le point d'appui du
+   haut de section — ce sont les personnes, pas les tarifs.
+
+   Tout est en jetons de thème : si la palette sombre était un jour
+   servie, la carte s'inverserait d'elle-même, comme la bande. */
 .who {
   list-style: none;
   margin: 26px 0 0;
   padding: 0;
-  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  gap: 12px;
 }
 .who li {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  column-gap: 16px;
-  padding-block: 10px;
-  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: clamp(15px, 1.9vw, 20px) clamp(15px, 1.9vw, 22px);
+  background: var(--ink);
+  color: var(--paper);
 }
 .who .who-name {
   font-family: var(--serif);
-  font-size: 1.15rem;
-  font-weight: 500;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.15;
 }
 .who .who-craft {
-  grid-column: 1;
   font-size: 0.88rem;
-  color: var(--muted);
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--paper) 74%, transparent);
 }
+/* `margin-top: auto` aligne les deux pseudos sur la même ligne quel que
+   soit le nombre de lignes du métier au-dessus — « les cils, les sourcils
+   et l'épilation » en prend deux là où « les ongles » en prend une. */
 .who .ig {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+  margin-top: auto;
+  padding-top: 10px;
+  color: var(--rose);
 }
-@media (max-width: 540px) {
-  .who li {
-    grid-template-columns: 1fr;
-  }
-  .who .ig {
-    grid-column: 1;
-    grid-row: auto;
-    margin-top: 2px;
-  }
+/* Le rose foncé du contour de focus tient tout juste sur l'encre
+   (3,46:1, le minimum étant 3). Le rose clair, celui du lien lui-même,
+   y monte à 6,05:1. */
+.who li :focus-visible {
+  outline-color: var(--rose);
 }
 
 .about-p {

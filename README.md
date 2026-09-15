@@ -418,6 +418,20 @@ différents — « Aisselles » vaut 12 € en 15 min chez la femme, 14 € en
 20 min chez l'homme. Écrasées sur une seule clé, ces paires s'annulent et
 un écart passe.
 
+**Les deux sœurs, en encre.** Le bloc qui les présente en haut de la
+section est passé d'une liste à filets à deux cartes à fond encre, une
+par praticienne — le salon réunit deux auto-entreprises distinctes, et
+deux cartes le disent mieux que deux lignes d'un même tableau. Le fond
+reprend celui de la bande « réserver » : le vocabulaire existait déjà.
+
+Deux autres fonds ont été essayés et écartés. Le blanc est pris plus bas
+par les cartes de prestations, et l'employer ici aurait laissé croire au
+même niveau de lecture. Le rosé pâle ne se détache pas du crème de la
+section — #fbf5f7 sur #f6f3f1, on ne voyait que la bordure. Mesuré sur
+l'encre : le prénom à 17,39:1, le métier à 9,91:1, le pseudo Instagram à
+6,05:1, et le contour de focus passé au rose clair, qui y vaut 6,05:1
+contre 3,46:1 pour le rose foncé.
+
 **Trois niveaux, trois traitements.** Univers, catégorie, prestation
 partageaient presque la même graisse : la catégorie était un titre de
 1,02 rem en gras posé sur des prestations de 1 rem, et la liste se lisait
