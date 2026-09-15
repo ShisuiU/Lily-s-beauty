@@ -44,12 +44,17 @@ FAMILLES = {
 #
 # Au fichier et non à la famille, parce que la plupart n'ont rien à
 # retirer : rogner les quatre pour le compte de l'une aurait mangé le
-# cadrage des trois autres sans raison. Le salon a d'ailleurs recorrigé
-# une photo lui-même depuis ; sa ligne a disparu d'ici.
+# cadrage des trois autres sans raison.
+#
+# Cette table se périme. Le salon peut renvoyer une photo qu'il a
+# recadrée lui-même, sous le même nom : la ligne d'ici continuerait alors
+# à rogner une bande qui n'existe plus. Le contrôle plus bas n'attrape
+# que le fichier disparu, pas celui-là — d'où le rappel du rognage
+# appliqué dans la sortie du script : une bande annoncée sur une photo
+# qu'on vient de corriger se voit.
 INTERFACE = {
-    'ongles-2-leopard-fleur.jpg': dict(rogne_haut=0.09),     # « 3/3 »
     'ongles-3-french-couleurs.jpg': dict(rogne_droite=0.025),  # barre de défilement
-    'cils-3.jpg': dict(rogne_droite=0.025),                  # barre de défilement
+    'cils-3.jpg': dict(rogne_droite=0.025),                    # barre de défilement
 }
 
 
@@ -86,8 +91,13 @@ def main() -> None:
         out = SORTIE / f.name
         propre.save(out, 'JPEG', quality=QUALITE, optimize=True, progressive=True)
         reste = len(Image.open(out).getexif())
+        coupes = ', '.join(
+            f'{cote} {part:.0%}'
+            for cote, part in (('haut', haut), ('droite', droite)) if part
+        )
         print(f'{out}  {propre.width}x{propre.height}  '
-              f'{out.stat().st_size / 1024:.0f} Ko  métadonnées restantes : {reste}')
+              f'{out.stat().st_size / 1024:.0f} Ko  métadonnées restantes : {reste}'
+              + (f'  ← rogné : {coupes}' if coupes else ''))
 
 
 if __name__ == '__main__':

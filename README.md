@@ -447,10 +447,14 @@ l'écran du téléphone qu'on retire, pas la photo qu'on arrange.
 
 Le réglage se fait **fichier par fichier**, pas par famille : la plupart
 n'ont rien à retirer, et rogner les quatre pour le compte d'une seule
-aurait mangé le cadrage des trois autres sans raison. Le script refuse de
-tourner si cette table vise un fichier qui n'existe plus — une photo
-recorrigée par le salon, par exemple, dont la ligne doit alors
-disparaître.
+aurait mangé le cadrage des trois autres sans raison.
+
+Cette table se périme, et deux garde-fous s'en occupent. Le script refuse
+de tourner si elle vise un fichier qui n'existe plus. Et il **annonce en
+sortie la bande qu'il a coupée**, fichier par fichier — parce que le cas
+courant n'est pas le fichier disparu mais la photo renvoyée corrigée sous
+le même nom, que le premier contrôle ne voit pas : une bande annoncée sur
+une photo qu'on vient de corriger, elle, se remarque.
 
 Les fichiers de cils sont numérotés, pas nommés par technique : on ne
 distingue pas à l'œil une pose cil à cil d'une mixte ou d'un volume
