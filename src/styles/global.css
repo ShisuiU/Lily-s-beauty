@@ -28,6 +28,10 @@
 }
 
 :root {
+  /* Ascenseurs, champs et contrôles natifs restent clairs eux aussi :
+     sans cette ligne, un téléphone en thème sombre les rendrait sombres
+     au milieu d'une page claire. */
+  color-scheme: light;
   interpolate-size: allow-keywords;
   --ink: #191a1e;
   --ink-2: #4a4542;
@@ -55,6 +59,14 @@
   --banner: 32px;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   PALETTE SOMBRE — écrite, conservée, mais NON SERVIE.
+   <html> porte data-theme="light" : ni ce bloc ni le suivant ne
+   s'appliquent. Décision de marque, pas un oubli — l'identité du
+   salon est crème, rose et encre, et l'inversion la dénature.
+   Pour la rendre au réglage du téléphone : retirer data-theme du
+   <html> dans Base.astro. Pour forcer le sombre : y mettre "dark".
+   ───────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --ink: #f2eeec;
@@ -921,6 +933,45 @@ section {
 
 #tarifs {
   background: var(--shell);
+  position: relative;
+  overflow: hidden;              /* le motif déborde volontairement */
+}
+
+/* Le rameau du logo, repris dans l'angle du bloc. Servi en masque plutôt
+   qu'en <img> : le fichier ne porte qu'un alpha, la couleur vient d'ici
+   — donc de la palette — et un pseudo-élément est par construction
+   invisible aux lecteurs d'écran, ce qui est exactement son statut.
+   Retourné, parce que le logo le pose à gauche d'un texte qui part vers
+   la droite ; ici le titre occupe déjà ce côté. */
+#tarifs > .shell {
+  position: relative;
+  z-index: 1;
+}
+#tarifs::before {
+  content: '';
+  position: absolute;
+  top: clamp(-52px, -4vw, -18px);
+  right: clamp(-58px, -4.5vw, -20px);
+  width: clamp(196px, 26vw, 340px);
+  aspect-ratio: 620 / 475;
+  background: var(--ink);
+  opacity: 0.1;
+  transform: scaleX(-1);
+  pointer-events: none;
+  /* Un élément positionné se peint après le texte courant : sans ces
+     deux plans, le décor passerait par-dessus les mots. */
+  z-index: 0;
+  -webkit-mask: url('/motif-lys.png') no-repeat center / contain;
+  mask: url('/motif-lys.png') no-repeat center / contain;
+}
+/* Sur téléphone, l'angle du bloc passe sous l'en-tête collant : sans ce
+   décalage le rameau s'y cache et ne sert à rien. */
+@media (max-width: 720px) {
+  #tarifs::before {
+    top: 12px;
+    right: -40px;
+    width: 208px;
+  }
 }
 .prices {
   display: grid;

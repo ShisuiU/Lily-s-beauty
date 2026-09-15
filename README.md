@@ -64,7 +64,7 @@ npm run preview  # sert dist/ localement
 
 ### Scripts de génération
 
-Quatre scripts produisent des fichiers versionnés dans le dépôt. Ils ne
+Cinq scripts produisent des fichiers versionnés dans le dépôt. Ils ne
 tournent **pas** au build : on les relance à la main quand la source
 change.
 
@@ -73,16 +73,17 @@ python3 scripts/fetch-fonts.py                     # public/fonts/ + src/styles/
 python3 scripts/generate-map.py                    # src/assets/plan-salon.jpg
 python3 scripts/generate-og.py                     # public/og.jpg
 python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
+python3 scripts/prepare-motif.py brand/motif-lys-original.png  # public/motif-lys.png
 ```
 
 Dépendances : `pip install Pillow fonttools brotli numpy scipy`.
 
-Le logo livré par le salon est conservé tel quel dans `brand/`. Le script
-en tire la version qu'affiche le site : fond détouré, ligne d'adresse et
-feuillage débordant retirés, bavure effacée. Il **relève** ces découpes
-sur le fichier au lieu de les coder en dur, et imprime ce qu'il a trouvé
-— après un nouveau logo, lire ces nombres avant de faire confiance au
-résultat.
+Les fichiers livrés par le salon sont conservés tels quels dans
+`brand/` ; les scripts en tirent les versions qu'affiche le site. Pour le
+logo : fond détouré, ligne d'adresse et feuillage débordant retirés,
+bavures effacées. Ces découpes sont **relevées sur le fichier** au lieu
+d'être codées en dur, et le script imprime ce qu'il a trouvé. Après un
+nouveau logo, lire ces nombres avant de faire confiance au résultat.
 
 ---
 
@@ -148,6 +149,23 @@ styles par défaut imposent `width: fit-content`, ce qui annulait
 l'`inset: 0` du panneau et le laissait couvrir 60 % de l'écran. Il est
 désormais tenu par un script court, qui ne fait que ce que la plateforme
 ne fait pas : `inert`, la touche Échap et le retour du focus.
+
+**Le site s'affiche en clair, toujours.** Une palette sombre existe dans
+`global.css`, mais `<html>` porte `data-theme="light"` et elle n'est
+jamais servie. C'est un choix de marque, pas un oubli : l'identité du
+salon est crème, rose et encre, et l'inversion la dénature — le logo est
+dessiné pour un fond clair, les photos de la façade aussi. Un téléphone
+réglé en sombre affiche donc le site tel qu'il a été composé.
+`color-scheme: light` étend la consigne aux ascenseurs et aux contrôles
+natifs. Pour rendre la main au réglage du téléphone : retirer
+`data-theme` du `<html>` dans `Base.astro`.
+
+**Le rameau du logo, une fois.** Le motif de l'angle de « Prestations et
+tarifs » est servi en masque CSS et non en `<img>` : le fichier ne porte
+qu'un alpha, la couleur vient de la palette, et un pseudo-élément est par
+construction invisible aux lecteurs d'écran — ce qui est exactement son
+statut. Il est posé sur un seul bloc : répété partout, un ornement cesse
+d'en être un.
 
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de

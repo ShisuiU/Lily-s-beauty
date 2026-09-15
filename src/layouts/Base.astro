@@ -62,7 +62,10 @@ const showBanner = pending.length > 0;
 ---
 
 <!doctype html>
-<html lang="fr" class={showBanner ? 'has-banner' : undefined}>
+<!-- data-theme="light" : le site s'affiche en clair quel que soit le
+     réglage du téléphone. Voir la note au-dessus de la palette sombre
+     dans global.css. -->
+<html lang="fr" data-theme="light" class={showBanner ? 'has-banner' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

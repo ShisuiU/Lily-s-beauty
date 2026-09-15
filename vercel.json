@@ -25,7 +25,7 @@
       ]
     },
     {
-      "source": "/(og.jpg|favicon.svg)",
+      "source": "/(og.jpg|favicon.svg|motif-lys.png)",
       "headers": [
         {
           "key": "Cache-Control",
