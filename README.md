@@ -316,7 +316,8 @@ recherche locale.
 ## À faire ensuite
 
 1. **Photographies du travail réalisé.** La galerie montre désormais
-   l'intérieur — deux cabines, le poste de manucure, le coin d'attente —
+   l'intérieur — le poste de soin sous deux angles, le coin manucure,
+   celui d'attente —
    mais toujours pas un ongle ni un regard. Sur ce métier, c'est ce qui
    convertit, et les deux comptes Instagram en regorgent. Les déposer
    dans `brand/` sous le nom `salon-*.jpg` et relancer

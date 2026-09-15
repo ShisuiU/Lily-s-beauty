@@ -128,14 +128,14 @@ export const galerie = [
       + "une grande lampe à abat-jour de lin, un mur framboise et un bahut peint en rose.",
   },
   {
-    fichier: 'salon-2-cabine-guirlande.jpg',
-    alt: 'Une cabine de soin : table d\'esthétique, lampe loupe en demi-lune, '
-      + 'rideau de guirlandes lumineuses au mur et suspension en rotin.',
+    fichier: 'salon-2-poste-guirlande.jpg',
+    alt: 'Le poste de soin vu depuis l\'entrée : table d\'esthétique, lampe loupe '
+      + 'en demi-lune, rideau de guirlandes lumineuses au mur et suspension en rotin.',
   },
   {
-    fichier: 'salon-3-cabine-fenetre.jpg',
-    alt: 'La seconde cabine, près de la fenêtre : voilages clairs, mur rose, '
-      + 'miroir rond lumineux et commode blanche.',
+    fichier: 'salon-3-poste-fenetre.jpg',
+    alt: 'Le même poste vu de l\'autre côté, face à la fenêtre : voilages clairs, '
+      + 'mur rose, miroir rond lumineux et commode blanche.',
   },
   {
     fichier: 'salon-4-manucure.jpg',
@@ -146,7 +146,7 @@ export const galerie = [
 
 export const galerieIntro = {
   titre: 'Le salon',
-  lead: 'Deux cabines, un poste de manucure, et un canapé pour attendre.',
+  lead: 'Un poste de soin, un coin manucure, et un canapé pour attendre.',
 };
 
 /* ─────────────────────────── HORAIRES ───────────────────────────
