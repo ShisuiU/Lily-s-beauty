@@ -1068,9 +1068,11 @@ section {
   mask-image: url('/motif-lys-fleur.png');
 }
 
-/* La pointe seule sur les pages de texte, mentions légales et erreur :
-   elles n'ont ni photo ni couleur, et une brindille suffit à les
-   rattacher au reste. La plus discrète des trois. */
+/* La fleur encore, sur les pages de texte — mentions légales et erreur.
+   Elles n'ont ni photo ni couleur, et leur droite est vide à côté du
+   titre. Une première version y posait la pointe du rameau, débordée
+   par le bord : on n'en voyait que la queue, ça lisait comme une
+   rayure. Un fragment qui déborde doit montrer sa fleur, pas sa tige. */
 .legal::before {
   top: clamp(90px, 14vw, 150px);
   right: clamp(20px, 6vw, 110px);
