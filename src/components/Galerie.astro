@@ -59,15 +59,17 @@ const SERIES = 4;
     </div>
   </div>
 
+  {/* Icône seule : le nom accessible passe donc par `aria-label`, que le
+      script tient à jour en même temps que l'icône. Sans lui le bouton
+      serait muet pour un lecteur d'écran. */}
   <div class="shell ruban-cmd">
-    <button type="button" data-ruban-pause aria-pressed="false">
+    <button type="button" data-ruban-pause aria-pressed="false" aria-label="Arrêter le défilement">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="i-pause">
-        <path d="M9 5v14M15 5v14" />
+        <path d="M9.5 5.5v13M14.5 5.5v13" />
       </svg>
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="i-play">
-        <path d="M8 5l11 7-11 7z" />
+        <path d="M8.5 5.6v12.8L18.4 12z" />
       </svg>
-      <span data-ruban-mot>Arrêter le défilement</span>
     </button>
   </div>
 </section>
@@ -85,7 +87,6 @@ const SERIES = 4;
     var bouton = document.querySelector('[data-ruban-pause]');
     if (!ruban || !bouton) return;
 
-    var mot = bouton.querySelector('[data-ruban-mot]');
     var doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!doux) {
       /* Le CSS a déjà transformé le ruban en bande défilable ; le bouton
@@ -97,7 +98,10 @@ const SERIES = 4;
     function etat(arrete) {
       ruban.classList.toggle('arrete', arrete);
       bouton.setAttribute('aria-pressed', arrete ? 'true' : 'false');
-      mot.textContent = arrete ? 'Relancer le défilement' : 'Arrêter le défilement';
+      bouton.setAttribute(
+        'aria-label',
+        arrete ? 'Relancer le défilement' : 'Arrêter le défilement',
+      );
     }
 
     bouton.addEventListener('click', function () {

@@ -277,8 +277,7 @@ ligne **dans la même fournée** : au défilement posé chacun arrive seul et
 part sans retard, au doigt rapide ou en arrivant par une ancre ils se
 suivent. Le décalage se paie là où il sert.
 
-**Le ruban défile tout seul, en CSS.** Les photos glissent en continu
-derrière un fondu sur les bords : quatre copies de la série défilent
+**Le ruban défile tout seul, en CSS.** Quatre copies de la série défilent
 d'exactement une série par tour, si bien que le raccord est invisible.
 Aucun script ne pilote le mouvement.
 
