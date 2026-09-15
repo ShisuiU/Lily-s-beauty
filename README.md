@@ -64,7 +64,7 @@ npm run preview  # sert dist/ localement
 
 ### Scripts de génération
 
-Cinq scripts produisent des fichiers versionnés dans le dépôt. Ils ne
+Six scripts produisent des fichiers versionnés dans le dépôt. Ils ne
 tournent **pas** au build : on les relance à la main quand la source
 change.
 
@@ -74,6 +74,7 @@ python3 scripts/generate-map.py                    # src/assets/plan-salon.jpg
 python3 scripts/generate-og.py                     # public/og.jpg
 python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
 python3 scripts/prepare-motif.py brand/motif-lys-original.png  # public/motif-lys.png
+python3 scripts/prepare-hero.py                    # les deux photos du bandeau
 ```
 
 Dépendances : `pip install Pillow fonttools brotli numpy scipy`.
@@ -171,8 +172,8 @@ réglé en sombre affiche donc le site tel qu'il a été composé.
 natifs. Pour rendre la main au réglage du téléphone : retirer
 `data-theme` du `<html>` dans `Base.astro`.
 
-**Le logo de l'en-tête est un masque.** Sous 880 px, le nom en Pinyon
-Script cède la place au vrai logo. Il n'est pas servi en `<img>` : la
+**Le logo de l'en-tête est un masque.** Le nom en Pinyon Script a cédé
+la place au vrai logo, à toutes les largeurs. Il n'est pas servi en `<img>` : la
 barre est transparente sur la photo du haut — enseigne blanche — puis
 opaque au défilement, où l'enseigne passe à l'encre, avec une transition
 entre les deux. Un PNG noir y serait invisible en haut de page. Le masque
@@ -184,6 +185,19 @@ Il y est posé à 34 px et non aux 27 px du texte qu'il remplace, parce que
 les lys montent au-dessus du mot : à 27 px les déliés viraient au gris
 pâle. La hauteur de l'en-tête ne bouge pas pour autant, elle est fixée
 par ailleurs — vérifié de 27 à 35 px.
+
+**La photo du bandeau vient de la prise large.** Le salon a fourni deux
+cadrages. Celui qui servait était le serré, recadré puis **agrandi 1,5
+fois** : d'où une enseigne qui remplissait le tiers de l'écran, coupée
+aux deux bouts, et des pleins qui bavaient. La prise large donne le mur
+de pierre, l'enseigne entière, la porte voisine et le trottoir — et,
+étant moins grossie, elle est plus piquée malgré ses 900 px.
+
+Le voile de lecture a dû être recalé dessus : elle est plus claire là où
+le texte se pose, et au réglage précédent le titre tombait à 2,51:1, le
+corps à 3,52:1. Après recalage, 4,30:1 et 7,26:1 — au-dessus des seuils
+(3:1 pour un titre de cette taille, 4,5:1 pour le corps). **Changer la
+photo du bandeau oblige à remesurer ces deux valeurs.**
 
 **Le rameau du logo, une fois.** Le motif de l'angle de « Prestations et
 tarifs » est servi en masque CSS et non en `<img>` : le fichier ne porte
@@ -237,19 +251,22 @@ recherche locale.
    convertit — et les deux comptes Instagram en regorgent.
 2. **Compléter les mentions légales** (tableau plus haut).
 3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni tient
-   au pied de page et, depuis, dans l'en-tête mobile. Au-dessus de 880 px
-   l'en-tête reste en Pinyon Script : la barre y est plus étroite en
-   hauteur utile, et le tracé du logo, très fin, y demanderait une taille
-   que la mise en page ne donne pas. Un vectoriel lèverait la question et
-   permettrait d'unifier les deux.
+   partout où il sert — en-tête et pied de page. Un vectoriel resterait
+   préférable : il supprimerait le masque au profit d'un tracé, et
+   permettrait de le poser plus petit sans que les déliés pâlissent.
+
+4. **Une photo de devanture en paysage**, prise d'où l'a été la large,
+   en 2 000 px au moins. Le bandeau se contente aujourd'hui d'une bande
+   découpée dans une photo verticale de 900 px : ça tient, mais c'est le
+   plafond de qualité de la page d'accueil.
 
    Les livraisons précédentes portaient une ligne d'adresse fausse
    (« 30290 Rue de la République Laudun ») ; celle en place ne porte plus
    d'adresse du tout. Si le fichier fautif a servi à l'enseigne ou aux
    cartes de visite, l'erreur y est toujours.
-4. **Un nom de domaine en `.fr`.** Sans effet sur la vitesse, beaucoup
+5. **Un nom de domaine en `.fr`.** Sans effet sur la vitesse, beaucoup
    sur la confiance et le référencement local.
-5. **Pages dédiées par univers** — `/ongles`, `/cils`,
+6. **Pages dédiées par univers** — `/ongles`, `/cils`,
    `/sourcils-epilation`. Aujourd'hui une seule page vise tout à la fois,
    or Google ne classe qu'une page par requête : elle est donc diluée sur
    chaque sujet. Trois pages distinctes se présenteraient chacune sur son

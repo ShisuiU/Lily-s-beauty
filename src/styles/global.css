@@ -250,12 +250,8 @@ main:focus {
   padding-block: 16px;
 }
 .brand {
-  font-family: var(--script);
-  font-size: 27px;
-  line-height: 1;
   color: #fff;
   transition: color 0.35s;
-  white-space: nowrap;
 }
 /* Sous 880 px, le nom cède la place au vrai logo.
 
@@ -268,28 +264,26 @@ main:focus {
 
    Le rapport doit suivre public/logo-mark.png ; scripts/prepare-logo.py
    imprime la valeur à reporter ici après chaque nouveau logo. */
-@media (max-width: 880px) {
-  .brand {
-    display: block;
-    /* Plus haut que ne l'était le nom en Pinyon Script (27 px), et ce
-       n'est pas un caprice : les lys du logo montent au-dessus du mot,
-       qui n'occupe donc pas toute la boîte. À 27 px les déliés viraient
-       au gris pâle. L'en-tête, lui, ne bouge pas : sa hauteur est fixée
-       par ailleurs, vérifié de 27 à 35 px. */
-    height: 34px;
-    aspect-ratio: 560 / 132;
-    background: currentColor;
-    -webkit-mask: url('/logo-mark.png') no-repeat left center / contain;
-    mask: url('/logo-mark.png') no-repeat left center / contain;
-  }
-  .brand-mot {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
+.brand {
+  display: block;
+  /* Plus haut que ne l'était le nom en Pinyon Script (27 px), et ce
+     n'est pas un caprice : les lys du logo montent au-dessus du mot,
+     qui n'occupe donc pas toute la boîte. À 27 px les déliés viraient au
+     gris pâle. L'en-tête, lui, ne bouge pas : sa hauteur est fixée par
+     ailleurs, vérifié de 27 à 35 px. */
+  height: 34px;
+  aspect-ratio: 560 / 132;
+  background: currentColor;
+  -webkit-mask: url('/logo-mark.png') no-repeat left center / contain;
+  mask: url('/logo-mark.png') no-repeat left center / contain;
+}
+.brand-mot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .top.solid .brand,
@@ -539,11 +533,19 @@ main:focus {
       rgb(20 17 14 / 0.62) 92px,
       rgb(20 17 14 / 0) 240px
     ),
+    /* Dégradé de lecture. Recalé sur la photo large, plus claire que
+       l'ancienne là où le texte se pose : au réglage précédent le titre
+       tombait à 2,51:1 et le corps à 3,52:1, sous les seuils. Mesuré
+       ici, au pire pixel de chaque bloc : titre 4,30:1 (grand texte,
+       seuil 3:1) et corps 7,26:1 (seuil 4,5:1). C'est le plus léger des
+       réglages essayés qui tienne les deux — inutile de noircir une
+       photo qu'on a justement choisie pour qu'elle se voie. */
     linear-gradient(
       to bottom,
-      rgb(30 27 24 / 0.08) 0%,
-      rgb(30 27 24 / 0.28) 52%,
-      rgb(30 27 24 / 0.86) 100%
+      rgb(30 27 24 / 0.12) 0%,
+      rgb(30 27 24 / 0.44) 42%,
+      rgb(30 27 24 / 0.76) 68%,
+      rgb(30 27 24 / 0.94) 100%
     );
 }
 .hero-in {
