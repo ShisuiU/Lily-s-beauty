@@ -29,7 +29,9 @@ CSS_URL = (
     'https://fonts.googleapis.com/css2'
     '?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400'
     '&family=Instrument+Sans:wght@400;500;600'
-    '&family=Pinyon+Script'
+    # Pinyon Script a servi de calligraphie de substitution pour le nom du
+    # salon, avant que le vrai logo n'arrive. Il est désormais affiché en
+    # image dans l'en-tête et le pied de page : la police n'a plus d'emploi.
     '&display=swap'
 )
 # Un navigateur moderne obtient du woff2 ; un vieil agent obtiendrait du ttf.

@@ -66,6 +66,15 @@ export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination
     « Nous trouver » désigne la section qui porte l'adresse, le plan et le
     lien d'itinéraire. Elle s'appelait « Le salon », ce qui ne disait pas
     qu'on y trouve la localisation. */
+/** Lien vers une section, depuis n'importe quelle page du site.
+
+    Écrit « /#tarifs » et non « #tarifs ». Une ancre seule désigne une
+    cible dans la page courante : depuis /mentions-legales, où ces
+    sections n'existent pas, les liens de l'en-tête ne faisaient
+    strictement rien. Sur l'accueil les deux formes se valent, le chemin
+    étant identique — le navigateur ne recharge pas. */
+export const lienSection = (href: string) => '/' + href;
+
 export const sections = [
   { href: '#tarifs', label: 'Prestations et tarifs' },
   { href: '#horaires', label: 'Horaires' },

@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { site, pending, sections } from '../data/site';
+import { site, pending, sections, lienSection } from '../data/site';
 import logo from '../assets/logo.png';
 const year = new Date().getFullYear();
 ---
@@ -16,7 +16,7 @@ const year = new Date().getFullYear();
         loading="lazy"
       />
       <nav class="foot-links" aria-label="Navigation de pied de page">
-        {sections.map((s) => <a href={'/' + s.href}>{s.label}</a>)}
+        {sections.map((s) => <a href={lienSection(s.href)}>{s.label}</a>)}
         <a href="/mentions-legales">Mentions légales</a>
       </nav>
       <p class="foot-note">

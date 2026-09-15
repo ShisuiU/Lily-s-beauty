@@ -1,5 +1,5 @@
 ---
-import { site, sections } from '../data/site';
+import { site, sections, lienSection } from '../data/site';
 import BookButton from './BookButton.astro';
 ---
 <header class="top" id="top">
@@ -7,10 +7,10 @@ import BookButton from './BookButton.astro';
     {/* Sous 880 px cette enseigne devient le logo du salon (masque CSS,
         voir global.css). Le nom reste dans le balisage : il n'est masqué
         que visuellement, les lecteurs d'écran le lisent toujours. */}
-    <a class="brand" href="#haut"><span class="brand-mot">{site.name}</span></a>
+    <a class="brand" href={lienSection('#haut')}><span class="brand-mot">{site.name}</span></a>
 
     <nav class="nav" aria-label="Navigation principale">
-      {sections.map((s) => <a href={s.href}>{s.label}</a>)}
+      {sections.map((s) => <a href={lienSection(s.href)}>{s.label}</a>)}
     </nav>
 
     <BookButton class="hide-sm" />
@@ -35,7 +35,7 @@ import BookButton from './BookButton.astro';
   <ul class="sheet-nav">
     {sections.map((s, i) => (
       <li>
-        <a href={s.href}>
+        <a href={lienSection(s.href)}>
           <i aria-hidden="true">{String(i + 1).padStart(2, '0')}</i>
           {s.label}
         </a>

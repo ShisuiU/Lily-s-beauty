@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source('../');
 @import './fonts.css';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -24,7 +24,6 @@
 
   --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   --font-sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-script: 'Pinyon Script', 'Cormorant Garamond', cursive;
 }
 
 :root {
@@ -46,7 +45,6 @@
   --scrim: #1e1b18;
   --serif: var(--font-serif);
   --sans: var(--font-sans);
-  --script: var(--font-script);
   --gut: clamp(20px, 5vw, 72px);
   --banner: 0px;
   --header-h: 60px;
@@ -266,7 +264,8 @@ main:focus {
    imprime la valeur à reporter ici après chaque nouveau logo. */
 .brand {
   display: block;
-  /* Plus haut que ne l'était le nom en Pinyon Script (27 px), et ce
+  /* Plus haut que ne l'était le nom en Pinyon Script qu'il remplace
+     (27 px), et ce
      n'est pas un caprice : les lys du logo montent au-dessus du mot,
      qui n'occupe donc pas toute la boîte. À 27 px les déliés viraient au
      gris pâle. L'en-tête, lui, ne bouge pas : sa hauteur est fixée par
@@ -1018,15 +1017,6 @@ section {
     width: 208px;
   }
 }
-.prices {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(30px, 6vw, 84px);
-}
-.price-col .eyebrow {
-  display: block;
-  margin-bottom: 22px;
-}
 .plist {
   list-style: none;
   margin: 0;
@@ -1383,7 +1373,12 @@ section {
 .legal p + p {
   margin-top: 12px;
 }
-.legal a {
+/* `:not(.btn)` n'est pas une précaution de style : sans lui cette règle
+   l'emporte sur `.btn` (0-2-0 contre 0-1-0) et repeint le texte du bouton
+   en `--rose-ink`, c'est-à-dire exactement sa propre couleur de fond.
+   Le bouton s'affiche alors vide. Le cas est resté invisible tant que
+   /mentions-legales n'a porté que des liens de texte. */
+.legal a:not(.btn) {
   color: var(--rose-ink);
   border-bottom: 1px solid color-mix(in srgb, var(--rose-ink) 38%, transparent);
 }
@@ -1395,6 +1390,16 @@ section {
   font-size: 0.9rem;
   color: var(--muted);
 }
+/* Les entrées du site sur la page d'erreur : une seule règle, le reste
+   emprunte la mise en page de /mentions-legales. */
+.legal-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin-top: 26px;
+  font-size: 0.98rem;
+}
+
 .legal-back {
   margin-top: clamp(44px, 6vw, 64px);
   padding-top: 22px;

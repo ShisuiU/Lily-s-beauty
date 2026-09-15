@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import BookButton from '../components/BookButton.astro';
+import { site, sections, lienSection, address } from '../data/site';
+---
+
+<Base
+  title="Page introuvable"
+  description={`Cette page n'existe pas sur le site de l'institut ${site.name} à ${address.city}.`}
+>
+  <section class="legal">
+    <div class="shell">
+      <div class="sec-top">
+        <hr class="rule" />
+        <h1>Cette page n'existe pas.</h1>
+        <p>
+          Le lien est peut-être ancien, ou mal recopié. Tout l'institut tient sur une seule
+          page : voici par où y entrer.
+        </p>
+      </div>
+
+      <nav class="legal-nav" aria-label="Sections du site">
+        {sections.map((s) => <a href={lienSection(s.href)}>{s.label}</a>)}
+      </nav>
+
+      <div class="hero-act" style="margin-top:30px">
+        <BookButton />
+      </div>
+
+      <p class="legal-back"><a href="/">Retour à l'accueil</a></p>
+    </div>
+  </section>
+  <Footer />
+</Base>

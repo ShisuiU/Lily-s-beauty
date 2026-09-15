@@ -26,6 +26,13 @@ const jsonLd: Record<string, unknown> = {
   url: site.url,
   image: new URL('/og.jpg', Astro.site ?? site.url).href,
   openingHoursSpecification: openingHoursSpecification(),
+  /* Fourchette affichée par Google sous le nom du salon. Calculée sur la
+     grille plutôt qu'écrite à la main : un tarif qui change la met à jour
+     toute seule. */
+  priceRange: (() => {
+    const p = universes.flatMap((u) => u.categories.flatMap((c) => c.items.map((s) => s.price)));
+    return `${Math.min(...p)} € – ${Math.max(...p)} €`;
+  })(),
   makesOffer: universes.flatMap((u) =>
     u.categories.flatMap((c) =>
       c.items.map((s) => ({

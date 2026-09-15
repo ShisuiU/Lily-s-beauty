@@ -100,6 +100,14 @@ relèverait un « fond noir » et effacerait le dessin au lieu du vide.
 
 Vercel détecte Astro tout seul ; `vercel.json` fait le reste.
 
+Il pose aussi les en-têtes de sécurité, **Content-Security-Policy**
+comprise. Elle est stricte parce qu'elle peut l'être : le site ne charge
+rien d'ailleurs, donc `default-src 'self'` suffit, et `object-src 'none'`
+avec `base-uri 'self'` ferment deux voies d'injection classiques. Seul
+`'unsafe-inline'` reste nécessaire, pour les trois scripts écrits dans la
+page. Après toute modification d'en-tête, vérifier la console du
+navigateur : une CSP trop serrée casse en silence.
+
 Ce fichier règle trois familles de cache. Les fichiers de `/_astro/`
 portent une empreinte dans leur nom : un an, immuable. Les polices de
 `/fonts/` ont un nom stable mais ne changent jamais : même traitement,
@@ -112,6 +120,9 @@ rafraîchissement en arrière-plan.
 > ajouter fait rejeter la configuration **sans aucune erreur visible** :
 > les en-têtes cessent simplement de s'appliquer. D'où ces explications
 > ici plutôt que dans le fichier.
+
+Une page **404** est servie depuis `src/pages/404.astro` : Vercel la
+prend automatiquement pour toute URL inconnue.
 
 Après un changement d'adresse, la reporter à **deux endroits** qui
 doivent rester en phase : `site.url` dans `src/data/site.ts` (balises
@@ -129,6 +140,12 @@ servis depuis le point de présence le plus proche de chaque visiteur.
 
 ## Choix techniques
 
+**Le CSS ne scanne que `src/`.** `@import 'tailwindcss' source('../')`,
+et ce n'est pas cosmétique : laissé à sa détection automatique, Tailwind
+lisait aussi `.claude/skills/**`, des documents de référence remplis
+d'exemples de classes. Il les compilait dans la feuille de production,
+qui pesait **40 % de plus** pour des règles que rien n'utilise.
+
 **Astro plutôt que Next.js.** Vitrine à contenu stable, beaucoup de
 photo, fort enjeu de référencement local. Aucun *fichier* JavaScript
 n'est servi : il ne reste que trois scripts en clair dans la page, courts
@@ -143,9 +160,12 @@ lys, le blanc du panneau. Les valeurs vivent sous `@theme` dans
 WCAG AA : `--rose` plafonne à 2,87:1 et reste donc **décoratif** ; dès
 qu'il s'agit de texte ou de bouton, c'est `--rose-ink`, à 5,03:1.
 
-**Une seule calligraphie.** Le script ne sert qu'au nom ; le reste est en
-Cormorant Garamond et Instrument Sans. Deux écritures manuscrites qui se
-disputent l'attention, c'est ce qui fait vieillir un site de salon.
+**Deux polices, pas trois.** Cormorant Garamond et Instrument Sans. Une
+calligraphie, Pinyon Script, a longtemps tenu lieu de nom du salon ; le
+vrai logo l'a remplacée partout et elle a été retirée — police, fichiers
+et jeton. Deux écritures manuscrites qui se disputent l'attention, c'est
+ce qui fait vieillir un site de salon ; une police qu'on télécharge sans
+l'afficher, c'est simplement du poids.
 
 **Aucun service tiers.** Les polices sont hébergées par le site, le plan
 du quartier est une image fabriquée au build depuis les tuiles
