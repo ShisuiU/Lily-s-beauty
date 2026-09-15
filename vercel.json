@@ -25,7 +25,7 @@
       ]
     },
     {
-      "source": "/(og.jpg|favicon.svg|logo-mark.png|motif-lys.*\\.png)",
+      "source": "/(og.jpg|favicon.svg|logo-mark.png)",
       "headers": [
         {
           "key": "Cache-Control",

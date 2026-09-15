@@ -61,7 +61,14 @@ DECOUPES = {
     # la fleur entière, dissipée dans sa tige
     'motif-lys-fleur.png': dict(boite=None, largeur=560, halo=(295, 740, 380, 560)),
 }
-SORTIE = pathlib.Path('public')
+# Les fragments vivent dans `src/`, pas dans `public/`. Un fichier de
+# `public/` est servi sous le nom qu'on lui donne : son URL ne change
+# jamais, donc un navigateur qui en a gardé une version l'affiche encore
+# longtemps après qu'on l'a corrigée — c'est arrivé, et la correction est
+# restée invisible sur les téléphones qui avaient déjà vu la page. Passés
+# par `src/`, ils reçoivent une empreinte de contenu dans leur nom : à
+# contenu changé, adresse changée, et plus rien à purger.
+SORTIE = pathlib.Path('src/assets')
 
 # Seuil de rognage. Bas pour un fragment au halo, dont la fin du dégradé
 # est justement ce qui évite la coupe ; celui d'origine pour les autres,

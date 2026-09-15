@@ -73,7 +73,7 @@ python3 scripts/fetch-fonts.py                     # public/fonts/ + src/styles/
 python3 scripts/generate-map.py                    # src/assets/plan-salon.jpg
 python3 scripts/generate-og.py                     # public/og.jpg
 python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
-python3 scripts/prepare-motif.py brand/motif-lys-original.png  # public/motif-lys.png
+python3 scripts/prepare-motif.py brand/motif-lys-original.png  # src/assets/motif-lys*.png
 python3 scripts/prepare-hero.py                    # les deux photos du bandeau (une par orientation)
 python3 scripts/prepare-galerie.py                 # src/assets/salon-*.jpg
 ```
@@ -282,6 +282,22 @@ le bord du fichier — `prepare-motif.py` relit les quatre bords de sa
 sortie et **refuse d'écrire** si l'encre y dépasse 8 sur 255. Le contrôle
 tient de lui-même : le dessin d'origine ne touche pas son propre cadre,
 son encre s'arrête à 27 px du plus proche.
+
+**Les motifs sont dans `src/`, pas dans `public/`.** Un fichier de
+`public/` est servi sous le nom qu'on lui donne : son adresse ne change
+jamais. Ces trois-là étaient posés là, avec un cache d'une journée — et
+une correction du dessin est restée invisible pendant ce temps sur les
+téléphones qui avaient déjà vu la page, alors que le fichier corrigé
+était bien en ligne. Passés par `src/`, ils reçoivent une empreinte de
+contenu dans leur nom : à contenu changé, adresse changée, et le cache
+d'un an devient non seulement sûr mais correct. Le HTML, lui, se
+revalide à chaque visite, si bien qu'un simple rechargement suffit
+toujours.
+
+La règle de `vercel.json` qui leur donnait ce cache d'une journée a
+disparu avec eux. **Tout fichier de `public/` amené à changer sous le
+même nom pose le même problème** : la place d'un fichier versionné est
+dans `src/`.
 
 Dans la carte « en ce moment », elle est réglée par sa **hauteur** et non
 par sa largeur. La carte n'a pas la même forme selon la colonne : 175 px
