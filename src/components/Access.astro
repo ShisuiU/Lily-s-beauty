@@ -11,6 +11,7 @@ const fullAddress = `${address.streetNumber}, ${address.street}, ${address.posta
   <div class="shell">
     <div class="access">
       <Image
+        class="monte"
         src={facade}
         widths={[420, 760, 1100]}
         sizes="(max-width: 860px) 100vw, 45vw"
@@ -19,7 +20,7 @@ const fullAddress = `${address.streetNumber}, ${address.street}, ${address.posta
         loading="lazy"
         alt="Façade de l'institut Lily's Beauty vue depuis la rue"
       />
-      <div>
+      <div class="monte">
         <hr class="rule" />
         <h2 class="addr">{about.lead}</h2>
         {about.body.map((t) => <p class="about-p">{t}</p>)}

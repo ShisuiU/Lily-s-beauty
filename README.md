@@ -129,9 +129,12 @@ servis depuis le point de présence le plus proche de chaque visiteur.
 ## Choix techniques
 
 **Astro plutôt que Next.js.** Vitrine à contenu stable, beaucoup de
-photo, fort enjeu de référencement local. Astro n'expédie aucun
-JavaScript ici, ce qui donne les meilleurs scores de performance — et la
-performance pèse sur le classement en recherche locale.
+photo, fort enjeu de référencement local. Aucun *fichier* JavaScript
+n'est servi : il ne reste que trois scripts en clair dans la page, courts
+et sans dépendance — le menu mobile, le calcul « ouvert / fermé » et les
+apparitions au défilement. Pas de framework à télécharger ni à exécuter
+avant l'affichage, ce qui donne les meilleurs scores de performance, et
+la performance pèse sur le classement en recherche locale.
 
 **Couleurs tirées de l'enseigne du salon.** L'encre du script, le rose du
 lys, le blanc du panneau. Les valeurs vivent sous `@theme` dans
@@ -175,23 +178,31 @@ construction invisible aux lecteurs d'écran — ce qui est exactement son
 statut. Il est posé sur un seul bloc : répété partout, un ornement cesse
 d'en être un.
 
-**Les apparitions au défilement sont en CSS.**
-`animation-timeline: view()` accroche l'animation à la position de
-l'élément dans la fenêtre : ni observateur, ni script, ni classe posée à
-la volée. Deux précautions valent d'être dites.
+**Les apparitions au défilement.** Les blocs concernés portent la classe
+`monte` dans leur composant ; un script en tête de page les confie à un
+`IntersectionObserver` et pose `vu` quand ils franchissent le quart bas
+de la fenêtre. La transition vit sur `vu`, donc l'apparition ne se rejoue
+pas à l'envers, et `unobserve` la rend définitive.
 
-L'état masqué vit **à l'intérieur** du `@supports`. Un navigateur sans
-les animations de défilement n'applique donc jamais `opacity: 0` et
-affiche la page normalement ; poser l'état de départ en dehors de la
-condition est la faute classique du procédé, celle qui laisse une page
-blanche quand quelque chose manque.
+Une première version se passait de script, avec
+`animation-timeline: view()`. Techniquement plus propre, et abandonnée :
+une animation accrochée au défilement est *scrubbée*, l'élément est
+dessiné selon sa position plutôt qu'animé, et l'œil ne le lit pas comme
+une apparition. Sur téléphone, on ne voyait presque rien. Une durée à
+soi, jouée une fois, demande un observateur — c'est le prix, il est
+assumé.
 
-Et les déclarations sont en **formes longues**, délibérément.
-`animation-timeline` n'est pas admis dans le raccourci `animation`, qui
-le remet à `auto` ; or le minifieur replie volontiers deux formes longues
-voisines en `animation: linear both monte view()`, que le navigateur
-rejette en bloc. Les animations cessent alors sans erreur visible. Les
-replier « pour faire propre » suffit à tout casser.
+Deux choses portent la sécurité du procédé. L'état masqué dépend de la
+classe `js-monte`, que le script ne pose qu'après avoir vérifié
+`IntersectionObserver` et `prefers-reduced-motion` : sans JavaScript ou
+en mouvement réduit, **rien n'est jamais masqué**. Et cette classe est
+posée depuis le `<head>`, avant le premier rendu, sinon la page
+s'afficherait puis se masquerait — ce qui se voit.
+
+Le décalage en cascade n'est appliqué qu'aux blocs qui franchissent la
+ligne **dans la même fournée** : au défilement posé chacun arrive seul et
+part sans retard, au doigt rapide ou en arrivant par une ancre ils se
+suivent. Le décalage se paie là où il sert.
 
 **« Ouvert / fermé » calculé chez le visiteur.** Le site étant statique,
 un calcul au build serait figé. Le script lit `hours`, résout l'heure de

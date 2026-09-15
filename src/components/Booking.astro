@@ -13,7 +13,7 @@ const steps = [
 <section id="reserver">
   <div class="shell">
     <div class="book">
-      <div>
+      <div class="monte">
         <span class="eyebrow">Rendez-vous</span>
         {rating.show && (
           <p class="rating">
@@ -39,8 +39,8 @@ const steps = [
           </p>
         )}
       </div>
-      <ol class="book-steps">
-        {steps.map((s) => <li>{s}</li>)}
+      <ol class="book-steps monte">
+        {steps.map((s) => <li class="monte">{s}</li>)}
       </ol>
     </div>
   </div>

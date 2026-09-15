@@ -10,21 +10,21 @@ const withCounts = universes.map((u) => ({
 ---
 <section id="tarifs">
   <div class="shell">
-    <div class="sec-top">
+    <div class="sec-top monte">
       <hr class="rule" />
       <h2>Prestations et tarifs</h2>
     </div>
 
     <Practitioners />
 
-    <p class="tarifs-intro">
+    <p class="tarifs-intro monte">
       Les durées sont celles réellement bloquées dans l'agenda. Dépliez l'univers qui vous
       intéresse.
     </p>
 
     <div class="universes">
       {withCounts.map((u) => (
-        <details class="universe">
+        <details class="universe monte">
           <summary>
             <h3 class="u-name">{u.label}</h3>
             <span class="u-count">{u.count} prestations</span>

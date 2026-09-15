@@ -934,10 +934,13 @@ section {
 #tarifs {
   background: var(--shell);
   position: relative;
-  /* Le motif déborde volontairement. `clip` et non `hidden` : hidden
-     ferait de la section un conteneur de défilement, et les animations
-     d'apparition de ses descendants se caleraient alors sur ce cadre,
-     qui ne défile jamais. Elles resteraient figées à leur départ. */
+  /* Le motif déborde volontairement. `clip` plutôt que `hidden` : les
+     deux rognent, mais `hidden` fait en plus de la section un conteneur
+     de défilement — une boîte que le clavier peut atteindre et faire
+     défiler de quelques pixels, et à laquelle se raccrocherait toute
+     mesure de défilement portant sur ses descendants. Rien ici n'a
+     besoin de ça. `hidden` reste au-dessus comme repli pour les
+     navigateurs qui ignorent `clip`. */
   overflow: hidden;
   overflow: clip;
 }
@@ -1503,71 +1506,36 @@ footer {
 /* ═══════════════════════════════════════════════════════════════
    APPARITIONS AU DÉFILEMENT
 
-   En CSS seul : `animation-timeline: view()` pilote l'animation par la
-   position de l'élément dans la fenêtre, sans observateur ni script.
-   Le site continue donc de ne servir aucun fichier JavaScript.
+   Chaque bloc porte la classe `monte` dans son composant : un seul
+   endroit nomme ce qui s'anime, lisible là où le balisage est écrit.
 
-   Deux garde-fous, dans cet ordre :
+   L'état masqué dépend de `js-monte`, que le script pose sur <html>
+   après avoir vérifié qu'il peut tenir sa promesse. Sans JavaScript,
+   sans IntersectionObserver ou en mouvement réduit, la classe n'arrive
+   jamais et la page s'affiche telle quelle. Poser l'état de départ en
+   dur est la faute classique du procédé : elle laisse une page blanche
+   le jour où le script ne s'exécute pas.
 
-   - `prefers-reduced-motion` d'abord. Le mouvement est une option,
-     jamais un prérequis pour lire la page.
-   - `@supports` ensuite, et c'est lui qui porte l'état de départ. Un
-     navigateur sans les animations de défilement n'applique donc
-     jamais `opacity: 0` : il affiche la page normalement plutôt que de
-     la laisser blanche. Poser l'état masqué en dehors de cette
-     condition est la faute classique du procédé.
+   La transition vit sur `.vu`, jamais sur `.monte` : elle n'existe donc
+   qu'au moment où la classe arrive, et l'apparition ne se rejoue pas à
+   l'envers puisque la classe ne repart pas.
 
-   La portée est donnée en pixels et non en pourcentages : le pourcentage
-   se calcule sur la hauteur de l'élément, si bien qu'un bloc haut se
-   révélerait sur un long défilement et une ligne sur trois fois rien.
-   En pixels, tout la page révèle au même rythme.
-
-   L'animation est rejouée à rebours si l'on remonte : une durée
-   accrochée au défilement se parcourt dans les deux sens, c'est le
-   principe même. Un déclenchement unique demanderait un observateur,
-   donc du script.
+   Un premier essai utilisait `animation-timeline: view()`, sans script.
+   Techniquement plus propre, mais accroché au défilement : l'élément
+   est alors dessiné selon sa position plutôt qu'animé, et l'œil ne le
+   lit pas comme une apparition. Une durée à soi, jouée une fois,
+   demande un observateur.
    ═══════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    @keyframes monte {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    #tarifs > .shell > .sec-top,
-    .tarifs-intro,
-    .duo > div,
-    .who li,
-    .universes .universe,
-    #horaires .sec-top,
-    .hours li,
-    .status,
-    #reserver .book > *,
-    .book-steps li,
-    #acces .access > *,
-    .foot-logo {
-      /* NE PAS replier en raccourci `animation`. `animation-timeline`
-         n'y est pas admis — le raccourci le remet à `auto` — et le
-         minifieur, lui, replie volontiers les formes longues voisines
-         en `animation: linear both monte view()`, que le navigateur
-         rejette. Les animations cessent alors sans la moindre erreur.
-         Les formes longues échappent à ce repli : c'est la raison
-         d'être de leur présence ici. */
-      animation-name: monte;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: view();
-      /* L'élément commence à paraître 20 px après avoir touché le bas de
-         la fenêtre, et finit 240 px plus loin. Les listes n'ont pas de
-         décalage à écrire : chaque ligne entre à son tour, le décalage
-         naît de la page elle-même. */
-      animation-range: entry 20px entry 260px;
-    }
+  .js-monte .monte {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+  .js-monte .monte.vu {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.62s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.62s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 }

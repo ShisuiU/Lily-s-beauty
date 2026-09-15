@@ -95,6 +95,62 @@ const showBanner = pending.length > 0;
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
+
+    <script is:inline>
+      /* Apparitions au défilement.
+
+         Le script pose `js-monte` sur <html> tout de suite, dans le
+         <head>, et non après le chargement : sinon la page s'affiche une
+         fraction de seconde puis se masque, ce qui se voit.
+
+         Il ne la pose qu'après avoir vérifié ce dont il a besoin. Sans
+         IntersectionObserver, ou si le visiteur demande moins de
+         mouvement, rien n'est masqué et la page reste simplement
+         lisible. `unobserve` rend l'apparition définitive : on ne
+         redécore pas ce qui a déjà été lu. */
+      (function () {
+        if (!('IntersectionObserver' in window)) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.documentElement.classList.add('js-monte');
+
+        function observer() {
+          var vue = new IntersectionObserver(
+            function (entrees) {
+              /* Un décalage, mais seulement quand plusieurs blocs
+                 franchissent la ligne ensemble — au doigt rapide, ou en
+                 arrivant par une ancre. Au défilement posé, chaque bloc
+                 arrive seul dans sa fournée et part donc sans retard :
+                 le décalage se paie exactement là où il sert. */
+              var arrives = entrees
+                .filter(function (e) { return e.isIntersecting; })
+                .sort(function (a, b) {
+                  return a.boundingClientRect.top - b.boundingClientRect.top;
+                });
+              for (var i = 0; i < arrives.length; i++) {
+                var bloc = arrives[i].target;
+                if (i > 0) {
+                  bloc.style.transitionDelay = Math.min(i, 6) * 0.07 + 's';
+                }
+                bloc.classList.add('vu');
+                vue.unobserve(bloc);
+              }
+            },
+            /* Le bas de la fenêtre est remonté d'un quart : le bloc
+               s'anime une fois franchement à l'écran, pas au ras du
+               bord où l'œil n'est pas. */
+            { rootMargin: '0px 0px -25% 0px' }
+          );
+          var blocs = document.querySelectorAll('.monte');
+          for (var i = 0; i < blocs.length; i++) vue.observe(blocs[i]);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', observer);
+        } else {
+          observer();
+        }
+      })();
+    </script>
   </head>
 
   <body>
