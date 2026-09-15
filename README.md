@@ -265,13 +265,26 @@ demandée. Répété à l'identique, un ornement devient un tampon ; c'est en
 changeant de fragment, de coin, d'échelle et de couleur qu'il reste un
 ornement.
 
-Les deux fleurs sont **posées**, pas accrochées à un bord : elles
-comblent un vide que la mise en page large laisse — sous la carte
-« en ce moment » pour les horaires, à droite du titre pour les pages de
-texte. Ce vide disparaît quand la page passe en colonne, et l'ornement
-avec lui : `display: none` sous 860 px pour les horaires, sous 1000 px
-pour les pages de texte, où le paragraphe d'introduction venait sinon se
-poser dessus et tombait à 4,56:1, à six centièmes du seuil.
+Les deux fleurs sont **posées**, pas accrochées à un bord — et c'est le
+fichier lui-même qui le permet. Un fragment prélevé dans un dessin d'un
+seul tenant est forcément coupé quelque part, et une découpe franche se
+voit : la première version tranchait un pétale, et le dessin avait l'air
+cassé. La fleur est donc détourée par un **halo** plutôt que par une
+boîte : pleine au centre, éteinte avant le bord. La fleur est entière ;
+ce sont la tige et les feuilles qui se dissipent. Une tige qui s'efface
+se lit comme une tige qui continue, un pétale tranché non.
+
+Dans la carte « en ce moment », elle est réglée par sa **hauteur** et non
+par sa largeur. La carte n'a pas la même forme selon la colonne : 175 px
+de haut en une seule colonne, 383 en deux. Une largeur en pourcentage
+donnait, entre 450 et 860 px de large, une fleur plus haute que la carte,
+dont le haut repassait sous le bord. Vérifié de 360 à 2 560 px : elle
+tient partout, avec de la marge.
+
+Sur les pages de texte, l'ornement comble un vide que seule la mise en
+page large laisse, et il disparaît avec lui : `display: none` sous
+1 000 px, où le paragraphe d'introduction venait sinon se poser dessus et
+tombait à 4,56:1, à six centièmes du seuil.
 
 **Avant de déplacer un motif, mesurer.** Les tests de chevauchement par
 boîte englobante sur-signalent : la boîte d'un titre fait toute la

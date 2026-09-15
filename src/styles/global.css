@@ -1080,7 +1080,7 @@ section {
   top: clamp(90px, 14vw, 150px);
   right: clamp(20px, 6vw, 110px);
   width: clamp(130px, 20vw, 250px);
-  aspect-ratio: 520 / 426;
+  aspect-ratio: 560 / 548;
   background: var(--ink);
   opacity: 0.085;
   -webkit-mask-image: url('/motif-lys-fleur.png');
@@ -1252,14 +1252,31 @@ section {
    court — « C'est ouvert. » fait 156 px dans une carte qui en fait 350
    au plus étroit — et ce vide-là ne disparaît pas quand la page passe en
    colonne, contrairement à celui qui entourait la carte. L'ornement
-   tient donc aussi sur téléphone, sans rallonger la page d'un pixel. */
+   tient donc aussi sur téléphone, sans rallonger la page d'un pixel.
+
+   Elle tient **entièrement dans la carte**. Une première version la
+   faisait déborder de l'angle : le bord de la carte tranchait alors les
+   pétales de droite et les feuilles du bas, et le dessin avait l'air
+   cassé. C'est le fichier lui-même qui s'éteint maintenant avant son
+   bord — voir `scripts/prepare-motif.py` — et il n'y a donc plus rien à
+   couper. */
 .status::before {
   content: '';
   position: absolute;
-  right: -14px;
-  bottom: -10px;
-  width: clamp(122px, 46%, 260px);
-  aspect-ratio: 520 / 426;
+  right: 12px;
+  bottom: 10px;
+  /* Réglée par sa **hauteur**, et non par sa largeur. La carte n'a pas
+     la même forme selon la colonne : 175 px de haut quand la page passe
+     en une seule colonne, 383 quand elle en tient deux. Une largeur en
+     pourcentage donnait, entre 450 et 860 px de large, une fleur plus
+     haute que la carte — et le haut du dessin repassait sous le bord.
+
+     Pas de `max-width` par-dessus : il rognerait la largeur sans rendre
+     la hauteur, et la fleur se recentrerait dans une boîte plus haute
+     qu'elle, décollée de son angle. C'est la hauteur seule qui règle.
+     Vérifié de 360 à 2 560 px : elle tient partout, avec de la marge. */
+  height: clamp(104px, 72%, 196px);
+  aspect-ratio: 560 / 548;
   background: var(--ink);
   opacity: 0.1;
   pointer-events: none;
