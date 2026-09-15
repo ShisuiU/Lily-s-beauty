@@ -257,6 +257,41 @@ main:focus {
   transition: color 0.35s;
   white-space: nowrap;
 }
+/* Sous 880 px, le nom cède la place au vrai logo.
+
+   Servi en masque et non en <img> : l'enseigne est blanche sur la photo
+   du haut, puis encre une fois la barre devenue opaque, avec une
+   transition entre les deux. Un PNG noir serait invisible en haut de
+   page. Le masque se peint avec `currentColor`, si bien que la règle de
+   couleur ci-dessous — et sa transition — continuent de le piloter sans
+   rien savoir de lui.
+
+   Le rapport doit suivre public/logo-mark.png ; scripts/prepare-logo.py
+   imprime la valeur à reporter ici après chaque nouveau logo. */
+@media (max-width: 880px) {
+  .brand {
+    display: block;
+    /* Plus haut que ne l'était le nom en Pinyon Script (27 px), et ce
+       n'est pas un caprice : les lys du logo montent au-dessus du mot,
+       qui n'occupe donc pas toute la boîte. À 27 px les déliés viraient
+       au gris pâle. L'en-tête, lui, ne bouge pas : sa hauteur est fixée
+       par ailleurs, vérifié de 27 à 35 px. */
+    height: 34px;
+    aspect-ratio: 560 / 132;
+    background: currentColor;
+    -webkit-mask: url('/logo-mark.png') no-repeat left center / contain;
+    mask: url('/logo-mark.png') no-repeat left center / contain;
+  }
+  .brand-mot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
 .top.solid .brand,
 .top.menu-ouvert .brand {
   color: var(--ink);

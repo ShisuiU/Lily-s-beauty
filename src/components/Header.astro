@@ -4,7 +4,10 @@ import BookButton from './BookButton.astro';
 ---
 <header class="top" id="top">
   <div class="shell">
-    <a class="brand" href="#haut">{site.name}</a>
+    {/* Sous 880 px cette enseigne devient le logo du salon (masque CSS,
+        voir global.css). Le nom reste dans le balisage : il n'est masqué
+        que visuellement, les lecteurs d'écran le lisent toujours. */}
+    <a class="brand" href="#haut"><span class="brand-mot">{site.name}</span></a>
 
     <nav class="nav" aria-label="Navigation principale">
       {sections.map((s) => <a href={s.href}>{s.label}</a>)}

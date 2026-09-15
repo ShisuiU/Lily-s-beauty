@@ -171,6 +171,20 @@ réglé en sombre affiche donc le site tel qu'il a été composé.
 natifs. Pour rendre la main au réglage du téléphone : retirer
 `data-theme` du `<html>` dans `Base.astro`.
 
+**Le logo de l'en-tête est un masque.** Sous 880 px, le nom en Pinyon
+Script cède la place au vrai logo. Il n'est pas servi en `<img>` : la
+barre est transparente sur la photo du haut — enseigne blanche — puis
+opaque au défilement, où l'enseigne passe à l'encre, avec une transition
+entre les deux. Un PNG noir y serait invisible en haut de page. Le masque
+se peint avec `currentColor`, si bien que la règle de couleur écrite pour
+le texte continue de le piloter sans rien savoir de lui. Le nom reste
+dans le balisage, masqué visuellement : les lecteurs d'écran le lisent.
+
+Il y est posé à 34 px et non aux 27 px du texte qu'il remplace, parce que
+les lys montent au-dessus du mot : à 27 px les déliés viraient au gris
+pâle. La hauteur de l'en-tête ne bouge pas pour autant, elle est fixée
+par ailleurs — vérifié de 27 à 35 px.
+
 **Le rameau du logo, une fois.** Le motif de l'angle de « Prestations et
 tarifs » est servi en masque CSS et non en `<img>` : le fichier ne porte
 qu'un alpha, la couleur vient de la palette, et un pseudo-élément est par
@@ -222,11 +236,12 @@ recherche locale.
    plan, jamais un ongle ni un regard. Sur ce métier, c'est ce qui
    convertit — et les deux comptes Instagram en regorgent.
 2. **Compléter les mentions légales** (tableau plus haut).
-3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni suffit
-   au pied de page, mais l'en-tête reste en Pinyon Script, une
-   approximation : à 27 px de haut, les déliés du script tombent sous le
-   demi-pixel et une image réduite y vire au gris, là où une police reste
-   nette. Un vectoriel lèverait la question.
+3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni tient
+   au pied de page et, depuis, dans l'en-tête mobile. Au-dessus de 880 px
+   l'en-tête reste en Pinyon Script : la barre y est plus étroite en
+   hauteur utile, et le tracé du logo, très fin, y demanderait une taille
+   que la mise en page ne donne pas. Un vectoriel lèverait la question et
+   permettrait d'unifier les deux.
 
    Les livraisons précédentes portaient une ligne d'adresse fausse
    (« 30290 Rue de la République Laudun ») ; celle en place ne porte plus

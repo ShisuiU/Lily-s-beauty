@@ -55,7 +55,9 @@ from PIL import Image
 from scipy.ndimage import binary_dilation, distance_transform_edt, label
 
 OUT = pathlib.Path('src/assets/logo.png')
+MARQUE = pathlib.Path('public/logo-mark.png')
 LARGEUR_MAX = 1300   # le pied de page l'affiche à 268 px au plus
+LARGEUR_MARQUE = 560 # l'en-tête l'affiche à 114 px au plus
 ENCRE = 18          # distance au fond à partir de laquelle c'est du dessin
 SEUIL, RAMPE = 3.0, 14.0
 BLANC_ADRESSE = 60  # lignes vides qui détachent l'adresse de l'enseigne
@@ -157,6 +159,46 @@ def enregistrer(im: Image.Image) -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     im.save(OUT, optimize=True)
     print(f'{OUT}  {im.width}x{im.height}  {OUT.stat().st_size / 1024:.0f} Ko')
+    marque(im)
+
+
+def marque(im: Image.Image) -> None:
+    """Écrit public/logo-mark.png : le nom seul, en masque.
+
+    L'en-tête est haut d'une trentaine de pixels. Le verrouillage complet
+    y ferait tenir « INSTITUT DE BEAUTÉ » sous le nom, si bien que le
+    script lui-même tomberait à une vingtaine de pixels et ses déliés
+    sous le demi-pixel. On coupe donc la ligne du bas — repérée, pas
+    supposée : c'est la dernière bande, courte, qu'un blanc sépare du
+    reste. Un logo qui n'en aurait pas passe entier.
+
+    Sorti en masque et non en image : l'enseigne de l'en-tête est blanche
+    sur la photo puis encre une fois la barre opaque, avec une transition
+    entre les deux. Un PNG noir y serait invisible en haut de page ; un
+    masque prend sa couleur de la feuille de style et suit l'état.
+    """
+    alpha = np.asarray(im)[:, :, 3]
+    bandes = groupes((alpha > 30).any(axis=1), 4)
+    bas = im.height
+    if len(bandes) > 1:
+        derniere = bandes[-1]
+        if (derniere[1] - derniere[0]) < im.height * 0.25:
+            bas = milieu(bandes, len(bandes) - 1)
+            print(f'  marque : bandes {bandes} -> on coupe sous y={bas}')
+
+    m = im.crop((0, 0, im.width, bas))
+    a = np.asarray(m)[:, :, 3]
+    ys, xs = np.nonzero(a > 6)
+    m = m.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
+    if m.width > LARGEUR_MARQUE:
+        m = m.resize((LARGEUR_MARQUE, round(m.height * LARGEUR_MARQUE / m.width)), Image.LANCZOS)
+
+    a = np.asarray(m)[:, :, 3]
+    MARQUE.parent.mkdir(parents=True, exist_ok=True)
+    Image.fromarray(np.dstack([np.zeros_like(a), a]), 'LA').save(MARQUE, optimize=True)
+    print(f'{MARQUE}  {m.width}x{m.height}  {MARQUE.stat().st_size / 1024:.0f} Ko')
+    print(f'  -> si ce rapport a changé, reporter `aspect-ratio: {m.width} / {m.height}`'
+          f' sur .brand dans global.css')
 
 
 def passer_tel_quel(src: str) -> None:
