@@ -34,6 +34,7 @@ DECOUPES = {
     'motif-lys.png':           (None,                 620),   # le rameau entier
     'motif-lys-branche.png':   ((500, 0, 1430, 430),  560),   # boutons et feuilles
     'motif-lys-brindille.png': ((760, 0, 1430, 300),  460),   # la pointe, la plus légère
+    'motif-lys-fleur.png':     ((0, 470, 780, 1100),  520),   # la fleur seule
 }
 SORTIE = pathlib.Path('public')
 

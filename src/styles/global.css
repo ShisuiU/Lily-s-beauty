@@ -967,6 +967,12 @@ section {
   margin-block: 5px 12px;
 }
 
+#horaires {
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
+}
+
 #tarifs {
   background: var(--shell);
   position: relative;
@@ -1000,6 +1006,7 @@ section {
    ═══════════════════════════════════════════════════════════════ */
 #tarifs::before,
 #reserver::before,
+#horaires::before,
 .legal::before {
   content: '';
   position: absolute;
@@ -1012,6 +1019,7 @@ section {
 }
 #tarifs > .shell,
 #reserver > .shell,
+#horaires > .shell,
 .legal > .shell {
   position: relative;
   z-index: 1;
@@ -1045,18 +1053,57 @@ section {
   mask-image: url('/motif-lys-branche.png');
 }
 
+/* La fleur seule, dans le bloc des horaires. Seul emploi qui ne déborde
+   pas d'un bord : la grille des jours est haute à gauche, la carte « en
+   ce moment » courte à droite, et il reste dessous un vide franc que
+   rien ne remplit. L'ornement y est posé, pas accroché à un angle. */
+#horaires::before {
+  right: clamp(24px, 6vw, 96px);
+  bottom: clamp(18px, 4vw, 54px);
+  width: clamp(150px, 22vw, 290px);
+  aspect-ratio: 520 / 426;
+  background: var(--ink);
+  opacity: 0.085;
+  -webkit-mask-image: url('/motif-lys-fleur.png');
+  mask-image: url('/motif-lys-fleur.png');
+}
+
 /* La pointe seule sur les pages de texte, mentions légales et erreur :
    elles n'ont ni photo ni couleur, et une brindille suffit à les
    rattacher au reste. La plus discrète des trois. */
 .legal::before {
-  top: 16px;
-  right: clamp(-44px, -3vw, -16px);
-  width: clamp(150px, 20vw, 250px);
-  aspect-ratio: 460 / 194;
+  top: clamp(90px, 14vw, 150px);
+  right: clamp(20px, 6vw, 110px);
+  width: clamp(130px, 20vw, 250px);
+  aspect-ratio: 520 / 426;
   background: var(--ink);
-  opacity: 0.09;
-  -webkit-mask-image: url('/motif-lys-brindille.png');
-  mask-image: url('/motif-lys-brindille.png');
+  opacity: 0.085;
+  -webkit-mask-image: url('/motif-lys-fleur.png');
+  mask-image: url('/motif-lys-fleur.png');
+}
+
+/* Deux ornements ne survivent pas au passage en colonne, et c'est
+   logique : ils comblaient un vide que la mise en page large créait.
+
+   Les horaires empilent leur grille et leur carte sous 860 px ; le
+   quart bas-droit n'existe plus et la fleur se poserait en travers de
+   « c'est ouvert ». Les pages de texte deviennent une colonne dense
+   sans marge à droite. Dans les deux cas on retire plutôt qu'on
+   déplace : un ornement qui gêne la lecture a cessé d'en être un. */
+@media (max-width: 860px) {
+  #horaires::before {
+    display: none;
+  }
+}
+/* Sous 1000 px, la colonne de texte des pages légales rejoint la fleur :
+   mesuré, le paragraphe d'introduction passait dessus et son contraste
+   tombait à 4,56:1, à six centièmes du seuil. Le paragraphe est déjà
+   bien calibré (56 caractères par ligne), ce n'est donc pas lui qu'il
+   faut corriger : c'est l'ornement qui n'a plus la place. */
+@media (max-width: 1000px) {
+  .legal::before {
+    display: none;
+  }
 }
 
 /* Sur téléphone, l'angle haut des blocs passe sous l'en-tête collant :
@@ -1066,11 +1113,6 @@ section {
     top: 12px;
     right: -40px;
     width: 208px;
-  }
-  .legal::before {
-    top: 10px;
-    right: -30px;
-    width: 160px;
   }
   /* Le bas du bloc sombre croise la barre de réservation fixée en pied
      d'écran : on remonte le dessin dans le bloc plutôt que de le laisser

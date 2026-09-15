@@ -224,15 +224,31 @@ photo du bandeau oblige à remesurer ces deux valeurs.**
 palette, et un pseudo-élément est par construction invisible aux lecteurs
 d'écran — ce qui est exactement son statut.
 
-Trois emplois, jamais le même deux fois. Le rameau entier en haut à
+Quatre emplois, jamais le même deux fois. Le rameau entier en haut à
 droite du bloc crème ; ses feuilles seules, en clair, en bas à gauche du
 bloc sombre, l'angle opposé, pour que les deux tracent une diagonale dans
-la page ; sa pointe sur les pages de texte, qui n'ont ni photo ni
-couleur. Les trois fichiers sortent du **même dessin**, découpé par
+la page ; la fleur seule dans les horaires et sur les pages de texte. Les
+fichiers sortent tous du **même dessin**, découpé par
 `scripts/prepare-motif.py` — aucune image supplémentaire n'a été
 demandée. Répété à l'identique, un ornement devient un tampon ; c'est en
 changeant de fragment, de coin, d'échelle et de couleur qu'il reste un
 ornement.
+
+Les deux fleurs sont **posées**, pas accrochées à un bord : elles
+comblent un vide que la mise en page large laisse — sous la carte
+« en ce moment » pour les horaires, à droite du titre pour les pages de
+texte. Ce vide disparaît quand la page passe en colonne, et l'ornement
+avec lui : `display: none` sous 860 px pour les horaires, sous 1000 px
+pour les pages de texte, où le paragraphe d'introduction venait sinon se
+poser dessus et tombait à 4,56:1, à six centièmes du seuil.
+
+**Avant de déplacer un motif, mesurer.** Les tests de chevauchement par
+boîte englobante sur-signalent : la boîte d'un titre fait toute la
+largeur de la colonne alors que ses lettres s'arrêtent bien avant. Il
+faut comparer l'étendue réelle des glyphes (`Range.getClientRects`), puis
+lire le contraste au pixel. Trois des cinq « chevauchements » relevés à
+la boîte n'en étaient pas, et un quatrième se produit derrière un bouton
+opaque.
 
 **Les apparitions au défilement.** Les blocs concernés portent la classe
 `monte` dans leur composant ; un script en tête de page les confie à un
