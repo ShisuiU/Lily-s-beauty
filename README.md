@@ -438,12 +438,19 @@ non crème, contrairement aux tarifs juste au-dessus — les photos y
 ressortent mieux, et le changement marque le chapitre. Deux groupes, un
 par praticienne, quatre photos chacun, en carré et à angles vifs.
 
-Les originaux sont des captures d'Instagram et portent l'interface de
-l'application **par-dessus la photo** : le compteur du carrousel en haut
-à droite des ongles (« 1/3 », « 3/3 »), la barre de défilement au bord
-droit des cils. `prepare-galerie.py` coupe ces bandes avant de réduire,
-puis ramène l'image au carré par son centre. Ce n'est pas de la retouche :
-c'est l'écran du téléphone qu'on retire, pas la photo qu'on arrange.
+Certains originaux sont des captures d'Instagram et portent l'interface
+de l'application **par-dessus la photo** : le compteur du carrousel en
+haut à droite (« 1/3 », « 3/3 »), la barre de défilement au bord droit.
+`prepare-galerie.py` coupe ces bandes avant de réduire, puis ramène
+l'image au carré par son centre. Ce n'est pas de la retouche : c'est
+l'écran du téléphone qu'on retire, pas la photo qu'on arrange.
+
+Le réglage se fait **fichier par fichier**, pas par famille : la plupart
+n'ont rien à retirer, et rogner les quatre pour le compte d'une seule
+aurait mangé le cadrage des trois autres sans raison. Le script refuse de
+tourner si cette table vise un fichier qui n'existe plus — une photo
+recorrigée par le salon, par exemple, dont la ligne doit alors
+disparaître.
 
 Les fichiers de cils sont numérotés, pas nommés par technique : on ne
 distingue pas à l'œil une pose cil à cil d'une mixte ou d'un volume

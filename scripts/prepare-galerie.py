@@ -29,27 +29,41 @@ QUALITE = 84
 # Largeur de sortie par famille, réglée sur la taille d'affichage la plus
 # grande, doublée pour les écrans à forte densité.
 #
-# `rogne_haut` et `rogne_droite` retirent une bande avant tout le reste.
-# Les réalisations sont des captures d'Instagram et portent l'interface de
-# l'application par-dessus la photo : le compteur du carrousel en haut à
-# droite des ongles (« 1/3 », « 3/3 »), la barre de défilement au bord
-# droit des cils. Ce n'est pas la photo, c'est l'écran du téléphone : on
-# le coupe. L'image est ensuite ramenée au carré en prenant le centre de
-# ce qui reste, pour que les huit gardent le même format.
 FAMILLES = {
-    'salon-*.jpg': dict(largeur=900),   # le ruban : 290 px au plus
-    'ongles-*.jpg': dict(largeur=900, rogne_haut=0.09, carre=True),
-    'cils-*.jpg': dict(largeur=900, rogne_droite=0.025, carre=True),
+    'salon-*.jpg': dict(largeur=900),               # le ruban : 290 px au plus
+    'ongles-*.jpg': dict(largeur=900, carre=True),  # « Le travail » : 420 px au plus
+    'cils-*.jpg': dict(largeur=900, carre=True),
+}
+
+# Bandes d'interface à retirer, **fichier par fichier**. Certaines
+# réalisations sont des captures d'Instagram et portent l'interface de
+# l'application par-dessus la photo : le compteur du carrousel en haut à
+# droite, la barre de défilement au bord droit. Ce n'est pas la photo,
+# c'est l'écran du téléphone, et on le coupe — puis l'image est ramenée
+# au carré par son centre.
+#
+# Au fichier et non à la famille, parce que la plupart n'ont rien à
+# retirer : rogner les quatre pour le compte de l'une aurait mangé le
+# cadrage des trois autres sans raison. Le salon a d'ailleurs recorrigé
+# une photo lui-même depuis ; sa ligne a disparu d'ici.
+INTERFACE = {
+    'ongles-2-leopard-fleur.jpg': dict(rogne_haut=0.09),     # « 3/3 »
+    'ongles-3-french-couleurs.jpg': dict(rogne_droite=0.025),  # barre de défilement
+    'cils-3.jpg': dict(rogne_droite=0.025),                  # barre de défilement
 }
 
 
 def main() -> None:
     fichiers = [(f, reglages) for motif, reglages in FAMILLES.items()
                 for f in sorted(SOURCE.glob(motif))]
+    inconnus = set(INTERFACE) - {f.name for f, _ in fichiers}
+    if inconnus:
+        raise SystemExit('INTERFACE vise des fichiers absents : ' + ', '.join(sorted(inconnus)))
     if not fichiers:
         raise SystemExit('aucune photo dans brand/')
 
-    for f, reglages in fichiers:
+    for f, famille in fichiers:
+        reglages = {**famille, **INTERFACE.get(f.name, {})}
         im = Image.open(f)
 
         haut = reglages.get('rogne_haut', 0)
