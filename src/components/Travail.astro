@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { travail, travailIntro } from '../data/site';
 
@@ -8,14 +8,34 @@ const fichiers = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 
-const groupes = travail.map((g) => ({
-  ...g,
-  photos: g.photos.map((p) => {
-    const trouve = fichiers[`../assets/${p.fichier}`];
-    if (!trouve) throw new Error(`travail : src/assets/${p.fichier} est introuvable`);
-    return { src: trouve.default, alt: p.alt };
-  }),
-}));
+/* Taille d'ouverture sur ordinateur, et d'où vient le nombre.
+
+   Les originaux font 1 290 px de côté — le maximum qu'Instagram rende, et
+   on ne peut pas inventer de pixels au-delà. Affichée à 720 px, la photo
+   est donc réduite sur un écran ordinaire, et agrandie de 12 % seulement
+   sur un écran à double densité (1 440 demandés contre 1 290 disponibles).
+   Douze pour cent ne se voient pas ; c'est ce qui fixe le 720. Une photo
+   d'origine plus grande permettrait d'ouvrir plus grand, pas l'inverse. */
+const OUVERTURE = 1290;
+
+const groupes = await Promise.all(
+  travail.map(async (g) => ({
+    ...g,
+    photos: await Promise.all(
+      g.photos.map(async (p) => {
+        const trouve = fichiers[`../assets/${p.fichier}`];
+        if (!trouve) throw new Error(`travail : src/assets/${p.fichier} est introuvable`);
+        const grand = await getImage({
+          src: trouve.default,
+          format: 'avif',
+          quality: 72,
+          width: OUVERTURE,
+        });
+        return { src: trouve.default, alt: p.alt, grand: grand.src };
+      }),
+    ),
+  })),
+);
 ---
 <section id="travail">
   <div class="shell">
@@ -32,17 +52,24 @@ const groupes = travail.map((g) => ({
           <span class="trav-by">avec {g.by}</span>
         </header>
         {/* Chaque photo est dans un vrai bouton, pas dans une image qu'on
-            écoute : c'est ce qui la rend atteignable au clavier, annoncée
-            comme une commande, et ce qui fait porter l'état par
-            `aria-expanded` plutôt que par une classe que personne ne lit.
-            Le nom du bouton est le texte de remplacement de la photo. */}
+            écoute : c'est ce qui la rend atteignable au clavier et
+            annoncée comme une commande. `data-grand` porte l'adresse de
+            la version d'ouverture, calculée à la construction — le script
+            n'a donc aucune URL à deviner. */}
         <ul class="trav-grille" data-zoom>
           {g.photos.map((p) => (
             <li>
-              <button type="button" class="trav-zoom" aria-expanded="false">
+              <button type="button" class="trav-zoom" data-grand={p.grand} data-alt={p.alt}>
+                {/* `width` explicite : sans lui, l'adresse de repli du
+                    `<img>` pointe sur la largeur d'origine, soit 1 290 px
+                    — une vignette de 290 px qui embarque un fichier de
+                    150 Ko pour les rares navigateurs sans `srcset`, et
+                    une seconde variante 1 290 px construite pour rien à
+                    côté de celle de la vue agrandie. */}
                 <Image
                   src={p.src}
                   alt={p.alt}
+                  width={860}
                   widths={[280, 440, 620, 860]}
                   sizes="(max-width: 759px) 90vw, 22vw"
                   format="avif"
@@ -58,45 +85,49 @@ const groupes = travail.map((g) => ({
   </div>
 </section>
 
+{/* Un seul `<dialog>` pour toute la page, rempli au clic. Natif, et pas
+    une division qu'on empile : il prend le focus, le retient, se ferme à
+    Échap et s'affiche au-dessus de tout sans qu'on ait à inventer un
+    z-index. */}
+<dialog class="trav-vue" data-vue aria-label="Photo agrandie">
+  <img alt="" />
+  <button type="button" class="trav-fermer" data-fermer aria-label="Fermer la photo">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />
+    </svg>
+  </button>
+</dialog>
+
 <script is:inline>
-  /* Agrandir une photo au doigt, et la refermer d'un second appui.
+  /* Deux gestes pour une même intention, selon la place disponible.
 
-     La photo ouverte se pose en absolu sur toute la grille — qui fait
-     justement deux colonnes sur deux lignes, donc un carré : ouverte,
-     elle occupe exactement la place des quatre. Les trois autres restent
-     dans le flux (la hauteur ne bouge pas) mais passent en
-     `visibility: hidden`, ce qui les retire aussi du clavier et des
-     lecteurs d'écran le temps de la vue.
+     Sur téléphone, la grille fait deux colonnes sur deux lignes, donc un
+     carré : la photo s'ouvre sur place et occupe exactement la place des
+     quatre. Sur ordinateur elles sont sur une seule ligne, il n'y a plus
+     de carré à remplir, et la photo s'ouvre dans une vue par-dessus la
+     page.
 
-     L'animation est un FLIP : on relève la position de départ, on
-     applique l'état d'arrivée, on relève la position finale, et on
-     rejoue l'écart à l'envers. C'est le seul moyen d'animer un passage
-     en `position: absolute`, qui ne se transitionne pas.
-
-     Au-delà de deux colonnes — ordinateur, tablette large — il n'y a
-     plus de carré de quatre à remplir : le bouton n'agrandit rien et se
-     comporte comme une image ordinaire. */
+     Dans les deux cas l'animation est un FLIP : on relève la position de
+     départ, on applique l'état d'arrivée, on relève la position finale,
+     et on rejoue l'écart à l'envers. C'est le seul moyen d'animer un
+     passage en `position: absolute` ou l'ouverture d'un `<dialog>`, qui
+     ne se transitionnent ni l'un ni l'autre. */
   (function () {
     var grilles = document.querySelectorAll('[data-zoom]');
+    var vue = document.querySelector('[data-vue]');
     if (!grilles.length || !document.body.animate) return;
 
     var DUREE = 340;
     var COURBE = 'cubic-bezier(0.22, 0.9, 0.28, 1)';
-    var deuxColonnes = window.matchMedia('(max-width: 759px)');
+    var etroit = window.matchMedia('(max-width: 759px)');
     var douceur = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var venuDe = null;
 
-    function bascule(li, ouvrir) {
-      var grille = li.parentElement;
-      var avant = li.getBoundingClientRect();
-
-      li.classList.toggle('ouvert', ouvrir);
-      grille.classList.toggle('zoome', ouvrir);
-      li.querySelector('.trav-zoom').setAttribute('aria-expanded', ouvrir ? 'true' : 'false');
-
+    function glisse(el, avant) {
       if (douceur.matches) return;
-      var apres = li.getBoundingClientRect();
+      var apres = el.getBoundingClientRect();
       if (!apres.width || !avant.width) return;
-      li.animate(
+      el.animate(
         [
           {
             transformOrigin: 'top left',
@@ -110,30 +141,84 @@ const groupes = travail.map((g) => ({
       );
     }
 
+    /* ── téléphone : sur place ── */
+    function bascule(li, ouvrir) {
+      var grille = li.parentElement;
+      var avant = li.getBoundingClientRect();
+      li.classList.toggle('ouvert', ouvrir);
+      grille.classList.toggle('zoome', ouvrir);
+      li.querySelector('.trav-zoom').setAttribute('aria-expanded', ouvrir ? 'true' : 'false');
+      glisse(li, avant);
+    }
+
     function ferme(grille) {
       var ouvert = grille.querySelector('li.ouvert');
       if (ouvert) bascule(ouvert, false);
     }
 
+    /* ── ordinateur : par-dessus la page ── */
+    function ouvreVue(bouton) {
+      if (!vue || !vue.showModal) return;
+      var img = vue.querySelector('img');
+      var depart = bouton.getBoundingClientRect();
+      img.src = bouton.getAttribute('data-grand');
+      img.alt = bouton.getAttribute('data-alt') || '';
+      venuDe = bouton;
+      vue.showModal();
+      glisse(img, depart);
+    }
+
     grilles.forEach(function (grille) {
       grille.addEventListener('click', function (e) {
         var bouton = e.target.closest('.trav-zoom');
-        if (!bouton || !deuxColonnes.matches) return;
-        var li = bouton.parentElement;
-        var etait = li.classList.contains('ouvert');
-        ferme(grille);
-        if (!etait) bascule(li, true);
+        if (!bouton) return;
+        if (etroit.matches) {
+          var li = bouton.parentElement;
+          var etait = li.classList.contains('ouvert');
+          ferme(grille);
+          if (!etait) bascule(li, true);
+        } else {
+          ouvreVue(bouton);
+        }
       });
     });
 
-    /* Échap ferme, comme partout ailleurs. Et si l'écran s'élargit au
-       point de sortir de la grille en deux colonnes, la photo ouverte
-       n'aurait plus de carré à occuper : on referme. */
+    if (vue) {
+      /* Un clic à côté de la photo ferme : la cible de l'événement est
+         alors le `<dialog>` lui-même, jamais l'image ni le bouton. */
+      vue.addEventListener('click', function (e) {
+        if (e.target === vue || e.target.closest('[data-fermer]')) vue.close();
+      });
+      vue.addEventListener('close', function () {
+        if (venuDe) venuDe.focus();
+        venuDe = null;
+      });
+    }
+
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') grilles.forEach(ferme);
     });
-    deuxColonnes.addEventListener('change', function (e) {
+
+    /* Le rôle du bouton n'est pas le même des deux côtés : il déplie sur
+       téléphone, il ouvre une vue sur ordinateur. On le dit correctement
+       plutôt que de laisser un `aria-expanded` mentir à moitié. */
+    function annonce() {
+      var surPlace = etroit.matches;
+      document.querySelectorAll('.trav-zoom').forEach(function (b) {
+        if (surPlace) {
+          b.removeAttribute('aria-haspopup');
+          if (!b.hasAttribute('aria-expanded')) b.setAttribute('aria-expanded', 'false');
+        } else {
+          b.removeAttribute('aria-expanded');
+          b.setAttribute('aria-haspopup', 'dialog');
+        }
+      });
+    }
+    annonce();
+    etroit.addEventListener('change', function (e) {
       if (!e.matches) grilles.forEach(ferme);
+      else if (vue && vue.open) vue.close();
+      annonce();
     });
   })();
 </script>

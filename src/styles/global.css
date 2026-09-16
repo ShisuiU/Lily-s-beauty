@@ -1499,11 +1499,70 @@ section {
 .trav-grille.zoome li:not(.ouvert) {
   visibility: hidden;
 }
-@media (min-width: 760px) {
-  /* Plus de carré de quatre à remplir : le bouton n'agrandit rien, et
-     rien ne doit laisser croire le contraire. */
-  .trav-zoom {
-    cursor: default;
+/* ── la photo ouverte par-dessus la page, sur ordinateur ──
+   Au-delà de deux colonnes, les quatre photos sont sur une seule ligne :
+   plus de carré à remplir sur place, la photo s'ouvre donc au-dessus.
+
+   720 px de côté, et le nombre n'est pas choisi au hasard. Les originaux
+   font 1 290 px — le maximum qu'Instagram rende, et on ne peut pas
+   inventer de pixels au-delà. À 720 px la photo est donc réduite sur un
+   écran ordinaire, et agrandie de 12 % seulement sur un écran à double
+   densité (1 440 demandés contre 1 290 disponibles) : invisible. Ouvrir
+   plus grand demanderait des photos d'origine plus grandes, pas une autre
+   valeur ici. */
+.trav-vue {
+  width: min(720px, 86vw, 82vh);
+  max-width: none;
+  /* Recentrage explicite. Un `<dialog>` modal est centré par le
+     navigateur avec `inset: 0` et `margin: auto` ; la remise à zéro des
+     marges de Tailwind écrase ce `auto`, et la vue se collait en haut à
+     gauche de l'écran, à moitié hors cadre. */
+  inset: 0;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+}
+.trav-vue::backdrop {
+  background: rgb(20 17 14 / 0.72);
+}
+.trav-vue img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+.trav-fermer {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.trav-fermer svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+/* Sur les écrans les plus étroits de cette plage, l'angle du bouton
+   sortirait de la fenêtre : on le rentre. */
+@media (max-width: 900px) {
+  .trav-fermer {
+    top: 8px;
+    right: 8px;
   }
 }
 

@@ -29,9 +29,14 @@ QUALITE = 84
 # Largeur de sortie par famille, réglée sur la taille d'affichage la plus
 # grande, doublée pour les écrans à forte densité.
 FAMILLES = {
-    'salon-*.jpg': 900,   # le ruban : 290 px au plus
-    'ongles-*.jpg': 900,  # « Le travail » : 420 px au plus
-    'cils-*.jpg': 900,
+    'salon-*.jpg': 900,    # le ruban : 290 px au plus
+    # « Le travail » : la vignette fait 290 px, mais un clic ouvre la
+    # photo en grand. On garde donc les 1 290 px de l'original — c'est le
+    # maximum qu'Instagram rende, et c'est ce plafond qui décide de la
+    # taille d'ouverture, pas l'inverse. Ces fichiers ne sont pas servis
+    # tels quels : Astro en tire les variantes AVIF dont la page a besoin.
+    'ongles-*.jpg': 1290,
+    'cils-*.jpg': 1290,
 }
 
 # On ne recadre pas. Une version de ce script rognait les bandes

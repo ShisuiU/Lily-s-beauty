@@ -445,19 +445,48 @@ recadre lui-même ce qu'il veut recadrer, et il l'a fait. `prepare-galerie.py`
 réduit et retire les métadonnées, rien d'autre ; le cadrage carré de
 l'affichage est l'affaire de la feuille de style.
 
-**Sur téléphone, un appui agrandit la photo à la taille des quatre.** La
-grille fait deux colonnes sur deux lignes, donc un carré : la photo
-ouverte se pose en absolu sur toute la grille et occupe exactement leur
-place. Les trois autres gardent leur place dans le flux — la hauteur de
-la section ne bouge pas d'un pixel — mais passent en `visibility:
-hidden`, ce qui les retire du même coup de la tabulation et des lecteurs
-d'écran le temps de la vue. Un second appui referme, Échap aussi.
+**Un appui, un clic : la photo s'ouvre — mais pas de la même façon des
+deux côtés**, parce que la place disponible n'est pas la même.
+
+Sur téléphone, la grille fait deux colonnes sur deux lignes, donc un
+carré : la photo ouverte se pose en absolu sur toute la grille et occupe
+exactement la place des quatre. Les trois autres gardent la leur dans le
+flux — la hauteur de la section ne bouge pas d'un pixel — mais passent en
+`visibility: hidden`, ce qui les retire du même coup de la tabulation et
+des lecteurs d'écran le temps de la vue. Un second appui referme, Échap
+aussi.
+
+Sur ordinateur, les quatre sont sur une seule ligne : plus de carré à
+remplir sur place, la photo s'ouvre donc **au-dessus de la page**, dans
+un `<dialog>` natif — pas une division qu'on empile. Il prend le focus,
+le retient, se ferme à Échap et s'affiche au-dessus de tout sans qu'on
+ait à inventer un `z-index`. Un clic à côté referme, et le focus revient
+sur la vignette d'où l'on est parti.
+
+Un détail qui coûte une ligne et se voyait de loin sans elle : un
+`<dialog>` modal est centré par le navigateur avec `inset: 0` et
+`margin: auto`, et la remise à zéro des marges de Tailwind écrase ce
+`auto` — la vue se collait en haut à gauche, à moitié hors cadre.
+
+**720 px de côté, et le nombre vient des photos, pas de l'écran.** Les
+originaux font 1 290 px — le maximum qu'Instagram rende, et on ne peut
+pas inventer de pixels au-delà. À 720 px la photo est réduite sur un
+écran ordinaire, et agrandie de 12 % seulement sur un écran à double
+densité : invisible. Ouvrir plus grand demanderait des photos d'origine
+plus grandes, pas une autre valeur dans la feuille de style. Les
+variantes de 1 290 px ne sont chargées qu'au clic — un million d'octets
+que personne ne paie en arrivant sur la page.
+
+Ces mêmes originaux sont désormais conservés en pleine résolution dans
+`src/assets` (1 290 px au lieu de 900), et le `<Image>` de la vignette
+porte une `width` explicite : sans elle, l'adresse de repli du `<img>`
+pointait sur la largeur d'origine, et la construction produisait une
+seconde variante de 1 290 px pour rien à côté de celle de la vue.
 
 Le nombre de colonnes est **écrit**, deux puis quatre, et non laissé à un
-`auto-fit` : tout l'agrandissement repose sur le fait que la grille est
+`auto-fit` : l'ouverture sur place repose sur le fait que la grille est
 un carré de quatre, ce qu'un nombre de colonnes variable ne garantit pas.
-Au-delà de deux colonnes, il n'y a plus de carré à remplir et le bouton
-n'agrandit rien.
+C'est ce même seuil qui décide lequel des deux gestes s'applique.
 
 L'animation est un **FLIP** : on relève la position de départ, on applique
 l'état d'arrivée, on relève la position finale, et on rejoue l'écart à
@@ -466,8 +495,12 @@ qui ne se transitionne pas. Sous mouvement réduit, l'état change sans
 animation — vérifié, zéro animation en cours.
 
 Chaque photo est dans un **vrai bouton**, pas dans une image qu'on
-écoute : atteignable au clavier, annoncée comme une commande, et l'état
-porté par `aria-expanded` plutôt que par une classe que personne ne lit.
+écoute : atteignable au clavier et annoncée comme une commande. Son rôle
+n'étant pas le même des deux côtés — il déplie sur téléphone, il ouvre
+une vue sur ordinateur — le script pose `aria-expanded` ou
+`aria-haspopup="dialog"` selon le cas, et bascule de l'un à l'autre si
+l'écran change de largeur. Un `aria-expanded` qui ne bougerait jamais sur
+ordinateur mentirait à moitié.
 
 Les fichiers de cils sont numérotés, pas nommés par technique : on ne
 distingue pas à l'œil une pose cil à cil d'une mixte ou d'un volume
