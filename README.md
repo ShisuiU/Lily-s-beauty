@@ -486,6 +486,22 @@ Un détail qui coûte une ligne et se voyait de loin sans elle : un
 `margin: auto`, et la remise à zéro des marges de Tailwind écrase ce
 `auto` — la vue se collait en haut à gauche, à moitié hors cadre.
 
+**La vue part de la vignette, pas de la grande version.** Elle est une
+seule et même image, remplie à chaque ouverture : lui donner directement
+l'adresse de la grande affichait la photo **précédente** pendant tout son
+chargement, parce qu'un navigateur garde ce qu'il a peint tant qu'il n'a
+pas mieux. On part donc de la vignette, déjà décodée et en cache — la
+bonne photo est là tout de suite, simplement plus douce — et la grande
+prend sa place dès qu'elle est prête. Un garde évite qu'une grande
+version arrivée en retard ne s'installe par-dessus une autre photo
+ouverte entre-temps.
+
+Mesuré en retardant les variantes de 1 290 px de deux secondes, puis en
+relevant la couleur moyenne de la vue 150 ms après le clic : écart de 1 à
+2 sur 255 avec la bonne photo, de 60 à 70 avec la précédente. Avec
+l'ancien code, le même test donne l'inverse — c'est ce qui prouve qu'il
+mesure la bonne chose.
+
 **720 px de côté, et le nombre vient des photos, pas de l'écran.** Les
 originaux font 1 290 px — le maximum qu'Instagram rende, et on ne peut
 pas inventer de pixels au-delà. À 720 px la photo est réduite sur un

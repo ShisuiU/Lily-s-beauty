@@ -122,6 +122,7 @@ const groupes = await Promise.all(
     var etroit = window.matchMedia('(max-width: 759px)');
     var douceur = window.matchMedia('(prefers-reduced-motion: reduce)');
     var venuDe = null;
+    var attendue = null;
 
     function glisse(el, avant) {
       if (douceur.matches) return;
@@ -156,16 +157,36 @@ const groupes = await Promise.all(
       if (ouvert) bascule(ouvert, false);
     }
 
-    /* ── ordinateur : par-dessus la page ── */
+    /* ── ordinateur : par-dessus la page ──
+       La vue est une seule et même image, remplie à chaque ouverture. Lui
+       donner directement l'adresse de la grande version affichait la
+       photo **précédente** le temps que la nouvelle arrive : un
+       navigateur garde ce qu'il a peint tant qu'il n'a pas mieux.
+
+       On part donc de la vignette, déjà décodée et en cache : la bonne
+       photo est là immédiatement, simplement plus douce. La grande prend
+       sa place dès qu'elle est prête. `attendue` évite qu'une grande
+       version arrivée en retard ne s'installe par-dessus une autre photo
+       ouverte entre-temps. */
     function ouvreVue(bouton) {
       if (!vue || !vue.showModal) return;
       var img = vue.querySelector('img');
+      var vignette = bouton.querySelector('img');
+      var grand = bouton.getAttribute('data-grand');
       var depart = bouton.getBoundingClientRect();
-      img.src = bouton.getAttribute('data-grand');
+
+      img.src = (vignette && (vignette.currentSrc || vignette.src)) || grand;
       img.alt = bouton.getAttribute('data-alt') || '';
+      attendue = grand;
       venuDe = bouton;
       vue.showModal();
       glisse(img, depart);
+
+      var haute = new Image();
+      haute.onload = function () {
+        if (vue.open && attendue === grand) img.src = grand;
+      };
+      haute.src = grand;
     }
 
     grilles.forEach(function (grille) {
@@ -192,6 +213,7 @@ const groupes = await Promise.all(
       vue.addEventListener('close', function () {
         if (venuDe) venuDe.focus();
         venuDe = null;
+        attendue = null;
       });
     }
 
