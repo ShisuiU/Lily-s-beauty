@@ -71,7 +71,7 @@ const groupes = await Promise.all(
                   alt={p.alt}
                   width={860}
                   widths={[280, 440, 620, 860]}
-                  sizes="(max-width: 759px) 90vw, 22vw"
+                  sizes="(max-width: 759px) 45vw, 22vw"
                   format="avif"
                   quality={64}
                   loading="lazy"
@@ -142,13 +142,39 @@ const groupes = await Promise.all(
       );
     }
 
-    /* ── téléphone : sur place ── */
+    /* ── téléphone : sur place ──
+       `sizes` décrit la vignette, pas la photo ouverte : la décrire à sa
+       taille d'ouverture faisait télécharger, pour chacune des huit, une
+       variante deux fois trop grande — 421 Ko au lieu de 150 — que la
+       plupart des visiteurs n'agrandiront jamais.
+
+       On passe donc à la version d'ouverture au moment de l'ouverture,
+       comme sur ordinateur. La photo affichée étant déjà la bonne, cet
+       échange ne fait que la préciser : il n'y a rien de faux à voir
+       entre-temps. `srcset` et `sizes` doivent partir avec, sinon ils
+       l'emportent sur `src` et l'échange n'a pas lieu. */
+    function haussePhoto(li) {
+      var bouton = li.querySelector('.trav-zoom');
+      var img = li.querySelector('img');
+      var grand = bouton && bouton.getAttribute('data-grand');
+      if (!grand || img.getAttribute('data-haussee') === grand) return;
+      var haute = new Image();
+      haute.onload = function () {
+        img.removeAttribute('srcset');
+        img.removeAttribute('sizes');
+        img.src = grand;
+        img.setAttribute('data-haussee', grand);
+      };
+      haute.src = grand;
+    }
+
     function bascule(li, ouvrir) {
       var grille = li.parentElement;
       var avant = li.getBoundingClientRect();
       li.classList.toggle('ouvert', ouvrir);
       grille.classList.toggle('zoome', ouvrir);
       li.querySelector('.trav-zoom').setAttribute('aria-expanded', ouvrir ? 'true' : 'false');
+      if (ouvrir) haussePhoto(li);
       glisse(li, avant);
     }
 

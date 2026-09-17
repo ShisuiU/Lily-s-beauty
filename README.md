@@ -73,7 +73,7 @@ python3 scripts/fetch-fonts.py                     # public/fonts/ + src/styles/
 python3 scripts/generate-map.py                    # src/assets/plan-salon.jpg
 python3 scripts/generate-og.py                     # public/og.jpg
 python3 scripts/prepare-logo.py brand/logo-original.png   # src/assets/logo.png
-python3 scripts/prepare-motif.py brand/motif-lys-original.png  # src/assets/motif-lys*.png
+python3 scripts/prepare-motif.py brand/motif-lys-original.png  # src/assets/motif-lys*.webp
 python3 scripts/prepare-hero.py                    # les deux photos du bandeau (une par orientation)
 python3 scripts/prepare-galerie.py                 # src/assets/salon-*.jpg
 python3 scripts/verifie-tarifs.py                  # compare la grille du site à Planity
@@ -265,6 +265,20 @@ surtitre 4,84:1, accroche 7,14:1, infos 10,15:1, titre 5,09:1, logo
 opaque et passe par-dessus. **Changer une photo du bandeau oblige à
 refaire cette mesure.**
 
+**Les masques pèsent 77 Ko, pas 166.** Les trois lys étaient des PNG en
+niveaux de gris + alpha, 166 Ko à eux trois — dont 137 chargés dès le
+premier écran, pour de l'ornement posé à 10 % d'opacité. Ils sont passés
+en **WebP sans perte, à 420 px** : 77 Ko, dont 63 sur le premier écran.
+
+420 px, c'est moins que le double de la plus grande taille d'affichage
+(340 px), et c'est assumé. Comparé à la pleine résolution, à la taille
+réellement affichée sur un écran à double densité et **une fois les 10 %
+d'opacité appliqués**, l'écart de rendu est de 0,25 sur 255 en moyenne et
+de 8,9 au pire pixel. C'est la mesure qui décide, pas la règle du double.
+
+Le WebP est sans perte : l'alpha *est* la forme, et une compression avec
+perte y ferait baver les contours pour quelques kilo-octets.
+
 **Le rameau du logo, décliné.** Il est servi en masque CSS et non en
 `<img>` : le fichier ne porte qu'un alpha, la couleur vient de la
 palette, et un pseudo-élément est par construction invisible aux lecteurs
@@ -450,6 +464,15 @@ différents — « Aisselles » vaut 12 € en 15 min chez la femme, 14 € en
 20 min chez l'homme. Écrasées sur une seule clé, ces paires s'annulent et
 un écart passe.
 
+**« Le travail » est dans le menu**, en deuxième position, juste après les
+tarifs — l'ordre du menu suit celui des sections. Une section de photos
+qu'on n'atteint qu'en faisant défiler est la plus rentable du site, et
+elle était cachée. Cinq entrées tiennent : au plus étroit où le menu
+s'affiche encore, il reste 24 px avant le bouton « Réserver ». Les liens
+passent en `white-space: nowrap`, faute de quoi « Prestations et tarifs »
+repassait à la ligne entre 881 et 1 000 px et donnait un en-tête sur deux
+hauteurs.
+
 **« Le travail », posé juste après les tarifs.** On vient de lire le prix
 d'une pose complète : on veut voir à quoi elle ressemble. Fond blanc et
 non crème, contrairement aux tarifs juste au-dessus — les photos y
@@ -485,6 +508,20 @@ Un détail qui coûte une ligne et se voyait de loin sans elle : un
 `<dialog>` modal est centré par le navigateur avec `inset: 0` et
 `margin: auto`, et la remise à zéro des marges de Tailwind écrase ce
 `auto` — la vue se collait en haut à gauche, à moitié hors cadre.
+
+**`sizes` décrit la vignette, pas la photo ouverte.** Il annonçait la
+taille d'ouverture, si bien que chacune des huit photos téléchargeait une
+variante deux fois trop grande — 421 Ko au lieu de 150 sur un téléphone à
+double densité — que la plupart des visiteurs n'agrandiront jamais. Le
+téléphone fait donc maintenant ce que fait déjà l'ordinateur : vignette
+légère au chargement, version d'ouverture au moment de l'ouverture. Elle
+s'y substitue une fois chargée, et `srcset` et `sizes` partent avec elle,
+sinon ils l'emportent sur `src` et l'échange n'a pas lieu.
+
+Deux gains d'un coup : 271 Ko de moins sur la page, et une photo ouverte
+servie en 1 290 px au lieu de 860 — ce qui règle la douceur qu'on voyait
+encore sur les écrans à triple densité. Mesuré : vignettes en 440 px à
+double densité, 620 à triple, et 1 290 après l'appui dans les deux cas.
 
 **La vue part de la vignette, pas de la grande version.** Elle est une
 seule et même image, remplie à chaque ouverture : lui donner directement

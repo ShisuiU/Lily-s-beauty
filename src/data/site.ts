@@ -77,6 +77,7 @@ export const lienSection = (href: string) => '/' + href;
 
 export const sections = [
   { href: '#tarifs', label: 'Prestations et tarifs' },
+  { href: '#travail', label: 'Le travail' },
   { href: '#horaires', label: 'Horaires' },
   { href: '#reserver', label: 'Rendez-vous' },
   { href: '#acces', label: 'Nous trouver' },

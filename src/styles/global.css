@@ -304,6 +304,11 @@ main:focus {
   padding-block: 11px;
   display: inline-flex;
   align-items: center;
+  /* Avec cinq entrées, « Prestations et tarifs » passait à la ligne
+     entre 881 et 1 000 px et donnait un en-tête sur deux hauteurs.
+     Mesuré : sur une seule ligne, il reste 24 px avant le bouton
+     « Réserver » au plus étroit — ça tient. */
+  white-space: nowrap;
 }
 .nav a::after {
   content: '';
@@ -1144,12 +1149,12 @@ section {
   top: clamp(-52px, -4vw, -18px);
   right: clamp(-58px, -4.5vw, -20px);
   width: clamp(196px, 26vw, 340px);
-  aspect-ratio: 620 / 475;
+  aspect-ratio: 420 / 322;
   background: var(--ink);
   opacity: 0.1;
   transform: scaleX(-1);
-  -webkit-mask-image: url('../assets/motif-lys.png');
-  mask-image: url('../assets/motif-lys.png');
+  -webkit-mask-image: url('../assets/motif-lys.webp');
+  mask-image: url('../assets/motif-lys.webp');
 }
 
 /* Les feuilles seules, en bas à gauche du bloc sombre : l'angle opposé
@@ -1159,11 +1164,11 @@ section {
   bottom: clamp(-30px, -2.4vw, -12px);
   left: clamp(-52px, -4vw, -22px);
   width: clamp(190px, 24vw, 310px);
-  aspect-ratio: 560 / 249;
+  aspect-ratio: 420 / 186;
   background: var(--paper);
   opacity: 0.14;
-  -webkit-mask-image: url('../assets/motif-lys-branche.png');
-  mask-image: url('../assets/motif-lys-branche.png');
+  -webkit-mask-image: url('../assets/motif-lys-branche.webp');
+  mask-image: url('../assets/motif-lys-branche.webp');
 }
 
 /* La fleur encore, sur les pages de texte — mentions légales et erreur.
@@ -1175,11 +1180,11 @@ section {
   top: clamp(90px, 14vw, 150px);
   right: clamp(20px, 6vw, 110px);
   width: clamp(130px, 20vw, 250px);
-  aspect-ratio: 560 / 630;
+  aspect-ratio: 420 / 473;
   background: var(--ink);
   opacity: 0.085;
-  -webkit-mask-image: url('../assets/motif-lys-fleur.png');
-  mask-image: url('../assets/motif-lys-fleur.png');
+  -webkit-mask-image: url('../assets/motif-lys-fleur.webp');
+  mask-image: url('../assets/motif-lys-fleur.webp');
 }
 
 /* Les pages de texte deviennent une colonne dense sans marge à droite :
@@ -1371,13 +1376,13 @@ section {
      qu'elle, décollée de son angle. C'est la hauteur seule qui règle.
      Vérifié de 360 à 2 560 px : elle tient partout, avec de la marge. */
   height: clamp(104px, 72%, 196px);
-  aspect-ratio: 560 / 630;
+  aspect-ratio: 420 / 473;
   background: var(--ink);
   opacity: 0.1;
   pointer-events: none;
   z-index: 0;
-  -webkit-mask: url('../assets/motif-lys-fleur.png') no-repeat center / contain;
-  mask: url('../assets/motif-lys-fleur.png') no-repeat center / contain;
+  -webkit-mask: url('../assets/motif-lys-fleur.webp') no-repeat center / contain;
+  mask: url('../assets/motif-lys-fleur.webp') no-repeat center / contain;
 }
 .status > * {
   position: relative;

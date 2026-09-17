@@ -5,15 +5,26 @@ Prépare les trois fragments de lys repris dans les angles des blocs.
 Le fichier fourni est déjà un PNG transparent au trait noir pur : rien à
 détourer. Trois choses seulement.
 
-Il est réduit — 620 px de large suffisent pour un décor affiché au plus
-à 340 px, écrans à forte densité compris — et surtout il est réenregistré
-en **niveaux de gris + alpha**, la forme portée par l'alpha.
+Il est réduit à 420 px de large et enregistré en **WebP sans perte**,
+la forme portée par l'alpha.
+
+420 px, c'est moins que le double de la plus grande taille d'affichage
+(340 px), et c'est assumé : ces dessins sont posés à 10 % d'opacité. En
+comparant, à la taille réellement affichée sur un écran à double densité,
+la version 420 px à la version pleine résolution, l'écart de rendu est de
+0,25 sur 255 en moyenne et de 8,9 au pire pixel. Invisible. Le PNG, lui,
+pesait 166 Ko pour les trois — dont 137 chargés dès le premier écran, pour
+de l'ornement.
 
 C'est ce que lit un masque CSS. Le réflexe d'enregistrer la silhouette en
 luminance produit une image opaque, donc un masque qui ne masque rien :
 la page affiche un rectangle plein à la place du dessin. Le décor tirant
 sa couleur de la feuille de style, les canaux de couleur du fichier ne
 servent à rien et partent à zéro.
+
+Le WebP est **sans perte** : l'alpha est la forme elle-même, et une
+compression avec perte y ferait baver les contours pour quelques
+kilo-octets.
 
 La troisième, c'est le **halo**. Un fragment prélevé au rectangle dans un
 dessin d'un seul tenant est coupé quelque part, et une coupe franche se
@@ -55,11 +66,11 @@ from PIL import Image
 # le plus long (365 px), `nul` laisse 180 px pour se dissiper.
 DECOUPES = {
     # le rameau entier
-    'motif-lys.png': dict(boite=None, largeur=620),
+    'motif-lys.webp': dict(boite=None, largeur=420),
     # boutons et feuilles
-    'motif-lys-branche.png': dict(boite=(500, 0, 1430, 430), largeur=560),
+    'motif-lys-branche.webp': dict(boite=(500, 0, 1430, 430), largeur=420),
     # la fleur entière, dissipée dans sa tige
-    'motif-lys-fleur.png': dict(boite=None, largeur=560, halo=(295, 740, 380, 560)),
+    'motif-lys-fleur.webp': dict(boite=None, largeur=420, halo=(295, 740, 380, 560)),
 }
 # Les fragments vivent dans `src/`, pas dans `public/`. Un fichier de
 # `public/` est servi sous le nom qu'on lui donne : son URL ne change
@@ -126,7 +137,7 @@ def main(src: str) -> None:
             )
 
         out = SORTIE / nom
-        Image.fromarray(np.dstack([np.zeros_like(fini), fini]), 'LA').save(out, optimize=True)
+        Image.fromarray(np.dstack([np.zeros_like(fini), fini]), 'LA').save(out, lossless=True)
         # Le bord n'est relevé que pour les fragments au halo. Les deux
         # autres sont posés en débordant volontairement de leur bloc :
         # chez eux, de l'encre au bord est le résultat cherché.
