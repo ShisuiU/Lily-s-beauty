@@ -94,7 +94,7 @@ export const practitioners = [
   },
   {
     name: 'Juliette',
-    craft: "Les cils, les sourcils et l'épilation",
+    craft: "La beauté du visage et l'épilation",
     instagram: 'https://www.instagram.com/joliscils30/',
   },
 ];
@@ -442,7 +442,7 @@ export const legal = {
       denomination: null as string | null,
       forme: 'Entrepreneur individuel (auto-entreprise)',
       siret: null as string | null,
-      activite: 'Soins des cils, des sourcils et épilation',
+      activite: 'Beauté du visage et épilation',
     },
   ],
 
