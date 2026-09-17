@@ -19,19 +19,53 @@ garde en effet ses anciennes grilles : au dernier relevé, 167 entrées
 étaient stockées pour 77 réellement proposées.
 
     python3 scripts/verifie-tarifs.py
+    python3 scripts/verifie-tarifs.py --noter
 
-Sortie 0 si tout concorde, 1 sinon. Aucune écriture : le script dit ce
-qui diffère, la correction se fait dans `src/data/site.ts`.
+Sortie 0 si tout concorde, 1 sinon.
+
+Sans `--noter`, le script n'écrit rien : il dit ce qui diffère, la
+correction se fait à la main dans `src/data/site.ts`. Avec `--noter`, et
+seulement quand tout concorde, il remet `pricesCheckedOn` à la date du
+jour — c'est cette date que la page affiche sous la grille, et une
+vérification qui passe est précisément ce qu'elle annonce. C'est l'action
+hebdomadaire de GitHub qui s'en sert ; à la main, elle ne sert à rien
+puisqu'on édite déjà le fichier.
 """
+import datetime
 import json
 import pathlib
 import re
 import sys
 import unicodedata
 import urllib.request
+import zoneinfo
 
 SOURCE = 'https://www.planity.com/lilys-beauty-30290-laudun-lardoise'
 DONNEES = pathlib.Path('src/data/site.ts')
+
+MOIS = ('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet',
+        'août', 'septembre', 'octobre', 'novembre', 'décembre')
+
+
+def note_la_date() -> str | None:
+    """Remet `pricesCheckedOn` à aujourd'hui. Renvoie la date si le
+    fichier a changé, None s'il portait déjà la bonne.
+
+    Les noms de mois sont écrits ici plutôt que tirés de `locale` : un
+    serveur d'intégration tourne en anglais, et `strftime('%B')` y aurait
+    donné « September »."""
+    jour = datetime.datetime.now(zoneinfo.ZoneInfo('Europe/Paris'))
+    date = f'{jour.day} {MOIS[jour.month - 1]} {jour.year}'
+    texte = DONNEES.read_text()
+    nouveau, combien = re.subn(
+        r"(export const pricesCheckedOn = ')[^']*(')", rf"\g<1>{date}\g<2>", texte
+    )
+    if not combien:
+        raise SystemExit('pricesCheckedOn est introuvable dans ' + str(DONNEES))
+    if nouveau == texte:
+        return None
+    DONNEES.write_text(nouveau)
+    return date
 
 
 def telecharge(url: str) -> str:
@@ -181,6 +215,9 @@ def main() -> None:
               'puis la date de `pricesCheckedOn`.')
         sys.exit(1)
     print('Aucun écart : la grille du site est celle de Planity.')
+    if '--noter' in sys.argv:
+        date = note_la_date()
+        print(f'pricesCheckedOn : {date}' if date else 'pricesCheckedOn : déjà à jour.')
 
 
 if __name__ == '__main__':

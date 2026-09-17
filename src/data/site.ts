@@ -231,7 +231,7 @@ export const hours: Day[] = [
    main.                                                            */
 
 export const pricesConfirmed = true;
-export const pricesCheckedOn = '15 septembre 2026';
+export const pricesCheckedOn = '17 septembre 2026';
 
 export type Service = { name: string; minutes: number; price: number; note?: string };
 export type Category = { title: string; items: Service[] };

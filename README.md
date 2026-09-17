@@ -426,6 +426,24 @@ compare à `src/data/site.ts` : manquantes, en trop, tarifs et durées
 différents. Sortie non nulle s'il y a un écart. **Relancer ce script
 plutôt que recopier.**
 
+**La grille ne se met jamais à jour toute seule, et une action
+hebdomadaire s'assure qu'on le sache.** Le site est statique : les tarifs
+sont recopiés dans `site.ts` et rien ne contacte Planity, ni à la
+construction ni chez le visiteur. `.github/workflows/tarifs.yml` lance
+donc le script chaque lundi. Écart trouvé, elle ouvre une alerte — ou met
+à jour celle qui est déjà ouverte, plutôt que d'en empiler une par
+semaine. Aucun écart, elle referme l'alerte s'il y en avait une et remet
+`pricesCheckedOn` à la date du jour, puisque c'est exactement ce que
+cette date annonce sous la grille. Une exécution qui ne change rien ne
+laisse aucune trace.
+
+Elle **signale, elle ne corrige pas**, et c'est délibéré : l'extraction
+repose sur un objet JSON interne à la page Planity, que Planity peut
+changer sans prévenir, et une grille de prix qui part en ligne sans
+relecture n'est pas une bonne idée. La date, elle, ne bouge pas tant
+qu'un écart subsiste — vérifié : avec un écart en place, `--noter` sort
+en 1 sans toucher au fichier.
+
 Les comparaisons se font sur des **listes**, pas sur des valeurs uniques :
 le même intitulé existe des deux côtés du catalogue avec des tarifs
 différents — « Aisselles » vaut 12 € en 15 min chez la femme, 14 € en

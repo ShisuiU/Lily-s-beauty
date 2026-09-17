@@ -1,0 +1,120 @@
+# Vérifie chaque semaine que la grille du site est toujours celle de
+# Planity, et prévient quand elle ne l'est plus.
+#
+# Le site est statique : les tarifs sont recopiés dans
+# `src/data/site.ts` et ne se mettent jamais à jour tout seuls. Cette
+# action ne les corrige pas non plus — elle *signale*. C'est délibéré :
+# l'extraction repose sur un objet JSON interne à la page Planity, que
+# Planity peut changer sans prévenir, et une grille de prix qui part en
+# ligne sans relecture n'est pas une bonne idée.
+#
+# Ce qu'elle fait, donc :
+#   · écart trouvé   → ouvre une alerte, ou met à jour celle qui est
+#                      déjà ouverte, avec le détail des écarts ;
+#   · aucun écart    → ferme l'alerte s'il y en avait une, et remet
+#                      `pricesCheckedOn` à la date du jour, puisque
+#                      c'est exactement ce que cette date annonce sous
+#                      la grille.
+
+name: Tarifs — écart avec Planity
+
+on:
+  schedule:
+    # Lundi 6 h UTC, soit 8 h à Paris l'été et 7 h l'hiver.
+    - cron: '0 6 * * 1'
+  # Pour la lancer à la demande depuis l'onglet Actions.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: tarifs
+  cancel-in-progress: false
+
+env:
+  TITRE: 'Tarifs : écart avec la fiche Planity'
+
+jobs:
+  verifie:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Le script ne dépend que de la bibliothèque standard : rien à
+      # installer.
+      - name: Comparer la grille du site à Planity
+        id: verif
+        run: |
+          if python3 scripts/verifie-tarifs.py --noter > rapport.txt 2>&1; then
+            echo 'ecart=non' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ecart=oui' >> "$GITHUB_OUTPUT"
+          fi
+          cat rapport.txt
+
+      - name: Signaler l'écart
+        if: steps.verif.outputs.ecart == 'oui'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "La grille affichée par le site ne correspond plus à la fiche Planity."
+            echo
+            echo '```'
+            cat rapport.txt
+            echo '```'
+            echo
+            echo "**Que faire** — corriger \`universes\` dans \`src/data/site.ts\`, puis"
+            echo "relancer \`python3 scripts/verifie-tarifs.py\` en local pour vérifier."
+            echo "La date affichée sous la grille se remettra à jour toute seule au"
+            echo "prochain passage sans écart ; elle ne bouge pas tant qu'il en reste."
+            echo
+            echo "_Relevé automatique du $(TZ=Europe/Paris date '+%d/%m/%Y à %H:%M')._"
+          } > corps.md
+
+          # Une seule alerte à la fois : on met à jour celle qui est
+          # ouverte plutôt que d'en empiler une par semaine.
+          NUM=$(gh issue list --state open --limit 50 --json number,title \
+                | jq -r --arg t "$TITRE" '[.[] | select(.title == $t)] | .[0].number // empty')
+          if [ -n "$NUM" ]; then
+            gh issue edit "$NUM" --body-file corps.md
+            echo "alerte mise à jour : #$NUM"
+          else
+            gh issue create --title "$TITRE" --body-file corps.md
+          fi
+
+      - name: Refermer l'alerte s'il y en avait une
+        if: steps.verif.outputs.ecart == 'non'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NUM=$(gh issue list --state open --limit 50 --json number,title \
+                | jq -r --arg t "$TITRE" '[.[] | select(.title == $t)] | .[0].number // empty')
+          if [ -n "$NUM" ]; then
+            gh issue close "$NUM" \
+              --comment "La grille du site correspond de nouveau à Planity."
+          fi
+
+      # `--noter` a déjà réécrit la date si elle avait changé. On ne
+      # publie que dans ce cas : une exécution qui ne change rien ne
+      # laisse aucune trace.
+      - name: Publier la date du relevé
+        if: steps.verif.outputs.ecart == 'non'
+        run: |
+          if git diff --quiet -- src/data/site.ts; then
+            echo 'date déjà à jour, rien à publier'
+            exit 0
+          fi
+          git config user.name 'Vérification des tarifs'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/data/site.ts
+          git commit -m 'Confirm the price grid still matches Planity'
+          git pull --rebase
+          git push
