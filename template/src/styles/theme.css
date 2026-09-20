@@ -121,7 +121,7 @@
      --shell: #f7f4ed;  --line: #e9e2d3;  --hair: #dbcfb7;
 
    ── Rose & lin ── la teinte du premier site construit sur ce gabarit.
-      À éviter si les deux instituts peuvent se croiser : c'est ce qui
+      À éviter si les deux maisons peuvent se croiser : c'est ce qui
       ferait croire à une enseigne commune.
      --accent: #c4879e;      (2,87:1 décoratif)
      --accent-ink: #9e5a76;  (5,03:1)
@@ -133,7 +133,7 @@
    PALETTE SOMBRE — écrite, conservée, mais NON SERVIE.
    <html> porte data-theme="light" : ni ce bloc ni le suivant ne
    s'appliquent. C'est une décision de marque, pas un oubli — l'identité
-   d'un institut est claire, et l'inversion la dénature ; le site est
+   de ces enseignes est claire, et l'inversion la dénature ; le site est
    aussi très photographique, et les photos, elles, ne s'inversent pas.
    Pour suivre le réglage du téléphone : retirer data-theme du <html>
    dans src/layouts/Base.astro. Pour forcer le sombre : y mettre "dark".

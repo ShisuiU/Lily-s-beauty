@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Régénère src/assets/plan.jpg à partir des coordonnées de l'institut.
+Régénère src/assets/plan.jpg à partir des coordonnées de l'établissement.
 
 La carte est une image fabriquée ici, une fois, et servie depuis le site.
 Aucun iframe, aucun script tiers : le visiteur ne contacte ni Google ni
@@ -24,7 +24,7 @@ from PIL import Image, ImageDraw
 # ── les trois lignes à régler ────────────────────────────────────────
 LAT, LON = 48.858370, 2.294481             # doit rester en phase avec `geo` dans src/data/site.ts
 ZOOM = 17                                  # 16 = le quartier, 17 = la rue, 18 = le pâté de maisons
-UA = 'SiteInstitut/1.0 (carte statique fabriquée à la construction; contact@exemple.fr)'
+UA = 'SiteVitrine/1.0 (carte statique fabriquée à la construction; contact@exemple.fr)'
 # ─────────────────────────────────────────────────────────────────────
 # Le User-Agent doit identifier le site : c'est une exigence de la
 # politique d'usage des tuiles OpenStreetMap, pas une formalité.

@@ -3,7 +3,7 @@
 Fabrique public/og.jpg, l'image qui s'affiche quand on partage le lien.
 
 Sans elle, le lien envoyé par WhatsApp, posté en story ou collé sur
-Facebook produit une vignette vide — ce qui, pour un institut qui circule
+Facebook produit une vignette vide — ce qui, pour une enseigne qui circule
 surtout de bouche à oreille, revient à perdre la première impression.
 
     pip install Pillow fonttools brotli

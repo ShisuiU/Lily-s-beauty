@@ -2,14 +2,16 @@
 import Base from '../layouts/Base.astro';
 import Footer from '../components/Footer.astro';
 import Todo from '../components/Todo.astro';
-import { site, address, legal, reservation, equipe, pseudo } from '../data/site';
+import { site, address, legal, reservation, equipe } from '../data/site';
 
 const lieu = `${address.streetNumber}, ${address.street}, ${address.postalCode} ${address.city}`;
 /* Une entreprise ou plusieurs : le titre et la phrase d'introduction
-   changent, le reste non. Un institut tenu par deux auto-entreprises qui
-   partagent un local doit faire apparaître les deux, chacune avec son
-   SIRET — c'est le cas qui justifie la liste. */
-const plusieurs = legal.entreprises.length > 1;
+   changent, le reste non. Plusieurs entreprises qui partagent un même
+   local doivent toutes apparaître, chacune avec son SIRET — c'est le cas
+   qui justifie la liste. */
+const plusieurs = legal.editeurs.length > 1;
+const reseaux = equipe.membres.filter((p) => p.instagram);
+const liensSortants = Boolean(reservation.url) || reseaux.length > 0;
 ---
 
 <Base
@@ -30,50 +32,44 @@ const plusieurs = legal.entreprises.length > 1;
       <h2>{plusieurs ? 'Éditeurs du site' : 'Éditeur du site'}</h2>
       {plusieurs && (
         <p class="legal-lead">
-          L'institut réunit plusieurs entreprises indépendantes qui partagent le même local et la
-          même enseigne. Chacune répond de son activité.
+          Plusieurs entreprises indépendantes partagent le même local et la même enseigne.
+          Chacune répond de son activité.
         </p>
       )}
 
       <div class="ent-grid">
-        {legal.entreprises.map((e) => {
-          const compte = equipe.membres.find((p) => p.name === e.praticienne);
-          return (
-            <div class="ent">
-              <h3>{e.praticienne}</h3>
-              <p class="ent-act">{e.activite}</p>
-              <dl>
-                <div>
-                  <dt>Exploitant</dt>
-                  <dd>{e.denomination ?? <Todo label="Nom et prénom à compléter" />}</dd>
-                </div>
-                <div><dt>Forme</dt><dd>{e.forme}</dd></div>
-                <div>
-                  <dt>SIRET</dt>
-                  <dd>{e.siret ?? <Todo label="Numéro à compléter" />}</dd>
-                </div>
-                <div><dt>Siège</dt><dd>{lieu}</dd></div>
-                {compte?.instagram && (
-                  <div>
-                    <dt>Contact</dt>
-                    <dd>
-                      <a href={compte.instagram} target="_blank" rel="noopener">
-                        {pseudo(compte.instagram)}
-                      </a>
-                    </dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-          );
-        })}
+        {legal.editeurs.map((e) => (
+          <div class="ent">
+            <h3>{e.titre ?? site.name}</h3>
+            <p class="ent-act">
+              {e.activite ?? <Todo label="Activité à compléter" />}
+            </p>
+            <dl>
+              <div>
+                <dt>Exploitant</dt>
+                <dd>{e.denomination ?? <Todo label="Nom et prénom, ou raison sociale" />}</dd>
+              </div>
+              <div>
+                <dt>Forme</dt>
+                <dd>{e.forme ?? <Todo label="Forme juridique à compléter" />}</dd>
+              </div>
+              <div>
+                <dt>SIRET</dt>
+                <dd>{e.siret ?? <Todo label="Numéro à compléter" />}</dd>
+              </div>
+              <div><dt>Siège</dt><dd>{lieu}</dd></div>
+            </dl>
+          </div>
+        ))}
       </div>
 
-      {legal.franchiseTva && (
-        <p class="legal-note">
-          TVA non applicable, article 293 B du code général des impôts.
-        </p>
-      )}
+      <p class="legal-note">
+        {legal.tva === false
+          ? 'TVA non applicable, article 293 B du code général des impôts.'
+          : legal.tva
+            ? `TVA intracommunautaire : ${legal.tva}.`
+            : <Todo label="Régime de TVA à préciser : franchise en base (article 293 B) ou numéro de TVA intracommunautaire" />}
+      </p>
 
       <h2>Responsable de la publication</h2>
       <p>
@@ -83,9 +79,23 @@ const plusieurs = legal.entreprises.length > 1;
       </p>
 
       <h2>Hébergeur</h2>
+      {/* Mention obligatoire : le prestataire qui héberge le site, avec
+          son adresse complète. C'est celui chez qui le site est déployé,
+          pas celui qui l'a construit. */}
       <p>
-        {legal.hebergeur.nom}, {legal.hebergeur.adresse}<br />
-        <a href={legal.hebergeur.site} target="_blank" rel="noopener">{legal.hebergeur.site}</a>
+        {legal.hebergeur.nom && legal.hebergeur.adresse ? (
+          <>
+            {legal.hebergeur.nom}, {legal.hebergeur.adresse}
+            {legal.hebergeur.site && (
+              <>
+                <br />
+                <a href={legal.hebergeur.site} target="_blank" rel="noopener">{legal.hebergeur.site}</a>
+              </>
+            )}
+          </>
+        ) : (
+          <Todo label="Nom, adresse et site de l'hébergeur à compléter" />
+        )}
       </p>
 
       <h2>Données personnelles et cookies</h2>
@@ -97,27 +107,31 @@ const plusieurs = legal.entreprises.length > 1;
       </p>
       {reservation.url && (
         <p>
-          La prise de rendez-vous se fait sur {reservation.enseigne ?? 'la plateforme de réservation'},
-          qui est un service distinct. Les données que vous y saisissez relèvent
-          de sa politique de confidentialité et des obligations de l'institut en tant que client
-          de cette plateforme.
+          La prise de rendez-vous se fait sur {reservation.enseigne ?? 'une plateforme extérieure'},
+          qui est un service distinct. Les données que vous y saisissez relèvent de sa politique
+          de confidentialité et des obligations de l'établissement en tant que client de cette
+          plateforme.
           {' '}<a href={reservation.url} target="_blank" rel="noopener">Ouvrir la page de réservation</a>.
         </p>
       )}
 
       <h2>Propriété intellectuelle</h2>
       <p>
-        L'enseigne, le nom {site.name}, les textes et les photographies de l'institut sont la
-        propriété de leurs auteurs. Toute reproduction sans autorisation est interdite. Le fond
-        de carte provient d'OpenStreetMap et de ses contributeurs, sous licence ODbL.
+        L'enseigne, le nom {site.name}, les textes et les photographies publiés sur ce site sont
+        la propriété de leurs auteurs. Toute reproduction sans autorisation est interdite. Le
+        fond de carte provient d'OpenStreetMap et de ses contributeurs, sous licence ODbL.
       </p>
 
-      <h2>Liens sortants</h2>
-      <p>
-        Ce site renvoie vers des services extérieurs — plateforme de réservation, comptes
-        Instagram, plan. Il n'exerce aucun contrôle sur ces services et décline toute
-        responsabilité quant à leur contenu.
-      </p>
+      {liensSortants && (
+        <>
+          <h2>Liens sortants</h2>
+          <p>
+            Ce site renvoie vers des services extérieurs — plateforme de réservation, réseaux
+            sociaux, plan. Il n'exerce aucun contrôle sur ces services et décline toute
+            responsabilité quant à leur contenu.
+          </p>
+        </>
+      )}
 
       <p class="legal-back"><a href="/">Retour à l'accueil</a></p>
     </div>

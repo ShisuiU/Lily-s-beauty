@@ -3,21 +3,29 @@ import { reservation, rating, contact } from '../data/site';
 import BookButton from './BookButton.astro';
 import Todo from './Todo.astro';
 
-/* Trois façons de réserver, trois titres. La section ne dit pas « prenez
-   rendez-vous » dans le vide : elle nomme le moyen, parce que c'est lui
-   qui lève l'hésitation. */
-const titre = reservation.url
-  ? `La réservation se fait ${reservation.enseigne ? 'sur ' + reservation.enseigne : 'en ligne'}.`
-  : contact.phone
-    ? 'La réservation se fait par téléphone.'
-    : 'Prendre rendez-vous.';
+/* Le titre et le paragraphe se composent tout seuls à partir du mode de
+   réservation — la section ne dit pas « prenez rendez-vous » dans le
+   vide, elle nomme le moyen, parce que c'est lui qui lève l'hésitation.
+   `reservation.titre` et `reservation.intro` les remplacent si on
+   préfère les écrire à la main. */
+const titre = reservation.titre ?? (
+  reservation.url
+    ? `La réservation se fait ${reservation.enseigne ? 'sur ' + reservation.enseigne : 'en ligne'}.`
+    : contact.phone
+      ? 'La réservation se fait par téléphone.'
+      : 'Prendre rendez-vous.'
+);
 
-const corps = reservation.url
-  ? "Agenda à jour en temps réel, confirmation immédiate et rappel la veille. Vous choisissez "
-    + "la prestation, elle réserve exactement la durée qu'il faut, sans créneau trop court qui "
-    + "déborde sur la cliente suivante."
-  : "Un appel suffit. On convient ensemble de la prestation et du créneau, et le temps réservé "
-    + "est celui de la prestation choisie : personne n'est expédié.";
+const intro = reservation.intro ?? (
+  reservation.url
+    ? "Agenda à jour en temps réel, confirmation immédiate et rappel la veille. Vous choisissez "
+      + "la prestation, elle réserve exactement la durée qu'il faut, sans créneau trop court qui "
+      + "déborde sur la personne suivante."
+    : contact.phone
+      ? "Un appel suffit. On convient ensemble de la prestation et du créneau, et le temps "
+        + "réservé est celui de la prestation choisie : personne n'est expédié."
+      : ''
+);
 ---
 <section id="reserver">
   <div class="shell">
@@ -34,7 +42,7 @@ const corps = reservation.url
           </p>
         )}
         <h2 style="margin-top:14px">{titre}</h2>
-        <p>{corps}</p>
+        {intro && <p>{intro}</p>}
         <div class="hero-act" style="margin-top:28px">
           <BookButton />
         </div>

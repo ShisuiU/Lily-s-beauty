@@ -1,7 +1,7 @@
 ---
 import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { travail, travailIntro } from '../data/site';
+import { travail } from '../data/site';
 
 const fichiers = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/travail-*.jpg',
@@ -11,7 +11,7 @@ const fichiers = import.meta.glob<{ default: ImageMetadata }>(
 /* Taille d'ouverture sur ordinateur, et d'où vient le nombre.
 
    Les originaux livrés ici font 1 290 px de côté : c'est ce que rend
-   Instagram, d'où viennent la plupart des photos d'un institut, et on ne
+   Instagram, d'où vient la plupart des photos d'une enseigne, et on ne
    peut pas inventer de pixels au-delà. Affichée à 720 px, la photo est
    donc réduite sur un écran ordinaire et agrandie de 12 % seulement sur
    un écran à double densité (1 440 demandés contre 1 290 disponibles).
@@ -21,7 +21,7 @@ const fichiers = import.meta.glob<{ default: ImageMetadata }>(
 const OUVERTURE = 1290;
 
 const groupes = await Promise.all(
-  travail.map(async (g) => ({
+  travail.groupes.map(async (g) => ({
     ...g,
     photos: await Promise.all(
       g.photos.map(async (p) => {
@@ -43,8 +43,8 @@ const groupes = await Promise.all(
   <div class="shell">
     <div class="sec-top monte">
       <hr class="rule" />
-      <h2>{travailIntro.titre}</h2>
-      <p>{travailIntro.lead}</p>
+      <h2>{travail.titre}</h2>
+      <p>{travail.lead}</p>
     </div>
 
     {groupes.map((g) => (

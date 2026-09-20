@@ -1,5 +1,5 @@
 ---
-import { hours, hoursConfirmed } from '../data/site';
+import { hours, hoursConfirmed, horaires } from '../data/site';
 import { formatRange } from '../lib/hours';
 import Todo from './Todo.astro';
 ---
@@ -7,7 +7,7 @@ import Todo from './Todo.astro';
   <div class="shell">
     <div class="sec-top monte">
       <hr class="rule" />
-      <h2>Horaires</h2>
+      <h2>{horaires.titre}</h2>
     </div>
     <div class="hours-wrap">
       <ul class="hours" id="hours">
@@ -19,10 +19,10 @@ import Todo from './Todo.astro';
         ))}
       </ul>
       <div class="status monte">
-        <span class="eyebrow">En ce moment</span>
-        <p class="big" id="st-big">Consultez les horaires</p>
+        <span class="eyebrow">{horaires.surtitre}</span>
+        <p class="big" id="st-big">{horaires.attente}</p>
         <p><span id="st-next"></span>
-          {!hoursConfirmed && <> Ces horaires sont <Todo label="des exemples à confirmer" />.</>}
+          {!hoursConfirmed && <> Ces horaires sont <Todo label="à confirmer" />.</>}
         </p>
       </div>
     </div>

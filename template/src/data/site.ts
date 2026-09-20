@@ -8,67 +8,83 @@
  *  légales. Les composants ne font que mettre en forme — on ne devrait
  *  pas avoir à les ouvrir pour livrer un premier site.
  *
- *  Les valeurs livrées sont des EXEMPLES. Elles décrivent un institut
- *  imaginaire, assez complet pour que la maquette se regarde en entier.
- *  Remplacez-les par les vôtres : le fichier se lit de haut en bas dans
- *  l'ordre de la page.
+ *  LES TEXTES LIVRÉS NE SONT PAS DU CONTENU : chacun décrit ce qui doit
+ *  venir à sa place, sa longueur utile et ce qu'il doit dire. Ils
+ *  tiennent la maquette debout le temps qu'on les remplace. Rien ici ne
+ *  suppose un métier : institut de beauté, massages, coiffure,
+ *  onglerie, barbier, cabinet de soins — la structure est la même, le
+ *  vocabulaire vous appartient.
  *
  *  `null` ne veut pas dire « vide » mais « pas de donnée » : la ligne
- *  correspondante disparaît de la page au lieu d'afficher un trou.
- *  C'est vrai du téléphone, du lien de réservation, du SIRET, de la
- *  photo de façade.
+ *  correspondante disparaît de la page, ou s'y affiche en pointillés
+ *  quand la loi l'exige. C'est vrai du téléphone, du lien de
+ *  réservation, du SIRET, du prix d'une prestation.
+ *
+ *  Le fichier se lit dans l'ordre de la page.
  */
 
-/* ─────────────────────────── LE GABARIT ─────────────────────────
-   Tant que ceci vaut `true`, un bandeau noir en haut de page annonce
-   qu'il s'agit d'une démonstration. À passer à `false` le jour où les
-   vrais textes, les vraies photos et les vrais tarifs sont en place —
-   c'est la dernière chose à faire avant la mise en ligne.            */
+/* ─────────────────────── LE BANDEAU D'APERÇU ────────────────────
+   Un bandeau noir en haut de page, qui énumère ce qui reste à
+   compléter (voir `pending`, tout en bas). Utile pendant la mise au
+   point, à laisser sur `false` pour montrer la maquette ou mettre en
+   ligne.                                                            */
 
-export const gabarit = true;
+export const bandeauApercu = false;
 
 /* ─────────────────────────── L'ENSEIGNE ────────────────────────── */
 
 export const site = {
-  name: 'Votre Institut',
-  tagline: 'Institut de beauté',
-  /** Adresse définitive du site. Doit rester en phase avec `site` dans
-      astro.config.mjs (la config Astro est chargée avant l'app, on évite
-      d'y importer du TypeScript). */
-  url: 'https://votre-institut.vercel.app',
-  /** 150 à 160 signes : c'est ce que Google affiche sous le titre.
-      On y met le métier, la ville et les prestations phares. */
+  /** Le nom tel qu'il s'écrit sur la devanture. Il s'affiche en
+      toutes lettres dans l'en-tête et le pied tant qu'aucun logo n'est
+      fourni : au-delà d'une vingtaine de signes, vérifier qu'il tient
+      sur un écran de téléphone. */
+  name: 'Votre Enseigne',
+  /** Ce que vous êtes, en deux ou trois mots. S'affiche au-dessus du
+      titre, à côté de la ville, et dans la barre du bas sur téléphone.
+      « Institut de beauté », « Massages bien-être », « Barbier »… */
+  tagline: 'Votre activité',
+  /** Adresse définitive du site. À tenir en phase avec `site` dans
+      astro.config.mjs (la config Astro est chargée avant l'app, on
+      évite d'y importer du TypeScript). */
+  url: 'https://votre-site.vercel.app',
+  /** 150 à 160 signes : c'est ce que Google affiche sous le titre, et
+      ce qui décide du clic. Le métier, la ville, les prestations
+      phares, la façon de prendre rendez-vous. Ni slogan ni majuscules. */
   description:
-    "Institut de beauté à Votre Ville : ongles, cils et sourcils, soins du visage, "
-    + "épilation à la cire. Réservation en ligne, du mardi au samedi.",
+    "Une phrase de 150 à 160 signes : votre métier, votre ville, vos prestations principales "
+    + "et la façon de prendre rendez-vous. C'est le texte que Google affiche sous le titre.",
+  /** Catégorie de l'établissement pour les moteurs de recherche
+      (schema.org). `LocalBusiness` convient à tout le monde ; plus c'est
+      précis, mieux la recherche locale s'y retrouve :
+      BeautySalon, NailSalon, HairSalon, BarberShop, DaySpa,
+      HealthAndBeautyBusiness, MassageTherapy… */
+  schemaType: 'LocalBusiness',
 } as const;
 
 /** Logo de l'en-tête et du pied de page.
 
     Tant que c'est `null`, le nom s'écrit en toutes lettres dans la
-    fonte du site — ce qui est très bien tant que l'institut n'a pas de
-    logo, et évite le placeholder gris qui traîne sur la moitié des
-    maquettes.
+    fonte serif du site — ce qui est très bien tant qu'il n'y a pas de
+    logo, et évite le rectangle gris qui traîne sur les maquettes en
+    attente.
 
     Pour poser un vrai logo : déposer le fichier dans `public/`,
     renseigner son chemin et son rapport largeur/hauteur. L'en-tête le
-    peint en **masque** (voir `.brand` dans global.css) : le fichier doit
-    donc porter la forme dans sa transparence — un PNG détouré ou un SVG
-    monochrome — et non des couleurs, puisque c'est la page qui les
+    peint en **masque** (voir `.brand-logo` dans global.css) : le fichier
+    doit donc porter la forme dans sa transparence — un PNG détouré ou un
+    SVG monochrome — et non des couleurs, puisque c'est la page qui les
     donne. C'est ce qui permet au logo d'être blanc sur la photo du haut
     puis encre une fois la barre devenue opaque. */
 export const brand = {
-  /** Fichier monochrome pour l'en-tête, déposé dans `public/`.
-      Ex. '/logo-mark.png' ou '/logo-mark.svg'. */
+  /** Fichier monochrome pour l'en-tête. Ex. '/logo-mark.svg'. */
   logo: null as string | null,
   /** Rapport du fichier, tel quel : '560 / 132'. */
   logoRatio: '560 / 132',
   /** Hauteur d'affichage dans l'en-tête, en pixels. Vérifié de 27 à 40. */
   logoHeight: 34,
 
-  /** Le même logo, mais en couleurs, pour le pied de page : là il est
-      posé sur le blanc de la page et n'a plus à s'adapter au fond.
-      `null` → le nom s'écrit en toutes lettres, comme dans l'en-tête. */
+  /** Le même logo en couleurs, pour le pied de page : là il est posé
+      sur le blanc de la page et n'a plus à s'adapter au fond. */
   logoCouleur: null as string | null,
   logoCouleurRatio: '1300 / 366',
 };
@@ -80,20 +96,33 @@ export const brand = {
    2. `url` à null mais un téléphone plus bas → le bouton appelle.
    3. ni l'un ni l'autre → le bouton descend à la section « Rendez-vous ».
 
-   `enseigne` est le nom du service de réservation (Planity, Treatwell,
-   Kiute, Wavy…). Il apparaît dans la section « Rendez-vous » et dans les
-   mentions légales. Mettre `null` si la prise de rendez-vous se fait par
-   téléphone ou par message.                                          */
+   `enseigne` est le nom du service de réservation, s'il y en a un
+   (Planity, Treatwell, Kiute, Wavy, Calendly…). Il apparaît dans la
+   section « Rendez-vous » et dans les mentions légales.               */
 
 export const reservation = {
-  enseigne: 'Planity' as string | null,
-  url: 'https://www.planity.com/' as string | null,
-  /** Les quatre lignes de la colonne de droite dans « Rendez-vous ». */
+  enseigne: null as string | null,
+  url: null as string | null,
+
+  /** Titre et paragraphe de la section « Rendez-vous ».
+
+      Laisser `null` les compose tout seuls à partir du mode de
+      réservation : « La réservation se fait sur X. » avec le texte qui
+      va avec, ou la version téléphone. Les textes ci-dessous ne sont là
+      que pour décrire l'emplacement tant que rien n'est branché. */
+  titre: 'Comment on prend rendez-vous.' as string | null,
+  intro: ("Trois ou quatre lignes qui lèvent l'hésitation : par où passer, ce qui se confirme "
+    + "tout de suite, ce qui se passe en cas d'empêchement. Branchez un agenda en ligne "
+    + "plus haut, et ce paragraphe s'écrit tout seul.") as string | null,
+
+  /** Les quatre lignes numérotées de la colonne de droite. Elles
+      rassurent sur le déroulé : ce sont souvent les dernières lues
+      avant le clic. */
   etapes: [
-    "Choisissez la prestation : la durée et le tarif s'affichent avant de valider.",
-    "Prenez un créneau réellement disponible dans l'agenda de l'institut.",
-    'Laissez un numéro : le rappel part automatiquement la veille.',
-    "Un empêchement ? L'annulation se fait depuis le même lien, sans appeler.",
+    "Première étape : ce que le visiteur choisit en premier — la prestation, la personne, le créneau.",
+    'Deuxième étape : ce qu\'il renseigne, et ce qu\'il reçoit en retour (confirmation, rappel).',
+    'Troisième étape : ce qui se passe le jour même — l\'accueil, le temps prévu, où se garer.',
+    "Quatrième étape : l'annulation ou le report, et le délai que vous demandez.",
   ],
 };
 
@@ -111,13 +140,14 @@ export const bookLabel = reservation.url || !contact.phone ? 'Réserver' : 'Appe
 /* ──────────────────────────── L'ADRESSE ───────────────────────── */
 
 export const address = {
-  streetNumber: '12',
-  street: 'Rue des Exemples',
+  streetNumber: '00',
+  street: 'Rue à compléter',
   postalCode: '00000',
-  city: 'Votre Ville',
+  city: 'Votre ville',
   country: 'FR',
-  /** Une précision d'accès : « parking gratuit devant », « au fond de la
-      cour », « entrée par la rue latérale ». `null` masque la ligne. */
+  /** Une précision d'accès : « parking gratuit devant », « au fond de
+      la cour », « premier étage, sonner à l'interphone ». `null` masque
+      la ligne. */
   directions: null as string | null,
 };
 
@@ -125,8 +155,8 @@ export const address = {
     construction du site à partir de ces deux nombres : aucun service
     tiers n'est appelé chez le visiteur, donc aucune bannière cookies à
     cause d'une carte embarquée.
-    Pour la régénérer après un déménagement : scripts/generate-map.py
-    (les coordonnées se relèvent d'un clic droit sur Google Maps). */
+    Pour la régénérer : scripts/generate-map.py (les coordonnées se
+    relèvent d'un clic droit sur Google Maps). */
 export const geo = { lat: 48.858370, lon: 2.294481 };
 
 export const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${geo.lat},${geo.lon}`;
@@ -139,9 +169,8 @@ export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination
     des trois endroits. L'ordre suit celui des sections dans la page —
     à tenir en phase avec src/pages/index.astro.
 
-    « Rendez-vous » mène à la section qui explique comment réserver, à ne
-    pas confondre avec le bouton « Réserver », qui ouvre l'agenda. L'un
-    renseigne, l'autre agit. */
+    Les libellés se renomment librement : « Prestations et tarifs »
+    peut devenir « La carte », « Les soins », « Les massages ». */
 export const sections = [
   { href: '#tarifs', label: 'Prestations et tarifs' },
   { href: '#travail', label: 'Le travail' },
@@ -159,140 +188,165 @@ export const sections = [
 export const lienSection = (href: string) => '/' + href;
 
 /* ──────────────────────── LE BANDEAU D'ACCUEIL ──────────────────
-   Le titre se compose en trois morceaux pour que le fragment du milieu
-   passe en italique — c'est la seule fantaisie typographique de la page,
-   elle mérite d'être choisie. Mettre `accent: null` pour un titre d'un
-   seul tenant.                                                       */
+   La première chose vue, et souvent la seule. Le titre se compose en
+   trois morceaux pour que celui du milieu passe en italique — c'est la
+   seule fantaisie typographique de la page, elle mérite d'être choisie.
+   Mettre `accent: null` pour un titre d'un seul tenant.
+
+   Viser court : huit à douze mots. Ce qui ne tient pas dans le titre
+   tient dans la ligne en dessous.                                    */
 
 export const hero = {
   titre: {
-    avant: 'Ongles, ',
-    accent: 'cils et sourcils',
-    apres: ', soins et épilation',
+    avant: 'Votre titre — ',
+    accent: 'ce que vous faites',
+    apres: ', en une ligne.',
   },
   lead:
-    "Manucure et pose gel, rehaussement et extensions de cils, soins du visage, "
-    + "épilation à la cire. Sur rendez-vous, du mardi au samedi.",
+    "Deux ou trois lignes sous le titre : vos prestations principales, votre ville, et ce qui "
+    + "distingue la maison. C'est le seul paragraphe que tout le monde lit.",
   /** Second bouton, discret, à côté de « Réserver ». `null` le retire. */
   lienSecondaire: { href: '#tarifs', label: 'Voir les tarifs' } as { href: string; label: string } | null,
 };
 
-/* ─────────────────────────── L'ÉQUIPE ───────────────────────────
-   Une praticienne, deux, quatre : la mise en page suit. `instagram`
-   attend l'URL propre du compte, sans le paramètre `?stkn=` que
-   l'application ajoute au partage — c'est un jeton lié au compte qui a
-   copié le lien, il n'a rien à faire sur une page publique.
-   Mettre la liste à vide retire le bloc.                             */
+/* ──────────────────────── QUI TIENT LA MAISON ───────────────────
+   Le bloc livré est réglé pour une personne seule. Ajouter une entrée
+   à `membres` suffit à passer à deux, puis à quatre : la mise en page
+   suit, et chaque univers de prestations peut alors nommer la personne
+   qui le tient (`by`, plus bas).
+
+   `instagram` attend l'URL propre du compte, sans le paramètre `?stkn=`
+   que l'application ajoute au partage — c'est un jeton lié au compte qui
+   a copié le lien, il n'a rien à faire sur une page publique.
+   Vider `membres` retire le bloc.                                    */
 
 export const equipe = {
-  lead: "Un institut de quartier tenu par <em>deux praticiennes</em>, chacune sur sa spécialité.",
+  /** La phrase d'accroche. Les mots entre <em> passent en italique et
+      prennent la couleur d'accent. */
+  lead: "Une phrase d'accroche : <em>qui vous êtes</em>, et dans quel esprit vous travaillez.",
   body:
-    "Camille s'occupe des ongles, Manon du regard, des soins et de l'épilation. Chaque "
-    + "prestation est réservée pour sa durée réelle : dix minutes pour un sourcil, près de "
-    + "deux heures pour une pose complète. Personne n'est expédié.",
+    "Trois ou quatre lignes : le parcours, la façon de travailler, ce à quoi la personne doit "
+    + "s'attendre en poussant la porte. On y met ce qui rassure — le temps réservé pour chaque "
+    + "prestation, le soin apporté, l'hygiène — plutôt que des superlatifs.",
   membres: [
     {
-      name: 'Camille',
-      craft: 'Les ongles',
-      instagram: null as string | null,
-    },
-    {
-      name: 'Manon',
-      craft: "Le regard, les soins et l'épilation",
+      name: 'Prénom',
+      /** Ce que cette personne tient : « les soins du visage », « les
+          massages », « la couleur ». */
+      craft: 'Votre spécialité',
       instagram: null as string | null,
     },
   ],
 };
 
-/** « https://www.instagram.com/monsalon/ » → « @monsalon » */
+/** « https://www.instagram.com/moncompte/ » → « @moncompte » */
 export const pseudo = (url: string) =>
   '@' + url.replace(/\/+$/, '').split('/').pop();
 
-/** Présentation de l'institut, dans la section « Nous trouver ».
-    Deux paragraphes suffisent : ce n'est pas une page « à propos », le
-    visiteur cherche surtout l'adresse. */
+/** Présentation du lieu, dans la section « Nous trouver ». Deux
+    paragraphes suffisent : ce n'est pas une page « à propos », le
+    visiteur y cherche surtout l'adresse. */
 export const about = {
-  lead: 'Un cocon au cœur de Votre Ville.',
-  /** Description de la photo qui accompagne le texte. */
-  photoAlt: "La façade de l'institut vue depuis la rue.",
+  /** Une phrase, affichée en grand à côté de la photo. */
+  lead: 'Une phrase sur le lieu : où il se trouve, ce qu’on y ressent.',
   body: [
-    "Décoration claire, lumière douce, et des professionnelles qui prennent le temps de "
-    + "faire les choses correctement.",
-    "Épilation nette, rehaussement de cils pour un regard ouvert, sourcils redessinés, "
-    + "pose et remplissage de gel, soins du visage : la carte est large, mais chaque "
-    + "prestation est tenue par celle qui en a fait sa spécialité.",
+    "Premier paragraphe : le cadre. L'ambiance, la lumière, le nombre de places, ce qui fait "
+    + "qu'on s'y sent bien. Deux ou trois lignes.",
+    "Second paragraphe : ce qu'on y trouve. Les grandes familles de prestations, sans reprendre "
+    + "la carte complète — elle est juste au-dessus.",
+  ],
+  /** Description de la photo qui accompagne le texte, lue par les
+      lecteurs d'écran. */
+  photoAlt: "Décrivez ici la photo : la façade, l'enseigne, la pièce principale.",
+};
+
+/* ────────────────────────────── LE LIEU ─────────────────────────
+   Le ruban de photos qui défile. La clé `fichier` est le nom du fichier
+   dans src/assets/ ; les images livrées sont des aplats de couleur qui
+   tiennent la place. Préparez les vraies avec scripts/prepare-photos.py
+   (recadrage, réduction, effacement des métadonnées EXIF — un fichier
+   sorti d'un téléphone embarque le modèle de l'appareil et parfois les
+   coordonnées GPS du lieu).
+
+   `alt` n'est pas un titre : c'est la description lue à voix haute par
+   un lecteur d'écran, et ce qui s'affiche si l'image ne charge pas. On
+   y décrit ce qu'on voit, pas ce qu'on voudrait vendre.
+
+   Quatre photos, c'est le minimum pour que le ruban tourne sans se
+   répéter à l'œil. Il en accepte davantage.                          */
+
+export const lieu = {
+  titre: 'Le lieu',
+  lead: 'Une ligne : ce que le visiteur verra en poussant la porte.',
+  photos: [
+    { fichier: 'lieu-1.jpg', alt: 'Décrivez cette photo en une phrase.' },
+    { fichier: 'lieu-2.jpg', alt: 'Décrivez cette photo en une phrase.' },
+    { fichier: 'lieu-3.jpg', alt: 'Décrivez cette photo en une phrase.' },
+    { fichier: 'lieu-4.jpg', alt: 'Décrivez cette photo en une phrase.' },
   ],
 };
 
-/* ─────────────────────────── LA GALERIE ─────────────────────────
-   Les photos de l'intérieur, dans l'ordre du ruban défilant. La clé est
-   le nom du fichier dans src/assets/ ; les images livrées sont des
-   aplats de couleur qui tiennent la place. Préparez les vraies avec
-   scripts/prepare-photos.py (recadrage, réduction, effacement des
-   métadonnées EXIF — un fichier sorti d'un téléphone embarque le modèle
-   de l'appareil et parfois les coordonnées GPS du lieu).
+/* ───────────────────────────── LE TRAVAIL ───────────────────────
+   Les réalisations, en groupes. Un clic agrandit la photo.
 
-   `alt` n'est pas un titre : c'est la description lue à voix haute par
-   un lecteur d'écran, et ce qui s'affiche si l'image ne charge pas. On y
-   décrit ce qu'on voit, pas ce qu'on voudrait vendre.                */
+   C'est la section qui convertit : on n'achète pas une prestation, on
+   achète un résultat. Deux groupes de quatre ici ; la grille en accepte
+   d'autres nombres, et un seul groupe suffit.
 
-export const galerieIntro = {
-  titre: 'Le salon',
-  lead: 'Un poste de soin, un coin manucure, et un fauteuil pour attendre.',
-};
-
-export const galerie = [
-  { fichier: 'salon-1.jpg', alt: "Le coin d'attente : un fauteuil clair, une grande lampe et un mur pastel." },
-  { fichier: 'salon-2.jpg', alt: "Le poste de soin vu depuis l'entrée : table d'esthétique et lampe loupe." },
-  { fichier: 'salon-3.jpg', alt: 'Le même poste face à la fenêtre : voilages clairs et miroir rond lumineux.' },
-  { fichier: 'salon-4.jpg', alt: 'Le poste de manucure : plan de travail en bois clair et lampes UV.' },
-];
-
-/* ───────────────────── LE TRAVAIL (réalisations) ─────────────────
-   Deux groupes de quatre photos ici, mais la grille accepte d'autres
-   nombres. `by` nomme la praticienne sous le titre du groupe ; `null`
-   retire la mention — c'est le réglage d'un institut tenu seul.      */
+   `by` nomme la personne qui a fait ces réalisations, quand l'équipe
+   compte plusieurs praticiens. `null` retire la mention.             */
 
 export type Realisation = { fichier: string; alt: string };
 
-export const travailIntro = {
+export const travail = {
   titre: 'Le travail',
-  lead: 'Quelques réalisations faites ici, par chacune sur sa spécialité.',
+  lead: 'Une ligne : ce que montrent ces photos, et ce qu’elles doivent prouver.',
+  groupes: [
+    {
+      titre: 'Nom du premier groupe',
+      by: null as string | null,
+      photos: [
+        { fichier: 'travail-1.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+        { fichier: 'travail-2.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+        { fichier: 'travail-3.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+        { fichier: 'travail-4.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+      ] as Realisation[],
+    },
+    {
+      titre: 'Nom du second groupe',
+      by: null as string | null,
+      photos: [
+        { fichier: 'travail-5.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+        { fichier: 'travail-6.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+        { fichier: 'travail-7.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+        { fichier: 'travail-8.jpg', alt: 'Décrivez cette réalisation en une phrase.' },
+      ] as Realisation[],
+    },
+  ],
 };
-
-export const travail: { titre: string; by: string | null; photos: Realisation[] }[] = [
-  {
-    titre: 'Ongles',
-    by: 'Camille',
-    photos: [
-      { fichier: 'travail-ongles-1.jpg', alt: 'Ongles amande nude ornés de strass et de motifs peints.' },
-      { fichier: 'travail-ongles-2.jpg', alt: 'French colorée sur ongles courts, finition nacrée.' },
-      { fichier: 'travail-ongles-3.jpg', alt: 'Pose gel rose pâle avec dégradé et fleurs en relief.' },
-      { fichier: 'travail-ongles-4.jpg', alt: 'Ongles bordeaux brillants, forme carrée arrondie.' },
-    ],
-  },
-  {
-    titre: 'Cils et sourcils',
-    by: 'Manon',
-    photos: [
-      { fichier: 'travail-regard-1.jpg', alt: "Gros plan d'un œil aux cils allongés et recourbés, sourcil net." },
-      { fichier: 'travail-regard-2.jpg', alt: "Gros plan d'un œil aux cils fournis et au sourcil brossé vers le haut." },
-      { fichier: 'travail-regard-3.jpg', alt: "Gros plan d'un œil aux cils longs et courbés, sourcil dessiné." },
-      { fichier: 'travail-regard-4.jpg', alt: "Gros plan de profil d'un œil aux cils longs et recourbés." },
-    ],
-  },
-];
 
 /* ─────────────────────────── HORAIRES ───────────────────────────
    `day` suit la convention JavaScript : 0 = dimanche … 6 = samedi.
    Heures en minutes depuis minuit (9 h 30 → 9 * 60 + 30).
    `open: null` = fermé ce jour-là.
 
-   L'ouverture affichée en haut de page (« Ouvert · ferme à 19 h ») est
+   La mention « Ouvert · ferme à 19 h » affichée en haut de page est
    calculée chez le visiteur, sur l'heure de Paris, à partir de cette
-   grille : rien d'autre à tenir à jour.                              */
+   grille : il n'y a rien d'autre à tenir à jour.                     */
 
-export const hoursConfirmed = true;
+export const horaires = {
+  titre: 'Horaires',
+  /** Le petit titre du bloc de droite, celui qui annonce l'état du
+      moment. */
+  surtitre: 'En ce moment',
+  /** Ce qu'il affiche avant que le calcul ne se fasse, et pour les
+      navigateurs sans JavaScript. */
+  attente: 'Consultez les horaires',
+};
+
+/** Passer à `false` tant que la grille n'est pas confirmée : la page le
+    signale alors en pointillés. */
+export const hoursConfirmed = false;
 
 export type Day = { day: number; label: string; open: number | null; close: number | null };
 
@@ -307,23 +361,33 @@ export const hours: Day[] = [
 ];
 
 /* ─────────────────────────── PRESTATIONS ────────────────────────
-   Quatre univers, chacun replié derrière son titre : c'est ce qui
-   permet de tenir une carte de soixante lignes sur une page unique sans
-   noyer le visiteur.
+   Trois niveaux, et c'est ce qui permet de tenir une carte de soixante
+   lignes sur une page unique sans noyer le visiteur :
 
-   Une catégorie = une carte blanche. Une prestation = une ligne, avec
-   son prix à droite, sa durée en dessous et, si besoin, une précision.
-   Les durées sont celles réellement bloquées dans l'agenda : c'est ce
-   qui rend la grille utile plutôt que décorative.                    */
+     univers    → un titre repliable. Une grande famille de prestations.
+                  Trois à cinq, pas davantage.
+     catégorie  → une carte blanche. Un groupe à l'intérieur de la
+                  famille.
+     prestation → une ligne : le nom, le prix à droite, la durée en
+                  dessous, et s'il le faut une précision.
 
-export const pricesConfirmed = true;
-/** Date affichée sous la grille. */
-export const tarifsMajLe = '1er janvier 2026';
+   Aucune prestation n'est livrée : la structure ci-dessous est vide et
+   décrit ses propres emplacements. Un métier ne se devine pas depuis un
+   gabarit.
 
-export type Service = { name: string; minutes: number; price: number; note?: string };
+   `price: null` et `minutes: null` s'affichent en pointillés : ce qui
+   manque se voit, et c'est fait pour.
+
+   Les durées sont celles réellement bloquées dans l'agenda. C'est ce
+   qui rend la grille utile plutôt que décorative : la personne sait
+   combien de temps elle bloque, et vous n'avez pas à le réexpliquer au
+   téléphone.                                                         */
+
+export type Service = { name: string; minutes: number | null; price: number | null; note?: string };
 export type Category = { title: string; items: Service[] };
-/** Chaque univers est tenu par une seule praticienne : `by` est donc
-    porté ici, et non répété sur chaque catégorie. `null` le masque. */
+/** Un univers est tenu par une seule personne : `by` est donc porté
+    ici, et non répété sur chaque catégorie. `null` le masque — c'est le
+    réglage d'une maison tenue seule. */
 export type Universe = {
   key: string;
   label: string;
@@ -332,222 +396,142 @@ export type Universe = {
   categories: Category[];
 };
 
-export const universes: Universe[] = [
-  {
-    key: 'ongles',
-    label: 'Ongles',
-    by: 'Camille',
-    blurb:
-      'Manucure, pose gel avec ou sans extensions, remplissage, semi-permanent mains et pieds, nail art, dépose.',
-    categories: [
-      {
-        title: 'Ongles en gel',
-        items: [
-          { name: 'Pose complète avec extensions', minutes: 90, price: 55, note: 'Rallongement en gel' },
-          { name: 'Pose gel sur ongles naturels', minutes: 60, price: 45, note: 'Sans extensions, sans dépose' },
-          { name: 'Remplissage', minutes: 75, price: 45, note: 'Dépose partielle + repose de gel' },
-          { name: 'Nail art simple', minutes: 15, price: 5, note: 'French, baby boomer, chrome' },
-          { name: 'Nail art travaillé', minutes: 30, price: 15, note: 'Dessins, 3D, incrustations' },
-          { name: 'Dépose + soin', minutes: 45, price: 18 },
-          { name: 'Réparation d’un ongle cassé', minutes: 15, price: 5, note: 'par ongle' },
-        ],
-      },
-      {
-        title: 'Manucure et semi-permanent',
-        items: [
-          { name: 'Manucure simple', minutes: 30, price: 25, note: 'Mise en forme, cuticules, soin' },
-          { name: 'Vernis semi-permanent mains', minutes: 45, price: 35 },
-          { name: 'Vernis semi-permanent pieds', minutes: 45, price: 35 },
-          { name: 'Beauté des pieds', minutes: 45, price: 40 },
-          { name: 'Forfait mains + pieds', minutes: 75, price: 60, note: 'Semi-permanent, sans gel' },
-          { name: 'Dépose semi-permanent + soin', minutes: 30, price: 12 },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'regard',
-    label: 'Cils et sourcils',
-    by: 'Manon',
-    blurb:
-      'Rehaussement, teinture, extensions cil à cil ou volume, restructuration et brow lift.',
-    categories: [
-      {
-        title: 'Cils',
-        items: [
-          { name: 'Rehaussement de cils', minutes: 60, price: 55, note: 'Recourbement naturel, tient 5 à 6 semaines' },
-          { name: 'Rehaussement + teinture', minutes: 75, price: 65 },
-          { name: 'Extensions cil à cil, pose complète', minutes: 120, price: 75 },
-          { name: 'Extensions volume, pose complète', minutes: 135, price: 90 },
-          { name: 'Remplissage 2 semaines', minutes: 60, price: 40 },
-          { name: 'Remplissage 3 semaines', minutes: 75, price: 50 },
-          { name: 'Dépose', minutes: 30, price: 15 },
-          { name: 'Teinture des cils', minutes: 30, price: 18 },
-        ],
-      },
-      {
-        title: 'Sourcils',
-        items: [
-          { name: 'Restructuration', minutes: 20, price: 15, note: 'Épilation et mise en forme' },
-          { name: 'Restructuration + teinture', minutes: 35, price: 25 },
-          { name: 'Teinture', minutes: 20, price: 14 },
-          { name: 'Brow lift', minutes: 45, price: 45, note: 'Sourcils lissés et redessinés' },
-          { name: 'Brow lift + teinture + épilation', minutes: 60, price: 55 },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'visage',
-    label: 'Soins du visage',
-    by: 'Manon',
-    blurb:
-      'Du soin express d’une demi-heure au protocole complet, sur peaux sensibles comme mixtes.',
-    categories: [
-      {
-        title: 'Soins',
-        items: [
-          { name: 'Soin découverte', minutes: 30, price: 35, note: 'Nettoyage, gommage, crème' },
-          { name: 'Soin éclat', minutes: 60, price: 60 },
-          { name: 'Soin hydratant profond', minutes: 75, price: 70 },
-          { name: 'Soin anti-âge', minutes: 90, price: 90 },
-          { name: 'Nettoyage de peau', minutes: 60, price: 55, note: 'Extraction des comédons' },
-        ],
-      },
-      {
-        title: 'En complément',
-        items: [
-          { name: 'Massage du visage', minutes: 20, price: 20 },
-          { name: 'Masque tissu', minutes: 15, price: 12 },
-          { name: 'Patchs contour des yeux', minutes: 10, price: 8 },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'epilation',
-    label: 'Épilation à la cire',
-    by: 'Manon',
-    blurb:
-      'Du sourcil aux jambes complètes, à l’unité ou en forfait, pour elle et pour lui.',
-    categories: [
-      {
-        title: 'Femme, à l’unité',
-        items: [
-          { name: 'Sourcils', minutes: 10, price: 10 },
-          { name: 'Lèvre', minutes: 10, price: 8 },
-          { name: 'Menton', minutes: 10, price: 8 },
-          { name: 'Aisselles', minutes: 15, price: 12 },
-          { name: 'Demi-bras', minutes: 15, price: 14 },
-          { name: 'Bras complets', minutes: 20, price: 18 },
-          { name: 'Maillot simple', minutes: 15, price: 14 },
-          { name: 'Maillot échancré', minutes: 20, price: 18 },
-          { name: 'Maillot intégral', minutes: 35, price: 25 },
-          { name: 'Demi-jambes', minutes: 20, price: 18 },
-          { name: 'Jambes complètes', minutes: 35, price: 28 },
-        ],
-      },
-      {
-        title: 'Femme, forfaits',
-        items: [
-          { name: 'Sourcils + lèvre', minutes: 20, price: 16 },
-          { name: 'Sourcils + lèvre + menton', minutes: 30, price: 22 },
-          { name: 'Aisselles + demi-jambes + maillot simple', minutes: 45, price: 40 },
-          { name: 'Aisselles + jambes complètes + maillot échancré', minutes: 60, price: 52 },
-        ],
-      },
-      {
-        title: 'Homme',
-        items: [
-          { name: 'Sourcils', minutes: 15, price: 12 },
-          { name: 'Oreilles ou nez', minutes: 10, price: 8 },
-          { name: 'Torse', minutes: 30, price: 25 },
-          { name: 'Dos', minutes: 30, price: 28 },
-          { name: 'Jambes complètes', minutes: 35, price: 32 },
-        ],
-      },
-    ],
-  },
-];
+const prestationVide = (n: number): Service => ({
+  name: `Nom de la prestation ${n}`,
+  minutes: null,
+  price: null,
+  note: n === 1 ? 'La précision utile : ce que comprend la prestation, ou ce qu’elle exclut.' : undefined,
+});
 
-/** Phrase au-dessus de la grille. `{n}` est remplacé par le nombre réel
-    de prestations — il n'y a donc rien à recompter à la main. */
-export const tarifsIntro =
-  "{n} prestations, les durées sont celles réellement bloquées dans l'agenda. "
-  + "Dépliez l'univers qui vous intéresse.";
+export const tarifs = {
+  titre: 'Prestations et tarifs',
+  /** Phrase au-dessus de la grille. `{n}` est remplacé par le nombre
+      réel de prestations : il n'y a rien à recompter à la main. */
+  intro:
+    "{n} prestations. Une ligne d'introduction : ce que le visiteur doit savoir avant de "
+    + "déplier — que les durées sont celles réellement réservées, par exemple.",
+  /** Date affichée sous la grille. `null` retire la mention. */
+  majLe: null as string | null,
+
+  univers: [
+    {
+      key: 'univers-1',
+      label: 'Première famille',
+      by: null,
+      blurb:
+        'Une ou deux lignes qui résument cette famille : ce qu’elle couvre, à qui elle s’adresse, '
+        + 'ce qui la distingue de la suivante.',
+      categories: [
+        { title: 'Nom du premier groupe', items: [prestationVide(1), prestationVide(2), prestationVide(3)] },
+        { title: 'Nom du second groupe', items: [prestationVide(4), prestationVide(5)] },
+      ],
+    },
+    {
+      key: 'univers-2',
+      label: 'Deuxième famille',
+      by: null,
+      blurb: 'Une ou deux lignes qui résument cette famille.',
+      categories: [
+        { title: 'Nom du groupe', items: [prestationVide(1), prestationVide(2), prestationVide(3)] },
+      ],
+    },
+    {
+      key: 'univers-3',
+      label: 'Troisième famille',
+      by: null,
+      blurb: 'Une ou deux lignes qui résument cette famille.',
+      categories: [
+        { title: 'Nom du groupe', items: [prestationVide(1), prestationVide(2)] },
+      ],
+    },
+  ] as Universe[],
+};
+
+/** Passer à `false` tant que la grille n'est pas confirmée. */
+export const pricesConfirmed = false;
 
 /* ─────────────────────────── LES AVIS ───────────────────────────
-   ATTENTION : les chiffres livrés sont des exemples. Mettre les vôtres,
-   relevés sur Google ou sur la plateforme de réservation, ou passer
-   `show` à `false`. Publier une note inventée se voit, et se retourne
-   contre l'institut le jour où un visiteur va vérifier.              */
+   Masqué par défaut, et ce n'est pas un oubli : une note ne s'invente
+   pas. Pour l'afficher, mettre `show: true` et reporter les vrais
+   chiffres, relevés sur Google, sur la plateforme de réservation ou
+   ailleurs — `source` nomme l'endroit, c'est lui qui rend la note
+   crédible. Le bloc apparaît alors sous le titre d'accueil et dans la
+   section « Rendez-vous ».                                           */
 
-export const rating = { show: true, value: 4.9, count: 120, source: 'Google' };
+export const rating = { show: false, value: 0, count: 0, source: '' };
 
 /* ─────────────────────────── LE PLAN ────────────────────────────
-   La légende sous la carte. Deux lignes : l'adresse complète, que le
-   composant compose tout seul, et cette phrase de repère.            */
+   La légende sous la carte : l'adresse complète, que le composant
+   compose tout seul, et cette phrase de repère.                      */
 
 export const plan = {
-  legende: 'En plein centre, à deux pas de la place du marché.',
+  legende: 'Une phrase de repère : le quartier, un bâtiment connu, où se garer.',
   /** Description lue par un lecteur d'écran. */
-  alt: `Plan du centre de ${address.city} : l'institut est situé ${address.street}.`,
+  alt: `Plan du quartier : l’adresse est signalée par un repère au centre de la carte.`,
 };
 
 /* ─────────────────────── MENTIONS LÉGALES ───────────────────────
-   Obligatoires pour tout site professionnel (article 6-III de la LCEN).
-   Un institut tenu par deux auto-entreprises distinctes qui partagent un
-   local doit faire apparaître les DEUX, chacune avec son SIRET : d'où
-   une liste. Pour une seule entreprise, n'en garder qu'une.
+   Obligatoires pour tout site professionnel (article 6-III de la loi du
+   21 juin 2004 pour la confiance dans l'économie numérique). Rien n'est
+   pré-rempli ici : ce sont des informations juridiques, elles ne se
+   devinent pas et une valeur fausse vaut moins que rien.
 
-   Les `null` s'affichent en pointillés sur /mentions-legales : ils se
-   voient, et c'est fait pour. Le SIRET se retrouve en cherchant le nom
-   sur annuaire-entreprises.data.gouv.fr                               */
+   Tout ce qui reste à `null` s'affiche en pointillés sur la page
+   /mentions-legales : les trous se voient.
+
+   · SIRET et dénomination se retrouvent sur annuaire-entreprises.data.gouv.fr
+   · `forme` : « Entrepreneur individuel », « SASU », « EURL », « SARL »…
+     Une société ajoute son capital social et son RCS.
+   · `tva` : `false` si vous relevez de la franchise en base (la page
+     affiche alors la mention de l'article 293 B), sinon le numéro de TVA
+     intracommunautaire. `null` tant que ce n'est pas tranché.
+   · `hebergeur` : le prestataire qui héberge le site, avec son adresse
+     complète — c'est une mention obligatoire. Pour un déploiement sur
+     Vercel : « Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA
+     91723, États-Unis, vercel.com ».
+
+   Plusieurs entreprises partagent le même local ? En ajouter une au
+   tableau : chacune apparaît alors avec ses propres informations.     */
 
 export const legal = {
   /** La personne responsable de la publication du site. */
   responsablePublication: null as string | null,
 
-  entreprises: [
+  editeurs: [
     {
-      praticienne: 'Camille',
-      /** Nom et prénom de l'exploitante, tels qu'immatriculés. */
+      /** Titre de la fiche. `null` reprend le nom de l'enseigne. */
+      titre: null as string | null,
+      /** L'activité déclarée, en quelques mots. */
+      activite: null as string | null,
+      /** Nom et prénom de l'exploitant, ou raison sociale. */
       denomination: null as string | null,
-      forme: 'Entrepreneur individuel (auto-entreprise)',
+      forme: null as string | null,
       siret: null as string | null,
-      activite: 'Prothésie ongulaire',
-    },
-    {
-      praticienne: 'Manon',
-      denomination: null as string | null,
-      forme: 'Entrepreneur individuel (auto-entreprise)',
-      siret: null as string | null,
-      activite: 'Soins esthétiques et épilation',
     },
   ],
 
-  /** Régime de TVA. Vrai tant que le chiffre d'affaires reste sous le
-      seuil de la franchise. */
-  franchiseTva: true,
+  /** `false` → franchise en base de TVA. Une chaîne → numéro de TVA
+      intracommunautaire. `null` → à compléter. */
+  tva: null as string | false | null,
 
   hebergeur: {
-    nom: 'Vercel Inc.',
-    adresse: '440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis',
-    site: 'https://vercel.com',
+    nom: null as string | null,
+    adresse: null as string | null,
+    site: null as string | null,
   },
 };
 
 /* ───────────────────── CE QUI RESTE À COMPLÉTER ─────────────────
-   Alimente le bandeau d'aperçu en haut de page et la note du pied. Une
-   donnée absente se signale d'elle-même : on ne découvre pas trois mois
-   plus tard que le SIRET manquait.                                   */
+   Alimente le bandeau d'aperçu et la note du pied de page, tous deux
+   commandés par `bandeauApercu` tout en haut. Une donnée absente se
+   signale d'elle-même : on ne découvre pas trois mois plus tard que le
+   SIRET manquait.                                                    */
 
 export const pending = [
-  gabarit && 'les textes et les photos d’exemple',
-  gabarit && rating.show && 'les avis',
-  reservation.url === null && contact.phone === null && 'le lien de réservation',
-  address.street === null && 'la rue',
+  reservation.url === null && contact.phone === null && 'la réservation',
+  address.street === 'Rue à compléter' && 'l’adresse',
   !hoursConfirmed && 'les horaires',
   !pricesConfirmed && 'les tarifs',
-  legal.entreprises.some((e) => !e.siret) && 'les mentions légales',
+  legal.editeurs.some((e) => !e.siret) && 'les mentions légales',
+  legal.hebergeur.nom === null && 'l’hébergeur',
 ].filter(Boolean) as string[];

@@ -4,11 +4,12 @@
  *     npm run placeholders
  *
  * Ce ne sont pas des photos : ce sont des aplats colorés, au bon format
- * et au bon poids, qui tiennent la place le temps que l'institut fournisse
+ * et au bon poids, qui tiennent la place le temps que la maison fournisse
  * les siennes. Ils sont fabriqués ici plutôt que téléchargés, pour trois
- * raisons : aucune image d'une banque à créditer, aucun visage de modèle
+* raisons : aucune image d'une banque à créditer, aucun visage de modèle
  * à faire signer, et une maquette qui ne se fait pas passer pour un site
- * fini devant un client.
+ * fini devant un client. Ils ne supposent aucun métier : chaque aplat
+ * dit seulement quelle photo vient à sa place, et à quelle taille.
  *
  * Quand les vraies photos arrivent, ce script n'a plus lieu d'être :
  * passer par scripts/prepare-photos.py, qui recadre, réduit et efface les
@@ -94,22 +95,22 @@ function brin(w, h) {
 
 const IMAGES = [
   // le bandeau d'accueil — légendes rangées hors du chemin du titre
-  ['src/assets/hero-large.jpg', 1600, 1100, 'argile', 'La devanture', 'Photo large · 1600 × 1100', [0.74, 0.26]],
-  ['src/assets/hero-portrait.jpg', 1200, 2132, 'sable', 'L’intérieur', 'Photo verticale · 1200 × 2132', [0.5, 0.2]],
-  // le ruban « Le salon »
-  ['src/assets/salon-1.jpg', 900, 1600, 'lin', 'Le coin d’attente', '900 × 1600'],
-  ['src/assets/salon-2.jpg', 900, 1600, 'rose', 'Le poste de soin', '900 × 1600'],
-  ['src/assets/salon-3.jpg', 900, 1600, 'pierre', 'La cabine', '900 × 1600'],
-  ['src/assets/salon-4.jpg', 900, 1600, 'the', 'Le poste de manucure', '900 × 1600'],
+  ['src/assets/hero-large.jpg', 1600, 1100, 'argile', 'Photo d’accueil', 'Bande large · 1600 × 1100', [0.74, 0.26]],
+  ['src/assets/hero-portrait.jpg', 1200, 2132, 'sable', 'Photo d’accueil', 'Verticale, téléphone · 1200 × 2132', [0.5, 0.2]],
+  // le ruban « Le lieu »
+  ['src/assets/lieu-1.jpg', 900, 1600, 'lin', 'Le lieu', '1 sur 4 · 900 × 1600'],
+  ['src/assets/lieu-2.jpg', 900, 1600, 'rose', 'Le lieu', '2 sur 4 · 900 × 1600'],
+  ['src/assets/lieu-3.jpg', 900, 1600, 'pierre', 'Le lieu', '3 sur 4 · 900 × 1600'],
+  ['src/assets/lieu-4.jpg', 900, 1600, 'the', 'Le lieu', '4 sur 4 · 900 × 1600'],
   // les réalisations
-  ['src/assets/travail-ongles-1.jpg', 1290, 1290, 'rose', 'Réalisation', 'Ongles · 1290 × 1290'],
-  ['src/assets/travail-ongles-2.jpg', 1290, 1290, 'sable', 'Réalisation', 'Ongles · 1290 × 1290'],
-  ['src/assets/travail-ongles-3.jpg', 1290, 1290, 'lin', 'Réalisation', 'Ongles · 1290 × 1290'],
-  ['src/assets/travail-ongles-4.jpg', 1290, 1290, 'argile', 'Réalisation', 'Ongles · 1290 × 1290'],
-  ['src/assets/travail-regard-1.jpg', 1290, 1290, 'pierre', 'Réalisation', 'Regard · 1290 × 1290'],
-  ['src/assets/travail-regard-2.jpg', 1290, 1290, 'the', 'Réalisation', 'Regard · 1290 × 1290'],
-  ['src/assets/travail-regard-3.jpg', 1290, 1290, 'rose', 'Réalisation', 'Regard · 1290 × 1290'],
-  ['src/assets/travail-regard-4.jpg', 1290, 1290, 'lin', 'Réalisation', 'Regard · 1290 × 1290'],
+  ['src/assets/travail-1.jpg', 1290, 1290, 'rose', 'Le travail', '1 sur 8 · 1290 × 1290'],
+  ['src/assets/travail-2.jpg', 1290, 1290, 'sable', 'Le travail', '2 sur 8 · 1290 × 1290'],
+  ['src/assets/travail-3.jpg', 1290, 1290, 'lin', 'Le travail', '3 sur 8 · 1290 × 1290'],
+  ['src/assets/travail-4.jpg', 1290, 1290, 'argile', 'Le travail', '4 sur 8 · 1290 × 1290'],
+  ['src/assets/travail-5.jpg', 1290, 1290, 'pierre', 'Le travail', '5 sur 8 · 1290 × 1290'],
+  ['src/assets/travail-6.jpg', 1290, 1290, 'the', 'Le travail', '6 sur 8 · 1290 × 1290'],
+  ['src/assets/travail-7.jpg', 1290, 1290, 'rose', 'Le travail', '7 sur 8 · 1290 × 1290'],
+  ['src/assets/travail-8.jpg', 1290, 1290, 'lin', 'Le travail', '8 sur 8 · 1290 × 1290'],
 ];
 
 await mkdir('src/assets', { recursive: true });
@@ -121,7 +122,7 @@ for (const [out, w, h, tons, titre, detail, ancre] of IMAGES) {
 }
 
 /* Le plan : un faux fond de carte, le temps que scripts/generate-map.py
-   fabrique le vrai à partir des coordonnées de l'institut. */
+   fabrique le vrai à partir des coordonnées de l'établissement. */
 const P = { w: 1200, h: 620 };
 const rues = [];
 for (let i = -6; i <= 8; i++) {
@@ -147,7 +148,7 @@ console.log('src/assets/plan.jpg — 1200×620');
 
 /* L'image de partage : ce qui s'affiche quand le lien est collé dans
    WhatsApp, en story ou sur Facebook. Sans elle, la vignette est vide —
-   pour un institut qui circule de bouche à oreille, c'est la première
+   pour une enseigne qui circule de bouche à oreille, c'est la première
    impression qui se perd. La vraie se fabrique avec
    scripts/generate-og.py, à partir d'une photo et du nom de l'enseigne. */
 const og = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
@@ -159,10 +160,10 @@ const og = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" hei
   ${brin(1200, 630)}
   <g font-family="Liberation Serif, Georgia, serif" fill="#ffffff">
     <rect x="84" y="286" width="72" height="2" fill="#ffffff" fill-opacity="0.85"/>
-    <text x="84" y="266" font-size="30" letter-spacing="7" fill-opacity="0.86">INSTITUT DE BEAUTÉ</text>
-    <text x="84" y="376" font-size="76">Votre Institut</text>
-    <text x="84" y="436" font-size="30" fill-opacity="0.9">Ongles · Regard · Soins · Épilation</text>
-    <text x="84" y="500" font-size="26" fill-opacity="0.72">12 Rue des Exemples, Votre Ville</text>
+    <text x="84" y="266" font-size="30" letter-spacing="7" fill-opacity="0.86">VOTRE ACTIVITÉ</text>
+    <text x="84" y="376" font-size="76">Votre Enseigne</text>
+    <text x="84" y="436" font-size="30" fill-opacity="0.9">La vignette des liens partagés</text>
+    <text x="84" y="500" font-size="26" fill-opacity="0.72">scripts/generate-og.py fabrique la vraie</text>
   </g>
 </svg>`);
 await mkdir('public', { recursive: true });

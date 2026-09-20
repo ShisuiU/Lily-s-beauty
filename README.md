@@ -9,9 +9,10 @@ d'accueil unique plus une page de mentions légales, réservation déléguée
 **Tailwind CSS 4** pour les jetons de design.
 
 Le dossier [`template/`](template/README.md) contient le même design,
-vidé de tout ce qui appartient au salon — textes, photos, logo, palette —
-pour pouvoir être rhabillé pour un autre institut. C'est un projet Astro
-complet et séparé : il ne participe pas à la construction de ce site-ci.
+vidé de tout ce qui appartient au salon — textes, photos, logo, palette,
+métier — pour pouvoir être rhabillé pour un autre établissement. C'est un
+projet Astro complet et séparé : il ne participe pas à la construction de
+ce site-ci.
 
 ---
 

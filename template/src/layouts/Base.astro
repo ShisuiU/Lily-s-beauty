@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site, address, contact, pending, hours, universes, rating, geo, equipe, gabarit } from '../data/site';
+import { site, address, contact, pending, hours, tarifs, rating, geo, equipe, bandeauApercu } from '../data/site';
 import { openingHoursSpecification } from '../lib/hours';
 import Header from '../components/Header.astro';
 import Dock from '../components/Dock.astro';
@@ -16,35 +16,39 @@ const pageTitle = title
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
 
 /* Fiche établissement pour Google : c'est elle qui alimente la recherche
-   locale (« institut de beauté près de moi ») et le panneau de droite.
-   On n'émet que les champs réellement renseignés.
+   locale (« un salon près de moi ») et le panneau de droite. On n'émet
+   que les champs réellement renseignés.
 
-   `@type` décrit le métier : BeautySalon convient à un institut, un
-   salon d'ongles ou un salon de coiffure ; NailSalon, HairSalon et
-   DaySpa existent aussi si le métier est plus étroit. */
+   `@type` vient de `site.schemaType` : plus il est précis, mieux la
+   recherche locale s'y retrouve. */
+const prix = tarifs.univers
+  .flatMap((u) => u.categories.flatMap((c) => c.items.map((s) => s.price)))
+  .filter((p): p is number => p !== null);
+
 const jsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
-  '@type': 'BeautySalon',
+  '@type': site.schemaType,
   name: site.name,
   description: site.description,
   url: site.url,
   image: new URL('/og.jpg', Astro.site ?? site.url).href,
   openingHoursSpecification: openingHoursSpecification(),
-  /* Fourchette affichée par Google sous le nom du salon. Calculée sur la
-     grille plutôt qu'écrite à la main : un tarif qui change la met à jour
-     toute seule. */
-  priceRange: (() => {
-    const p = universes.flatMap((u) => u.categories.flatMap((c) => c.items.map((s) => s.price)));
-    return `${Math.min(...p)} € – ${Math.max(...p)} €`;
-  })(),
-  makesOffer: universes.flatMap((u) =>
+  /* Fourchette affichée par Google sous le nom de l'établissement.
+     Calculée sur la grille plutôt qu'écrite à la main : un tarif qui
+     change la met à jour toute seule. Tant qu'aucun prix n'est
+     renseigné, on n'annonce rien — une fourchette inventée est pire
+     qu'une fourchette absente. */
+  priceRange: prix.length ? `${Math.min(...prix)} € – ${Math.max(...prix)} €` : undefined,
+  makesOffer: tarifs.univers.flatMap((u) =>
     u.categories.flatMap((c) =>
-      c.items.map((s) => ({
-        '@type': 'Offer',
-        price: s.price,
-        priceCurrency: 'EUR',
-        itemOffered: { '@type': 'Service', name: s.name, category: u.label },
-      })),
+      c.items
+        .filter((s) => s.price !== null)
+        .map((s) => ({
+          '@type': 'Offer',
+          price: s.price,
+          priceCurrency: 'EUR',
+          itemOffered: { '@type': 'Service', name: s.name, category: u.label },
+        })),
     ),
   ),
   aggregateRating: rating.show
@@ -69,7 +73,7 @@ const reseaux = equipe.membres.map((p) => p.instagram).filter(Boolean);
 if (reseaux.length) jsonLd.sameAs = reseaux;
 
 const ogImage = new URL('/og.jpg', Astro.site ?? site.url).href;
-const showBanner = pending.length > 0;
+const showBanner = bandeauApercu && pending.length > 0;
 ---
 
 <!doctype html>
@@ -171,22 +175,11 @@ const showBanner = pending.length > 0;
     {
       showBanner && (
         <div class="preview">
-          {gabarit ? (
-            <>
-              <span class="wide-only">
-                Gabarit de démonstration — les textes, les photos et les tarifs sont des exemples.
-              </span>
-              <span class="narrow-only">Gabarit de démonstration</span>
-            </>
-          ) : (
-            <>
-              <span class="wide-only">
-                Aperçu : {pending.slice(0, 3).join(', ')}
-                {pending.length > 3 ? ' et autres données' : ''} à compléter.
-              </span>
-              <span class="narrow-only">Aperçu : {pending.length} données à compléter</span>
-            </>
-          )}
+          <span class="wide-only">
+            Aperçu : {pending.slice(0, 3).join(', ')}
+            {pending.length > 3 ? ' et autres données' : ''} à compléter.
+          </span>
+          <span class="narrow-only">Aperçu : {pending.length} données à compléter</span>
         </div>
       )
     }
@@ -202,7 +195,7 @@ const showBanner = pending.length > 0;
     <script>
       /* Menu mobile. Le panneau se glisse SOUS l'en-tête, qui reste
          visible : son bouton se change en croix et sert à refermer. C'est
-         ce qui évite de redessiner le nom de l'institut dans le panneau —
+         ce qui évite de redessiner le nom de l'enseigne dans le panneau —
          une copie de l'enseigne serait 1 px plus petite et 1,5 px plus
          basse, d'où un léger saut à l'ouverture.
          Le placement dans le calque supérieur de l'API Popover rendait ça
@@ -255,7 +248,7 @@ const showBanner = pending.length > 0;
     <script is:inline define:vars={{ hours }}>
       /* Ouvert / fermé — calculé chez le visiteur, sur l'heure de Paris.
          Le site étant statique, un calcul à la construction serait figé au
-         jour de la mise en ligne. Pour un institut hors de France
+         jour de la mise en ligne. Pour un établissement hors de France
          métropolitaine, changer le fuseau plus bas. */
       (function () {
         var GRID = {};

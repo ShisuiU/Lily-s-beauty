@@ -1,14 +1,23 @@
-# Gabarit « institut de beauté »
+# Gabarit de site vitrine
 
 Le design du site de Lily's Beauty, vidé de son contenu, prêt à être
-rhabillé pour un autre institut.
+rhabillé pour un autre établissement — institut, salon de coiffure,
+onglerie, cabinet de massage, barbier. Rien dans la structure ne suppose
+un métier.
 
-Tout y est : le bandeau d'accueil photographique, la carte des
+Tout le design est là : le bandeau d'accueil photographique, la carte des
 prestations repliable, la grille des réalisations avec vue agrandie, le
 ruban de photos qui défile, les horaires qui affichent « ouvert » ou
-« fermé » en temps réel, le bloc de réservation, le plan, les mentions
-légales. Ce qui a changé, ce sont les textes, les photos et la couleur —
-c'est-à-dire tout ce qu'un nouvel institut apporte de toute façon.
+« fermé » en temps réel, le bloc de rendez-vous, le plan, les mentions
+légales.
+
+**Les textes livrés ne sont pas du contenu.** Chacun décrit ce qui vient
+à sa place, la longueur utile et ce qu'il doit dire : « Deux ou trois
+lignes sous le titre : vos prestations principales, votre ville… ». La
+maquette tient donc debout, se montre à un client, et se remplit en
+écrasant les descriptions une à une. Aucune prestation, aucun tarif,
+aucune note d'avis, aucune mention légale n'est pré-remplie : ces
+choses-là ne se devinent pas, et une valeur fausse vaut moins que rien.
 
 **Astro 7** en sortie statique (aucun JavaScript de framework servi au
 visiteur), **Tailwind CSS 4** pour les jetons, polices et plan hébergés
@@ -24,10 +33,6 @@ npm install
 npm run dev          # http://localhost:4321
 ```
 
-Un bandeau noir annonce « Gabarit de démonstration » en haut de page :
-c'est voulu, et c'est utile quand on montre la maquette à un client. Il
-disparaît en passant `gabarit` à `false` dans `src/data/site.ts`.
-
 ```bash
 npm run build        # site statique dans dist/
 npm run preview      # relire le résultat construit
@@ -35,7 +40,8 @@ npm run check        # types et accessibilité de base
 ```
 
 Les images d'exemple sont fabriquées, pas photographiées :
-`npm run placeholders` les régénère. Aucune photo d'un autre institut
+`npm run placeholders` les régénère. Chaque aplat dit quelle photo vient
+à sa place et à quelle taille. Aucune photo d'un autre établissement
 n'est livrée ici — c'est ce qui permet de montrer le gabarit à qui l'on
 veut sans poser de question de droits.
 
@@ -45,7 +51,7 @@ veut sans poser de question de droits.
 
 | Fichier | Ce qu'on y règle |
 | --- | --- |
-| `src/data/site.ts` | **Tout le contenu.** Nom, textes, horaires, tarifs, photos, équipe, mentions légales. |
+| `src/data/site.ts` | **Tout le contenu.** Nom, textes, horaires, prestations, photos, équipe, mentions légales. |
 | `src/styles/theme.css` | **L'identité visuelle.** Couleurs, polices, marges. Trois palettes de rechange y sont écrites, prêtes à coller. |
 | `src/pages/index.astro` | **L'ordre des sections** de la page d'accueil. |
 
@@ -54,57 +60,71 @@ besoin d'être ouvert pour livrer un premier site.
 
 ---
 
-## Habiller le gabarit pour un institut
+## Habiller le gabarit
 
 Dans l'ordre, et tout tient dans `src/data/site.ts` sauf mention
 contraire.
 
-1. **L'enseigne** — `site.name`, `site.tagline`, `site.description`
-   (150 à 160 signes : c'est ce que Google affiche), `site.url`. Reporter
-   la même URL dans `astro.config.mjs`.
+1. **L'enseigne** — `site.name`, `site.tagline` (ce que vous êtes, en
+   deux ou trois mots), `site.description` (150 à 160 signes : c'est ce
+   que Google affiche), `site.url`. Reporter la même URL dans
+   `astro.config.mjs`. `site.schemaType` précise le métier pour les
+   moteurs de recherche : `BeautySalon`, `HairSalon`, `NailSalon`,
+   `BarberShop`, `DaySpa`, `MassageTherapy`… `LocalBusiness` par défaut.
 2. **L'adresse et les coordonnées GPS** — `address`, puis `geo`. Les
    coordonnées se relèvent d'un clic droit sur Google Maps.
 3. **La réservation** — `reservation.url` et `reservation.enseigne`
-   (Planity, Treatwell, Kiute…). Sans lien mais avec un téléphone dans
-   `contact.phone`, le bouton « Réserver » devient « Appeler » : rien
-   d'autre à changer.
-4. **Les horaires** — `hours`. En minutes depuis minuit, `open: null`
+   (Planity, Treatwell, Kiute, Calendly…). Sans lien mais avec un
+   téléphone dans `contact.phone`, le bouton « Réserver » devient
+   « Appeler » : rien d'autre à changer. Remettre `reservation.titre` et
+   `reservation.intro` à `null` une fois la réservation branchée — les
+   textes se composent alors tout seuls.
+4. **Les horaires** — `hours`, en minutes depuis minuit, `open: null`
    pour un jour de fermeture. La mention « Ouvert · ferme à 19 h » se
-   calcule toute seule, chez le visiteur, sur l'heure de Paris.
-5. **Les prestations** — `universes`. Quatre univers, chacun replié
-   derrière son titre, avec des catégories et des lignes. Les durées sont
-   celles réellement bloquées dans l'agenda : c'est ce qui rend la grille
-   utile plutôt que décorative.
-6. **L'équipe** — `equipe`. Une praticienne ou quatre, la mise en page
-   suit. Pour un institut tenu seul : une seule entrée, et `by: null`
-   sur les univers pour retirer les mentions « avec X ».
-7. **Les textes** — `hero`, `about`, `galerieIntro`, `travailIntro`,
-   `plan.legende`.
+   calcule toute seule, chez le visiteur, sur l'heure de Paris. Passer
+   `hoursConfirmed` à `true` quand la grille est juste.
+5. **Les prestations** — `tarifs.univers`. Trois niveaux : l'univers
+   (une grande famille, repliable), la catégorie (une carte), la
+   prestation (une ligne). Un prix ou une durée à `null` s'affiche en
+   pointillés : ce qui manque se voit. Passer `pricesConfirmed` à `true`
+   une fois la carte complète.
+6. **Qui tient la maison** — `equipe`. Le gabarit est réglé pour une
+   personne seule ; ajouter une entrée à `membres` suffit à passer à
+   deux, puis à quatre. Avec plusieurs praticiens, `by` nomme celui qui
+   tient chaque univers et chaque groupe de photos.
+7. **Les textes** — `hero`, `about`, `lieu`, `travail`, `horaires`,
+   `plan`. Chacun décrit ce qu'il attend ; il suffit de l'écraser.
 8. **Les photos** — voir la section suivante.
-9. **Les mentions légales** — `legal`. Les champs laissés à `null`
-   s'affichent en pointillés sur la page : ils se voient, et c'est fait
-   pour. Le SIRET se retrouve sur `annuaire-entreprises.data.gouv.fr`.
-10. **Les avis** — `rating`. Les chiffres livrés sont des exemples. Mettre
-    les vrais, ou passer `show` à `false`. Une note inventée se retourne
-    contre l'institut le jour où un visiteur va vérifier.
+9. **Les mentions légales** — `legal`. Rien n'est pré-rempli : SIRET,
+   forme juridique, régime de TVA, responsable de la publication,
+   hébergeur. Tout ce qui reste à `null` s'affiche en pointillés sur la
+   page. Le SIRET se retrouve sur `annuaire-entreprises.data.gouv.fr` ;
+   l'hébergeur est celui chez qui le site est déployé.
+10. **Les avis** — `rating`, masqué par défaut. Pour l'afficher, mettre
+    les vrais chiffres et nommer leur source. Une note inventée se
+    retourne contre la maison le jour où un visiteur va vérifier.
 11. **La couleur** — `src/styles/theme.css`, une paire de valeurs à
     changer (voir plus bas).
-12. **Le bandeau** — `gabarit: false` une fois le reste en place.
+12. **Le bandeau d'aperçu** — `bandeauApercu` (tout en haut de
+    `site.ts`). Sur `true`, un bandeau noir énumère ce qui reste à
+    compléter, d'après la liste `pending` en bas du même fichier. Utile
+    pendant la mise au point, à laisser sur `false` pour montrer la
+    maquette ou mettre en ligne.
 
 ---
 
 ## Les photos
 
 Format attendu par chaque emplacement — les rapports comptent plus que
-les tailles exactes, les composants se chargent de produire les
-variantes AVIF et WebP à la construction.
+les tailles exactes, les composants produisent les variantes AVIF et
+WebP à la construction.
 
 | Fichier dans `src/assets/` | Taille | Où il apparaît |
 | --- | --- | --- |
 | `hero-large.jpg` | 1600 × 1100 | Bandeau d'accueil sur ordinateur, et photo de la section « Nous trouver » |
 | `hero-portrait.jpg` | 1200 × 2132 | Bandeau d'accueil sur téléphone |
-| `salon-1…4.jpg` | 900 × 1600 | Le ruban défilant « Le salon » |
-| `travail-*.jpg` | 1290 × 1290 | La grille des réalisations |
+| `lieu-1…4.jpg` | 900 × 1600 | Le ruban défilant « Le lieu » |
+| `travail-1…8.jpg` | 1290 × 1290 | La grille des réalisations |
 | `plan.jpg` | 1200 × 620 | Le plan du quartier |
 | `public/og.jpg` | 1200 × 630 | La vignette des liens partagés |
 
@@ -173,7 +193,7 @@ l'accessibilité : on remplace une paire, pas quarante règles.
 Trois palettes de rechange sont écrites dans `theme.css`, contrastes
 déjà vérifiés : **sauge & lin**, **or & encre**, **rose & lin**. La
 dernière est celle du premier site construit sur ce gabarit : à éviter si
-les deux instituts peuvent se croiser.
+les deux établissements peuvent se croiser.
 
 Après tout changement de couleur, refaire le calcul de contraste
 (n'importe quel vérificateur en ligne le fait en dix secondes) et
@@ -181,9 +201,9 @@ reporter les valeurs dans le commentaire en tête de `theme.css`.
 
 Les ornements végétaux (`src/assets/motif*.svg`) sont posés en masque :
 seule leur forme compte, la couleur vient de la palette. Les remplacer
-par un fragment du vrai logo est la première chose à faire quand
-l'institut en a un — un ornement, c'est la marque répétée en filigrane,
-pas une image de stock.
+par un fragment du vrai logo est la première chose à faire quand la
+maison en a un — un ornement, c'est la marque répétée en filigrane, pas
+une image de stock.
 
 ---
 
@@ -201,7 +221,8 @@ npm run build      # dist/ contient tout le site
 Sur Vercel : importer le dépôt, framework « Astro », rien d'autre à
 régler. Brancher ensuite le vrai nom de domaine et reporter l'adresse
 dans `site.url` **et** dans `astro.config.mjs` — sans cela, la balise
-canonique et le plan du site annoncent l'ancienne adresse.
+canonique et le plan du site annoncent l'ancienne adresse. Renseigner
+aussi `legal.hebergeur` : la mention est obligatoire.
 
 Si la politique de contenu (CSP) de `vercel.json` doit accueillir un
 script tiers — un outil de mesure d'audience, par exemple —, il faut
@@ -212,9 +233,9 @@ c'est le bon défaut : le site n'appelle personne.
 
 ## Ce que le gabarit ne fait pas, volontairement
 
-- **Aucun formulaire.** La réservation part vers un agenda en ligne qui
-  gère les créneaux, les rappels et les annulations. Un formulaire de
-  contact promet une réponse que personne n'a le temps de donner.
+- **Aucun formulaire.** La réservation part vers un agenda en ligne ou
+  vers un téléphone. Un formulaire de contact promet une réponse que
+  personne n'a le temps de donner.
 - **Aucun cookie, aucune mesure d'audience.** Rien à demander au
   visiteur, aucune bannière à afficher.
 - **Aucune carte tierce.** Le plan est une image fabriquée à la
@@ -225,9 +246,9 @@ c'est le bon défaut : le site n'appelle personne.
   ne rapporte — mais si le client veut modifier ses tarifs lui-même,
   c'est le premier chantier à ouvrir, et il est faisable.
 - **Pas de thème sombre servi.** La palette existe dans `theme.css` mais
-  n'est pas activée : l'identité d'un institut est claire, et la page est
-  très photographique — les photos, elles, ne s'inversent pas. Pour
-  l'activer, retirer `data-theme="light"` du `<html>` dans
+  n'est pas activée : l'identité d'une maison de soin est claire, et la
+  page est très photographique — les photos, elles, ne s'inversent pas.
+  Pour l'activer, retirer `data-theme="light"` du `<html>` dans
   `src/layouts/Base.astro`.
 
 ---
@@ -271,5 +292,5 @@ scripts/
   affichée sous le plan est une obligation, ne pas la retirer.
 - Ornements, images d'exemple, icône : fabriqués pour ce gabarit,
   réutilisables librement.
-- Aucune photo, aucun texte et aucune marque d'un institut existant n'est
-  livré dans ce dossier.
+- Aucune photo, aucun texte et aucune marque d'un établissement existant
+  n'est livré dans ce dossier.

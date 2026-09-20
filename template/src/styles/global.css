@@ -192,7 +192,7 @@ main:focus {
 
    `--logo`, `--logo-ratio` et `--logo-h` viennent de site.ts, posées en
    style en ligne par Brand.astro : le CSS n'a pas à connaître le nom du
-   fichier d'un institut. */
+   fichier d'une enseigne. */
 .brand-mot {
   display: block;
   font-family: var(--serif);
@@ -371,7 +371,7 @@ main:focus {
 }
 
 .sheet {
-  /* Sous l'en-tête, pas au-dessus : celui-ci garde le nom de l’institut et le
+  /* Sous l'en-tête, pas au-dessus : celui-ci garde le nom de l’enseigne et le
      bouton, qui devient la croix de fermeture. Le nom ne bouge donc plus
      d'un pixel entre les deux états. */
   position: fixed;
@@ -692,7 +692,7 @@ section {
   font-size: 1.02rem;
 }
 
-/* ── les deux métiers ── */
+/* ── qui tient la maison ── */
 .duo {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
@@ -728,10 +728,10 @@ section {
 }
 
 /* ── qui fait quoi ──
-   Un seul bloc encre, et non deux cartes côte à côte : les deux sœurs
-   tiennent le même institut, et deux rectangles séparés les posaient en
-   vis-à-vis plutôt qu'ensemble. Elles partagent maintenant un même fond,
-   séparées par un simple filet.
+   Un seul bloc encre, et non une carte par personne : elles tiennent
+   la même maison, et des rectangles séparés les posaient en vis-à-vis
+   plutôt qu'ensemble. Elles partagent un même fond, séparées par un
+   simple filet. Seule, la fiche occupe toute la largeur du bloc.
 
    Ce filet est le fond du bloc qui transparaît dans un écart d'un
    pixel, et non une bordure : l'écart d'une grille se place tout seul
@@ -776,9 +776,9 @@ section {
   line-height: 1.4;
   color: color-mix(in srgb, var(--paper) 74%, transparent);
 }
-/* `margin-top: auto` aligne les deux pseudos sur la même ligne quel que
-   soit le nombre de lignes du métier au-dessus — « les cils, les sourcils
-   et l'épilation » en prend deux là où « les ongles » en prend une. */
+/* `margin-top: auto` aligne les pseudos sur la même ligne quel que soit
+   le nombre de lignes de la spécialité au-dessus : une spécialité qui
+   tient en deux lignes ne doit pas décaler le compte d'à côté. */
 .who .ig {
   margin-top: auto;
   padding-top: 10px;
@@ -835,7 +835,7 @@ section {
   border-bottom: 1px solid currentColor;
 }
 
-/* variante encadrée : cible franche, employée dans la section salon */
+/* variante encadrée : cible franche, employée dans « Nous trouver » */
 .ig-chip {
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -1507,13 +1507,13 @@ section {
   }
 }
 
-/* ── galerie : l'intérieur du salon, en ruban défilant ──
+/* ── le lieu : l'intérieur, en ruban défilant ──
    Posée entre les horaires et la réservation, et pas plus bas : on
    montre l'endroit juste avant de demander de réserver, pas après.
 
    Pas d'ornement ici. Les photos sont la décoration ; y ajouter un motif
    serait la surcharge qu'on évite partout ailleurs. */
-#salon {
+#lieu {
   position: relative;
   background: var(--shell);
 }

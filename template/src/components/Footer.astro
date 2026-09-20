@@ -1,10 +1,10 @@
 ---
-import { site, pending, sections, lienSection, brand } from '../data/site';
+import { site, pending, sections, lienSection, brand, bandeauApercu } from '../data/site';
 
 /* Le logo du pied est une vraie image, pas un masque : posé sur le blanc
    de la page, il peut porter ses couleurs. Sans logo, le nom s'écrit
    dans la fonte serif — même parti pris que l'en-tête, et de loin le
-   meilleur placeholder tant que l'institut n'a pas de marque dessinée. */
+   meilleur placeholder tant que la maison n'a pas de marque dessinée. */
 const year = new Date().getFullYear();
 ---
 <footer>
@@ -28,7 +28,7 @@ const year = new Date().getFullYear();
       </nav>
       <p class="foot-note">
         © {year} {site.name}.
-        {pending.length > 0 && (
+        {bandeauApercu && pending.length > 0 && (
           <> Site en cours de finalisation : {pending.join(', ')} restent à compléter.
             Tout est regroupé dans <code>src/data/site.ts</code>.</>
         )}

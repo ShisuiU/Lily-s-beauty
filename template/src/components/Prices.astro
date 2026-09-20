@@ -1,9 +1,9 @@
 ---
-import { universes, reservation, tarifsMajLe, tarifsIntro } from '../data/site';
+import { tarifs, reservation } from '../data/site';
 import { formatDuration } from '../lib/hours';
 import Equipe from './Equipe.astro';
 
-const withCounts = universes.map((u) => ({
+const withCounts = tarifs.univers.map((u) => ({
   ...u,
   count: u.categories.reduce((n, c) => n + c.items.length, 0),
 }));
@@ -13,12 +13,12 @@ const total = withCounts.reduce((n, u) => n + u.count, 0);
   <div class="shell">
     <div class="sec-top monte">
       <hr class="rule" />
-      <h2>Prestations et tarifs</h2>
+      <h2>{tarifs.titre}</h2>
     </div>
 
     <Equipe />
 
-    <p class="tarifs-intro monte">{tarifsIntro.replace('{n}', String(total))}</p>
+    <p class="tarifs-intro monte">{tarifs.intro.replace('{n}', String(total))}</p>
 
     <div class="universes">
       {withCounts.map((u) => (
@@ -50,9 +50,16 @@ const total = withCounts.reduce((n, u) => n + u.count, 0);
                     {c.items.map((s) => (
                       <li>
                         <span class="pname">{s.name}</span>
-                        <span class="pcost">{s.price} €</span>
+                        {/* Un prix ou une durée qui manque s'affiche en
+                            pointillés plutôt que de disparaître : une
+                            ligne muette se remarque moins qu'un trou. */}
+                        <span class:list={['pcost', s.price === null && 'todo']}>
+                          {s.price === null ? '00 €' : `${s.price} €`}
+                        </span>
                         {s.note && <span class="pdetail">{s.note}</span>}
-                        <span class="pdur">{formatDuration(s.minutes)}</span>
+                        <span class:list={['pdur', s.minutes === null && 'todo']}>
+                          {s.minutes === null ? '00 min' : formatDuration(s.minutes)}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -64,15 +71,17 @@ const total = withCounts.reduce((n, u) => n + u.count, 0);
       ))}
     </div>
 
-    <p class="pnote">
-      Tarifs mis à jour le {tarifsMajLe}.
-      {reservation.url && reservation.enseigne && (
-        <>
-          {' '}En cas d'écart,{' '}
-          <a href={reservation.url} target="_blank" rel="noopener">la fiche {reservation.enseigne}</a>{' '}
-          fait foi : c'est elle qui porte l'agenda et les tarifs à jour.
-        </>
-      )}
-    </p>
+    {(tarifs.majLe || (reservation.url && reservation.enseigne)) && (
+      <p class="pnote">
+        {tarifs.majLe && <>Tarifs mis à jour le {tarifs.majLe}.</>}
+        {reservation.url && reservation.enseigne && (
+          <>
+            {' '}En cas d'écart,{' '}
+            <a href={reservation.url} target="_blank" rel="noopener">la fiche {reservation.enseigne}</a>{' '}
+            fait foi : c'est elle qui porte l'agenda et les tarifs à jour.
+          </>
+        )}
+      </p>
+    )}
   </div>
 </section>

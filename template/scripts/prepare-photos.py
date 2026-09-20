@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Prépare les photos livrées par l'institut.
+Prépare les photos livrées par l'établissement.
 
 Déposez les originaux dans `brand/` (le dossier n'est pas publié), puis :
 
@@ -34,23 +34,27 @@ SORTIE = pathlib.Path('src/assets')
 # Les deux photos du bandeau ne sont pas deux cadrages de la même : une
 # bande large pour l'ordinateur, une verticale pour le téléphone. Voir le
 # commentaire en tête de src/components/Hero.astro.
+#
+# Les noms d'origine ci-dessous sont libres : ce sont ceux que vous donnez
+# aux fichiers déposés dans brand/. Seule la colonne du milieu compte,
+# c'est elle que le site va chercher.
 PHOTOS = [
-    ('devanture.jpg',   'hero-large.jpg',        1600, 1100, 82),
-    ('interieur.jpg',   'hero-portrait.jpg',     1200, 2132, 80),
+    ('accueil-large.jpg',    'hero-large.jpg',      1600, 1100, 82),
+    ('accueil-vertical.jpg', 'hero-portrait.jpg',   1200, 2132, 80),
 
-    ('salon-1.jpg',     'salon-1.jpg',            900, 1600, 80),
-    ('salon-2.jpg',     'salon-2.jpg',            900, 1600, 80),
-    ('salon-3.jpg',     'salon-3.jpg',            900, 1600, 80),
-    ('salon-4.jpg',     'salon-4.jpg',            900, 1600, 80),
+    ('lieu-1.jpg',           'lieu-1.jpg',           900, 1600, 80),
+    ('lieu-2.jpg',           'lieu-2.jpg',           900, 1600, 80),
+    ('lieu-3.jpg',           'lieu-3.jpg',           900, 1600, 80),
+    ('lieu-4.jpg',           'lieu-4.jpg',           900, 1600, 80),
 
-    ('ongles-1.jpg',    'travail-ongles-1.jpg',  1290, 1290, 80),
-    ('ongles-2.jpg',    'travail-ongles-2.jpg',  1290, 1290, 80),
-    ('ongles-3.jpg',    'travail-ongles-3.jpg',  1290, 1290, 80),
-    ('ongles-4.jpg',    'travail-ongles-4.jpg',  1290, 1290, 80),
-    ('regard-1.jpg',    'travail-regard-1.jpg',  1290, 1290, 80),
-    ('regard-2.jpg',    'travail-regard-2.jpg',  1290, 1290, 80),
-    ('regard-3.jpg',    'travail-regard-3.jpg',  1290, 1290, 80),
-    ('regard-4.jpg',    'travail-regard-4.jpg',  1290, 1290, 80),
+    ('travail-1.jpg',        'travail-1.jpg',       1290, 1290, 80),
+    ('travail-2.jpg',        'travail-2.jpg',       1290, 1290, 80),
+    ('travail-3.jpg',        'travail-3.jpg',       1290, 1290, 80),
+    ('travail-4.jpg',        'travail-4.jpg',       1290, 1290, 80),
+    ('travail-5.jpg',        'travail-5.jpg',       1290, 1290, 80),
+    ('travail-6.jpg',        'travail-6.jpg',       1290, 1290, 80),
+    ('travail-7.jpg',        'travail-7.jpg',       1290, 1290, 80),
+    ('travail-8.jpg',        'travail-8.jpg',       1290, 1290, 80),
 ]
 
 

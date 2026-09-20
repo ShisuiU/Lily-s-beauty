@@ -1,16 +1,16 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { galerie, galerieIntro } from '../data/site';
+import { lieu } from '../data/site';
 
 const fichiers = import.meta.glob<{ default: ImageMetadata }>(
-  '../assets/salon-*.jpg',
+  '../assets/lieu-*.jpg',
   { eager: true },
 );
 
-const photos = galerie.map((p) => {
+const photos = lieu.photos.map((p) => {
   const trouve = fichiers[`../assets/${p.fichier}`];
-  if (!trouve) throw new Error(`galerie : src/assets/${p.fichier} est introuvable`);
+  if (!trouve) throw new Error(`le lieu : src/assets/${p.fichier} est introuvable`);
   return { src: trouve.default, alt: p.alt };
 });
 
@@ -26,12 +26,12 @@ const photos = galerie.map((p) => {
 const SERIES = 4;
 ---
 
-<section id="salon">
+<section id="lieu">
   <div class="shell">
     <div class="sec-top monte">
       <hr class="rule" />
-      <h2>{galerieIntro.titre}</h2>
-      <p>{galerieIntro.lead}</p>
+      <h2>{lieu.titre}</h2>
+      <p>{lieu.lead}</p>
     </div>
   </div>
 
@@ -40,7 +40,7 @@ const SERIES = 4;
       script, et les flèches du clavier parce qu'elle peut recevoir le
       focus. Le défilement automatique ne fait que pousser cette même
       barre de défilement. */}
-  <div class="ruban monte" data-ruban tabindex="0" role="group" aria-label="Photos de l'institut">
+  <div class="ruban monte" data-ruban tabindex="0" role="group" aria-label="Photos du lieu">
     <div class="ruban-piste" data-series={SERIES}>
       {Array.from({ length: SERIES }).map((_, serie) => (
         <ul class="ruban-serie" aria-hidden={serie > 0 ? 'true' : undefined}>
