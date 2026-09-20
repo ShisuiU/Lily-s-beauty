@@ -1,0 +1,126 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import Todo from '../components/Todo.astro';
+import { site, address, legal, reservation, equipe, pseudo } from '../data/site';
+
+const lieu = `${address.streetNumber}, ${address.street}, ${address.postalCode} ${address.city}`;
+/* Une entreprise ou plusieurs : le titre et la phrase d'introduction
+   changent, le reste non. Un institut tenu par deux auto-entreprises qui
+   partagent un local doit faire apparaître les deux, chacune avec son
+   SIRET — c'est le cas qui justifie la liste. */
+const plusieurs = legal.entreprises.length > 1;
+---
+
+<Base
+  title="Mentions légales"
+  description={`Mentions légales du site de ${site.name}, à ${address.city} : éditeur, hébergeur, données personnelles.`}
+>
+  <section class="legal">
+    <div class="shell">
+      <div class="sec-top">
+        <hr class="rule" />
+        <h1>Mentions légales</h1>
+        <p>
+          Informations publiées en application de l'article 6-III de la loi du 21 juin 2004 pour
+          la confiance dans l'économie numérique.
+        </p>
+      </div>
+
+      <h2>{plusieurs ? 'Éditeurs du site' : 'Éditeur du site'}</h2>
+      {plusieurs && (
+        <p class="legal-lead">
+          L'institut réunit plusieurs entreprises indépendantes qui partagent le même local et la
+          même enseigne. Chacune répond de son activité.
+        </p>
+      )}
+
+      <div class="ent-grid">
+        {legal.entreprises.map((e) => {
+          const compte = equipe.membres.find((p) => p.name === e.praticienne);
+          return (
+            <div class="ent">
+              <h3>{e.praticienne}</h3>
+              <p class="ent-act">{e.activite}</p>
+              <dl>
+                <div>
+                  <dt>Exploitant</dt>
+                  <dd>{e.denomination ?? <Todo label="Nom et prénom à compléter" />}</dd>
+                </div>
+                <div><dt>Forme</dt><dd>{e.forme}</dd></div>
+                <div>
+                  <dt>SIRET</dt>
+                  <dd>{e.siret ?? <Todo label="Numéro à compléter" />}</dd>
+                </div>
+                <div><dt>Siège</dt><dd>{lieu}</dd></div>
+                {compte?.instagram && (
+                  <div>
+                    <dt>Contact</dt>
+                    <dd>
+                      <a href={compte.instagram} target="_blank" rel="noopener">
+                        {pseudo(compte.instagram)}
+                      </a>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          );
+        })}
+      </div>
+
+      {legal.franchiseTva && (
+        <p class="legal-note">
+          TVA non applicable, article 293 B du code général des impôts.
+        </p>
+      )}
+
+      <h2>Responsable de la publication</h2>
+      <p>
+        {legal.responsablePublication ?? (
+          <Todo label="Nom de la personne responsable de la publication à compléter" />
+        )}
+      </p>
+
+      <h2>Hébergeur</h2>
+      <p>
+        {legal.hebergeur.nom}, {legal.hebergeur.adresse}<br />
+        <a href={legal.hebergeur.site} target="_blank" rel="noopener">{legal.hebergeur.site}</a>
+      </p>
+
+      <h2>Données personnelles et cookies</h2>
+      <p>
+        Ce site ne dépose aucun cookie, n'utilise aucun outil de mesure d'audience et ne
+        collecte aucune donnée personnelle. Il ne comporte aucun formulaire. Les polices de
+        caractères et le plan du quartier sont servis depuis ce site : aucune requête n'est
+        adressée à un service tiers pendant votre visite.
+      </p>
+      {reservation.url && (
+        <p>
+          La prise de rendez-vous se fait sur {reservation.enseigne ?? 'la plateforme de réservation'},
+          qui est un service distinct. Les données que vous y saisissez relèvent
+          de sa politique de confidentialité et des obligations de l'institut en tant que client
+          de cette plateforme.
+          {' '}<a href={reservation.url} target="_blank" rel="noopener">Ouvrir la page de réservation</a>.
+        </p>
+      )}
+
+      <h2>Propriété intellectuelle</h2>
+      <p>
+        L'enseigne, le nom {site.name}, les textes et les photographies de l'institut sont la
+        propriété de leurs auteurs. Toute reproduction sans autorisation est interdite. Le fond
+        de carte provient d'OpenStreetMap et de ses contributeurs, sous licence ODbL.
+      </p>
+
+      <h2>Liens sortants</h2>
+      <p>
+        Ce site renvoie vers des services extérieurs — plateforme de réservation, comptes
+        Instagram, plan. Il n'exerce aucun contrôle sur ces services et décline toute
+        responsabilité quant à leur contenu.
+      </p>
+
+      <p class="legal-back"><a href="/">Retour à l'accueil</a></p>
+    </div>
+  </section>
+  <Footer />
+</Base>

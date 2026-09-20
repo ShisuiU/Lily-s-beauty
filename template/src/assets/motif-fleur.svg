@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 473" width="420" height="473" role="img" aria-label="Fleur">
+  <!-- Fleur. Ornement posé en masque par global.css : seule la
+       forme compte, la couleur vient de la palette. Le remplacer
+       par le fragment d'un vrai logo est la première chose à faire
+       quand l'institut en a un. -->
+  <g fill="#000">
+    <path d="M210,470 C210,380 206,330 206,286" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>
+    <path d="M208.0,372.0 Q276.5,372.2 317.4,328.2 Q251.0,331.4 208.0,372.0 Z"/>
+    <path d="M208.0,372.0 Q167.1,328.1 98.6,328.2 Q141.6,368.9 208.0,372.0 Z"/>
+    <path d="M210.0,176.0 Q257.1,100.0 225.2,24.0 Q184.0,100.0 210.0,176.0 Z"/>
+    <path d="M210.0,176.0 Q299.4,178.8 349.2,113.2 Q262.8,115.5 210.0,176.0 Z"/>
+    <path d="M210.0,176.0 Q252.3,254.8 334.0,265.2 Q288.8,191.5 210.0,176.0 Z"/>
+    <path d="M210.0,176.0 Q162.9,252.0 194.8,328.0 Q236.0,252.0 210.0,176.0 Z"/>
+    <path d="M210.0,176.0 Q120.6,173.2 70.8,238.8 Q157.2,236.5 210.0,176.0 Z"/>
+    <path d="M210.0,176.0 Q167.7,97.2 86.0,86.8 Q131.2,160.5 210.0,176.0 Z"/>
+    <circle cx="210" cy="176" r="21"/>
+  </g>
+</svg>

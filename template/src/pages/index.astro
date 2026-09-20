@@ -1,0 +1,27 @@
+---
+/* L'ordre des sections de la page d'accueil.
+
+   Il se lit comme une visite : ce qu'on fait et ce que ça coûte, à quoi
+   ça ressemble, quand c'est ouvert, où c'est, comment réserver. Déplacer
+   une section ici la déplace pour de bon — penser à reporter l'ordre
+   dans `sections` (src/data/site.ts), qui alimente les trois menus. */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Prices from '../components/Prices.astro';
+import Travail from '../components/Travail.astro';
+import Hours from '../components/Hours.astro';
+import Galerie from '../components/Galerie.astro';
+import Booking from '../components/Booking.astro';
+import Access from '../components/Access.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base>
+  <Hero />
+  <Prices />
+  <Travail />
+  <Hours />
+  <Galerie />
+  <Booking />
+  <Access />
+  <Footer />
+</Base>

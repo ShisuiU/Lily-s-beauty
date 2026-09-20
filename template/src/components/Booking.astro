@@ -1,0 +1,52 @@
+---
+import { reservation, rating, contact } from '../data/site';
+import BookButton from './BookButton.astro';
+import Todo from './Todo.astro';
+
+/* Trois façons de réserver, trois titres. La section ne dit pas « prenez
+   rendez-vous » dans le vide : elle nomme le moyen, parce que c'est lui
+   qui lève l'hésitation. */
+const titre = reservation.url
+  ? `La réservation se fait ${reservation.enseigne ? 'sur ' + reservation.enseigne : 'en ligne'}.`
+  : contact.phone
+    ? 'La réservation se fait par téléphone.'
+    : 'Prendre rendez-vous.';
+
+const corps = reservation.url
+  ? "Agenda à jour en temps réel, confirmation immédiate et rappel la veille. Vous choisissez "
+    + "la prestation, elle réserve exactement la durée qu'il faut, sans créneau trop court qui "
+    + "déborde sur la cliente suivante."
+  : "Un appel suffit. On convient ensemble de la prestation et du créneau, et le temps réservé "
+    + "est celui de la prestation choisie : personne n'est expédié.";
+---
+<section id="reserver">
+  <div class="shell">
+    <div class="book">
+      <div class="monte">
+        <span class="eyebrow">Rendez-vous</span>
+        {rating.show && (
+          <p class="rating">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <span>
+              <b>{rating.value.toLocaleString('fr-FR')}</b> sur 5, d'après {rating.count} avis
+              vérifiés sur {rating.source}
+            </span>
+          </p>
+        )}
+        <h2 style="margin-top:14px">{titre}</h2>
+        <p>{corps}</p>
+        <div class="hero-act" style="margin-top:28px">
+          <BookButton />
+        </div>
+        {!reservation.url && !contact.phone && (
+          <p style="margin-top:16px;font-size:.86rem">
+            <Todo label="Lien de réservation ou téléphone à renseigner dans src/data/site.ts" />
+          </p>
+        )}
+      </div>
+      <ol class="book-steps monte">
+        {reservation.etapes.map((s) => <li class="monte">{s}</li>)}
+      </ol>
+    </div>
+  </div>
+</section>

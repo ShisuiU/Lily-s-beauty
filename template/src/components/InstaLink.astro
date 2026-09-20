@@ -1,0 +1,32 @@
+---
+import { pseudo } from '../data/site';
+
+interface Props {
+  url: string;
+  /** Prénom de la praticienne, affiché sous le pseudo dans la variante « chip ». */
+  name?: string;
+  /** 'inline' : icône + pseudo. 'chip' : bloc encadré, cible plus large. */
+  variant?: 'inline' | 'chip';
+}
+const { url, name, variant = 'inline' } = Astro.props;
+---
+<a
+  class:list={['ig', `ig-${variant}`]}
+  href={url}
+  target="_blank"
+  rel="noopener"
+  aria-label={`${name ? name + ', ' : ''}${pseudo(url)} sur Instagram (nouvel onglet)`}
+>
+  {/* Marque Instagram en monochrome : elle hérite de currentColor, donc
+      elle suit le thème clair comme le sombre sans seconde version. */}
+  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+       stroke-width="1.7" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <rect x="3" y="3" width="18" height="18" rx="5.2" />
+    <circle cx="12" cy="12" r="4.1" />
+    <circle cx="17.25" cy="6.75" r="1.15" fill="currentColor" stroke="none" />
+  </svg>
+  <span class="ig-text">
+    <b>{pseudo(url)}</b>
+    {variant === 'chip' && name && <span>{name}</span>}
+  </span>
+</a>

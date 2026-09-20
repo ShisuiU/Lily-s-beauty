@@ -1,0 +1,30 @@
+---
+import { hours, hoursConfirmed } from '../data/site';
+import { formatRange } from '../lib/hours';
+import Todo from './Todo.astro';
+---
+<section id="horaires">
+  <div class="shell">
+    <div class="sec-top monte">
+      <hr class="rule" />
+      <h2>Horaires</h2>
+    </div>
+    <div class="hours-wrap">
+      <ul class="hours" id="hours">
+        {hours.map((d) => (
+          <li class="monte" data-d={d.day}>
+            <span class="d">{d.label}</span>
+            <span class={d.open === null ? 'h shut' : 'h'}>{formatRange(d)}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="status monte">
+        <span class="eyebrow">En ce moment</span>
+        <p class="big" id="st-big">Consultez les horaires</p>
+        <p><span id="st-next"></span>
+          {!hoursConfirmed && <> Ces horaires sont <Todo label="des exemples à confirmer" />.</>}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

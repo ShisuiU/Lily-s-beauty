@@ -1,0 +1,77 @@
+---
+import { getImage } from 'astro:assets';
+import { address, hero, rating, site } from '../data/site';
+import BookButton from './BookButton.astro';
+import Todo from './Todo.astro';
+import large from '../assets/hero-large.jpg';
+import portrait from '../assets/hero-portrait.jpg';
+
+/* Direction artistique : deux photos, pas deux cadrages du même fichier.
+   L'ordinateur reçoit la bande large — la devanture, ou la pièce vue en
+   entier ; le téléphone reçoit une photo verticale, où un cadrage
+   paysage ne montrerait qu'une tranche. AVIF puis WebP, JPEG en dernier
+   recours ; le repli JPEG prend la photo large, puisqu'un navigateur qui
+   l'atteint ignore aussi `media`.
+
+   Pour n'avoir qu'une seule photo : pointer les deux imports sur le même
+   fichier, le reste continue de fonctionner. */
+const wideAvif = await getImage({ src: large, format: 'avif', quality: 60 });
+const wideWebp = await getImage({ src: large, format: 'webp', quality: 72 });
+/* Le portrait est servi en trois largeurs : c'est le plus gros fichier de
+   la page et il tombe sur des téléphones, où la densité d'écran va du
+   simple au triple. Sans cela, un écran à deux pixels par point
+   téléchargeait le fichier des écrans à trois. */
+const TAILLES = [420, 800, 1200];
+const tallAvif = await getImage({ src: portrait, format: 'avif', quality: 60, widths: TAILLES });
+const tallWebp = await getImage({ src: portrait, format: 'webp', quality: 72, widths: TAILLES });
+const fallback = await getImage({ src: large, format: 'jpeg', quality: 78 });
+---
+<div class="hero">
+  {/* Texte de remplacement vide, et c'est voulu : l'attribut `alt` est
+      unique alors que la photo, elle, change avec la largeur d'écran — il
+      décrirait une devanture aux uns et un intérieur aux autres. Les deux
+      photos sont décrites là où elles portent une information : la
+      façade dans la section « Nous trouver », l'intérieur dans le ruban.
+      Ici elles ne font que planter le décor. */}
+  <picture>
+    <source media="(max-width: 700px)" type="image/avif" sizes="100vw" srcset={tallAvif.srcSet.attribute} />
+    <source media="(max-width: 700px)" type="image/webp" sizes="100vw" srcset={tallWebp.srcSet.attribute} />
+    <source type="image/avif" srcset={wideAvif.src} />
+    <source type="image/webp" srcset={wideWebp.src} />
+    <img
+      src={fallback.src}
+      width={fallback.attributes.width}
+      height={fallback.attributes.height}
+      alt=""
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
+
+  <div class="shell hero-in">
+    <span class="eyebrow">{site.tagline} · {address.city}</span>
+    <h1>
+      {hero.titre.avant}{hero.titre.accent && <em>{hero.titre.accent}</em>}{hero.titre.apres}
+    </h1>
+    <p class="hero-line">{hero.lead}</p>
+    <div class="hero-act">
+      <BookButton />
+      {hero.lienSecondaire && (
+        <a class="btn btn-ghost" href={hero.lienSecondaire.href}>{hero.lienSecondaire.label}</a>
+      )}
+    </div>
+    <p class="hero-meta">
+      <span class="live" id="live" data-open="false"><i></i><b id="live-txt">Horaires</b></span>
+      <span id="live-next"></span>
+      <span>
+        <b>{address.streetNumber}</b>{' '}
+        {address.street && address.city
+          ? `${address.street}, ${address.city}`
+          : <Todo label="rue et ville à compléter" />}
+      </span>
+      {rating.show && (
+        <span><b>{rating.value.toLocaleString('fr-FR')}/5</b> · {rating.count} avis</span>
+      )}
+    </p>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import { address, contact, equipe, about, plan, mapsUrl, directionsUrl } from '../data/site';
+import InstaLink from './InstaLink.astro';
+import facade from '../assets/hero-large.jpg';
+import carte from '../assets/plan.jpg';
+
+const fullAddress = `${address.streetNumber}, ${address.street}, ${address.postalCode} ${address.city}`;
+const reseaux = equipe.membres.filter((p) => p.instagram);
+---
+<section id="acces">
+  <div class="shell">
+    <div class="access">
+      <Image
+        class="monte"
+        src={facade}
+        widths={[420, 760, 1100]}
+        sizes="(max-width: 860px) 100vw, 45vw"
+        format="avif"
+        quality={70}
+        loading="lazy"
+        alt={about.photoAlt}
+      />
+      <div class="monte">
+        <hr class="rule" />
+        <h2 class="addr">{about.lead}</h2>
+        {about.body.map((t) => <p class="about-p">{t}</p>)}
+        <dl>
+          <div>
+            <dt>Adresse</dt>
+            <dd>
+              {address.streetNumber}, {address.street}<br />
+              {address.postalCode} {address.city}
+            </dd>
+          </div>
+          {contact.phone && (
+            <div>
+              <dt>Téléphone</dt>
+              <dd><a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a></dd>
+            </div>
+          )}
+          {reseaux.length > 0 && (
+            <div>
+              <dt>Instagram</dt>
+              <dd class="insta">
+                {reseaux.map((p) => <InstaLink url={p.instagram!} name={p.name} variant="chip" />)}
+              </dd>
+            </div>
+          )}
+          {address.directions && (
+            <div><dt>Accès</dt><dd>{address.directions}</dd></div>
+          )}
+        </dl>
+      </div>
+    </div>
+
+    <figure class="plan">
+      <Image
+        src={carte}
+        widths={[600, 900, 1200]}
+        sizes="(max-width: 1200px) 100vw, 1160px"
+        format="avif"
+        quality={72}
+        loading="lazy"
+        alt={plan.alt}
+      />
+      <figcaption>
+        <span class="plan-where">
+          <b>{fullAddress}</b>
+          <span>{plan.legende}</span>
+        </span>
+        <span class="plan-acts">
+          <a class="btn btn-quiet" href={directionsUrl} target="_blank" rel="noopener">Itinéraire</a>
+          <a class="plan-open" href={mapsUrl} target="_blank" rel="noopener">Ouvrir le plan</a>
+        </span>
+      </figcaption>
+      <p class="plan-credit">
+        Fond de carte <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>,
+        généré à la construction du site : aucune carte tierce n'est chargée pendant votre visite.
+      </p>
+    </figure>
+  </div>
+</section>

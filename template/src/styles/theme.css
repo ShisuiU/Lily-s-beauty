@@ -1,0 +1,168 @@
+/* ═══════════════════════════════════════════════════════════════
+   L'IDENTITÉ — couleurs, fontes, rythme
+
+   C'est le deuxième fichier à ouvrir, après src/data/site.ts. Tout ce
+   qui se règle ici se répercute sur la page entière : le reste du CSS ne
+   connaît que des noms de jetons, jamais des valeurs.
+
+   ── LE PRINCIPE DE LA PALETTE ──────────────────────────────────
+   Trois neutres qui portent le texte, trois fonds, une seule couleur
+   d'accent — et cette couleur existe en deux versions :
+
+     --accent      la teinte de marque, DÉCORATIVE. Filets, ornements,
+                   puces, étoiles. Jamais du texte sur fond clair : elle
+                   n'y a pas le contraste nécessaire, et c'est normal,
+                   une couleur assez pâle pour être jolie en aplat ne
+                   peut pas être lisible en petit corps.
+     --accent-ink  la même teinte, assombrie jusqu'à passer le seuil
+                   AA (4,5:1 sur blanc). C'est elle qui porte les liens,
+                   les prix, les compteurs, les contours de focus.
+
+   Séparer les deux est ce qui permet de changer de couleur sans casser
+   l'accessibilité : on remplace une paire, pas quarante règles.
+
+   ── CONTRASTES VÉRIFIÉS (palette livrée, WCAG AA) ──────────────
+     --ink        sur --paper    17,38:1
+     --ink-2      sur --paper     9,69:1
+     --muted      sur --paper     5,73:1
+     --accent-ink sur --paper     5,15:1
+     --accent-ink sur --shell     4,62:1
+     --accent     sur --paper     2,96:1  → DÉCORATIF UNIQUEMENT
+     --accent     sur --ink       5,87:1  (liens du bloc sombre)
+
+   Après avoir changé une couleur, refaire le calcul : n'importe quel
+   vérificateur de contraste en ligne le fait en dix secondes, et c'est
+   la seule façon de savoir. Reporter les valeurs ci-dessus.
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Tailwind lit ce bloc pour fabriquer ses utilitaires et ses
+     variables ; le CSS du site, lui, travaille avec les jetons de
+     `:root` juste en dessous. Garder les deux en phase. */
+  --color-ink: #1b1a19;
+  --color-ink-2: #4a4340;
+  --color-muted: #6c6560;
+  --color-paper: #ffffff;
+  --color-shell: #f6f2ee;
+  --color-line: #e8e1da;
+  --color-hair: #d8cec5;
+  --color-accent: #c08a6b;
+  --color-accent-ink: #9a5f3e;
+  --color-accent-wash: #fbf5f0;
+
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+:root {
+  /* Ascenseurs, champs et contrôles natifs restent clairs eux aussi :
+     sans cette ligne, un téléphone en thème sombre les rendrait sombres
+     au milieu d'une page claire. */
+  color-scheme: light;
+  interpolate-size: allow-keywords;
+
+  /* ── les neutres ── */
+  --ink: #1b1a19;        /* le texte, les titres */
+  --ink-2: #4a4340;      /* le texte courant des blocs secondaires */
+  --muted: #6c6560;      /* les mentions, les durées, les légendes */
+  --paper: #ffffff;      /* le fond de la page */
+  --shell: #f6f2ee;      /* le fond crème des sections posées */
+  --line: #e8e1da;       /* les séparateurs */
+  --hair: #d8cec5;       /* les filets les plus fins, les bordures */
+
+  /* ── l'accent ── */
+  --accent: #c08a6b;
+  --accent-ink: #9a5f3e;
+  --accent-wash: #fbf5f0; /* fond très pâle des cartes actives */
+
+  --scrim: #1e1b18;      /* le voile posé sur les photos */
+
+  /* ── les fontes ──
+     Deux familles, et c'est un maximum : un serif à contraste pour les
+     titres, un sans neutre pour le texte. Les fichiers sont servis
+     depuis le site (public/fonts), donc aucune requête vers Google.
+     Pour en changer : éditer scripts/fetch-fonts.py et le relancer. */
+  --serif: var(--font-serif);
+  --sans: var(--font-sans);
+
+  /* ── le rythme ──
+     `--gut` est la marge latérale de toute la page : 20 px sur un
+     téléphone, 72 px sur un grand écran, et tout ce qu'il y a entre les
+     deux sans palier visible. C'est le réglage qui change le plus
+     l'allure du site pour un seul nombre. */
+  --gut: clamp(20px, 5vw, 72px);
+  --banner: 0px;
+  --header-h: 60px;
+}
+
+/* Décale l'en-tête sous le bandeau d'aperçu. `:root.has-banner` (0-1-1)
+   l'emporte sur `:root` (0-0-1) sans dépendre de l'ordre des feuilles —
+   une balise <style> en ligne, de même spécificité, se faisait écraser. */
+:root.has-banner {
+  --banner: 32px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TROIS AUTRES PALETTES, PRÊTES À COLLER
+
+   Remplacer les neuf valeurs de `@theme` et de `:root`. Les contrastes
+   annoncés ont été vérifiés sur blanc (--accent-ink) et sur crème.
+
+   ── Sauge & lin ── un vert grisé, plus froid, plus « soin »
+     --accent: #8fa07e;      (2,80:1 décoratif)
+     --accent-ink: #566849;  (6,05:1)
+     --accent-wash: #f4f6f1;
+     --shell: #f4f5f1;  --line: #e4e6df;  --hair: #d2d6c9;
+
+   ── Or & encre ── plus chaud, plus « coiffure de standing »
+     --accent: #be9a55;      (2,64:1 décoratif)
+     --accent-ink: #8a6a22;  (5,04:1)
+     --accent-wash: #faf6ec;
+     --shell: #f7f4ed;  --line: #e9e2d3;  --hair: #dbcfb7;
+
+   ── Rose & lin ── la teinte du premier site construit sur ce gabarit.
+      À éviter si les deux instituts peuvent se croiser : c'est ce qui
+      ferait croire à une enseigne commune.
+     --accent: #c4879e;      (2,87:1 décoratif)
+     --accent-ink: #9e5a76;  (5,03:1)
+     --accent-wash: #fbf5f7;
+     --shell: #f6f3f1;  --line: #e7e1de;  --hair: #d9d0cc;
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   PALETTE SOMBRE — écrite, conservée, mais NON SERVIE.
+   <html> porte data-theme="light" : ni ce bloc ni le suivant ne
+   s'appliquent. C'est une décision de marque, pas un oubli — l'identité
+   d'un institut est claire, et l'inversion la dénature ; le site est
+   aussi très photographique, et les photos, elles, ne s'inversent pas.
+   Pour suivre le réglage du téléphone : retirer data-theme du <html>
+   dans src/layouts/Base.astro. Pour forcer le sombre : y mettre "dark".
+   Les valeurs ci-dessous suivent la palette claire — à reprendre en
+   même temps qu'elle.
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ink: #f2eeec;
+    --ink-2: #c6beba;
+    --muted: #a39c98;
+    --paper: #141316;
+    --shell: #1c1b1f;
+    --line: #2c2a2e;
+    --hair: #3a373c;
+    --accent: #b9866a;
+    --accent-ink: #d9a482;
+    --accent-wash: #201c1a;
+  }
+}
+:root[data-theme='dark'] {
+  --ink: #f2eeec;
+  --ink-2: #c6beba;
+  --muted: #a39c98;
+  --paper: #141316;
+  --shell: #1c1b1f;
+  --line: #2c2a2e;
+  --hair: #3a373c;
+  --accent: #b9866a;
+  --accent-ink: #d9a482;
+  --accent-wash: #201c1a;
+}
