@@ -1,0 +1,151 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import Todo from '../components/Todo.astro';
+import { site, address, legal, contact, planityUrl, practitioners, pseudo } from '../data/site';
+
+const lieu = `${address.streetNumber}, ${address.street}, ${address.postalCode} ${address.city}`;
+const exploitantes = legal.entreprises
+  .map((e) => e.denomination)
+  .filter(Boolean)
+  .join(' et ');
+---
+
+<Base
+  title="Données personnelles"
+  description={`Politique de confidentialité du site de l'institut ${site.name} : aucun cookie, aucun traceur, aucun formulaire. Ce que le site traite, et comment exercer vos droits.`}
+>
+  <section class="legal">
+    <div class="shell">
+      <div class="sec-top">
+        <hr class="rule" />
+        <h1>Données personnelles</h1>
+        <p>
+          Information prévue par les articles 13 et 14 du règlement général sur la protection
+          des données. Dernière révision le {legal.confidentialiteRevueLe}.
+        </p>
+      </div>
+
+      {/* Le résumé d'abord : c'est la seule partie que la plupart des gens
+          liront, et dans ce cas précis elle suffit. */}
+      <div class="rgpd-resume">
+        <h2>En deux phrases</h2>
+        <p>
+          Ce site ne dépose aucun cookie, n'utilise aucun outil de mesure d'audience, ne
+          contient aucun formulaire et n'appelle aucun service tiers pendant votre visite.
+          La seule donnée personnelle qui existe du fait de ce site est le journal technique
+          que tout hébergeur conserve, et qui contient votre adresse IP.
+        </p>
+      </div>
+
+      <h2>Qui est responsable</h2>
+      <p class="legal-lead">
+        L'institut réunit deux entreprises indépendantes. Chacune est responsable du traitement
+        pour ce qui la concerne, à l'adresse suivante : {lieu}.
+      </p>
+      <p>
+        {exploitantes ? exploitantes + '.' : (
+          <Todo label="Noms des deux exploitantes à compléter dans les mentions légales" />
+        )}
+      </p>
+
+      <h2>Ce que le site ne fait pas</h2>
+      <ul class="rgpd-liste">
+        <li>
+          <b>Aucun cookie</b>, et aucun stockage dans votre navigateur :
+          ni <code>localStorage</code>, ni <code>sessionStorage</code>, ni base locale.
+          Un bandeau de consentement n'aurait donc rien à vous demander : il n'y en a pas.
+        </li>
+        <li>
+          <b>Aucune mesure d'audience</b>, aucun traceur publicitaire, aucun bouton de partage
+          qui vous suivrait.
+        </li>
+        <li>
+          <b>Aucun appel à un service tiers.</b> Les polices de caractères, le plan du quartier
+          et toutes les images sont servis depuis ce site. Tant que vous ne cliquez pas sur un
+          lien sortant, aucune autre société n'apprend que vous êtes ici.
+        </li>
+        <li>
+          <b>Aucun formulaire et aucun compte.</b> Le site ne vous demande jamais votre nom,
+          votre adresse, ni votre téléphone.
+        </li>
+      </ul>
+
+      <h2>Ce que le site traite malgré tout</h2>
+      <p>
+        <b>Les journaux de connexion de l'hébergeur.</b> Comme tout site, celui-ci est servi par
+        des machines qui enregistrent les connexions : adresse IP, date, page demandée, type de
+        navigateur. C'est nécessaire pour que le site fonctionne et reste protégé des abus —
+        la base légale est l'intérêt légitime, article 6.1.f du règlement. Ces journaux ne sont
+        ni lus ni exploités par l'institut, qui n'y a pas accès.
+      </p>
+      <p>
+        L'hébergeur est {legal.hebergeur.nom}, {legal.hebergeur.adresse}. Il est établi aux
+        États-Unis : ces journaux peuvent donc être traités hors de l'Union européenne. Les
+        garanties applicables et les durées de conservation relèvent de sa propre politique,
+        publiée sur{' '}
+        <a href={legal.hebergeur.site} target="_blank" rel="noopener">{legal.hebergeur.site}</a>.
+      </p>
+      <p>
+        <b>Les photographies.</b> Certaines photographies de la section « Le travail » montrent
+        les mains ou le regard de clientes. Elles sont publiées avec leur accord, et cet accord
+        est la base légale. Si vous vous reconnaissez sur l'une d'elles et souhaitez qu'elle
+        soit retirée, il suffit de le demander : elle l'est sans discussion et sans délai.
+      </p>
+
+      <h2>La prise de rendez-vous se passe ailleurs</h2>
+      <p>
+        Le bouton « Réserver » vous emmène sur Planity, qui est un service distinct, avec son
+        propre responsable de traitement. Tout ce que vous y saisissez — nom, téléphone,
+        rendez-vous — relève de la politique de confidentialité de Planity et des obligations de
+        l'institut en tant que client de cette plateforme. Rien de ce que vous y faites ne
+        revient sur ce site.
+        {planityUrl && (
+          <>
+            {' '}<a href={planityUrl} target="_blank" rel="noopener">Ouvrir Planity</a>.
+          </>
+        )}
+      </p>
+
+      <h2>Les liens sortants</h2>
+      <p>
+        Ce site renvoie vers Planity et vers les comptes Instagram des praticiennes
+        {practitioners.some((p) => p.instagram) && (
+          <> ({practitioners.filter((p) => p.instagram).map((p) => pseudo(p.instagram!)).join(', ')})</>
+        )}. Ce sont de simples liens, pas des contenus intégrés : ces services n'apprennent
+        votre passage qu'au moment où vous cliquez. Le site leur transmet alors uniquement son
+        adresse d'origine, jamais la page précise que vous consultiez.
+      </p>
+
+      <h2>Vos droits</h2>
+      <p>
+        Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation,
+        d'opposition et de portabilité sur les données qui vous concernent. En pratique, le site
+        n'en détient aucune : ces droits portent sur les journaux de l'hébergeur et sur les
+        photographies publiées.
+      </p>
+      <p>
+        Pour les exercer, écrivez à l'institut&nbsp;:
+        {contact.email ? (
+          <> <a href={`mailto:${contact.email}`}>{contact.email}</a>, ou par courrier au {lieu}.</>
+        ) : (
+          /* Pas d'adresse de courriel publique : le courrier postal et la
+             demande sur place sont les deux voies qui restent, et elles
+             suffisent. Le jour où `contact.email` est renseigné, il
+             apparaît ici de lui-même et passe en tête. */
+          <> par courrier au {lieu}, ou en le demandant sur place.</>
+        )}
+      </p>
+      <p>
+        Si la réponse ne vous satisfait pas, vous pouvez saisir l'autorité de contrôle&nbsp;:
+        {' '}{legal.autorite.nom}, {legal.autorite.adresse} —{' '}
+        <a href={legal.autorite.site} target="_blank" rel="noopener">{legal.autorite.site}</a>.
+      </p>
+
+      <p class="legal-back">
+        <a href="/mentions-legales">Mentions légales</a> · <a href="/">Retour à l'accueil</a>
+      </p>
+    </div>
+  </section>
+  <Footer />
+</Base>

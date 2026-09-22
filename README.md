@@ -29,13 +29,22 @@ Remplacer le `null` par une vraie valeur suffit ; rien d'autre à toucher.
 
 ### Ce qui reste à renseigner
 
-Uniquement sur `/mentions-legales`, dans l'objet `legal` :
+Quatre champs : les trois premiers dans l'objet `legal`, où ils ne
+servent qu'à `/mentions-legales` ; le dernier dans `contact`.
 
 | Donnée | Champ | Où la trouver |
 | --- | --- | --- |
 | Nom et prénom de chaque exploitante | `entreprises[].denomination` | vous |
 | SIRET de chacune | `entreprises[].siret` | annuaire-entreprises.data.gouv.fr |
 | Responsable de la publication | `directricePublication` | une décision à prendre |
+| Adresse de courriel | `contact.email` | à ouvrir, voir ci-dessous |
+
+Le courriel n'est pas légalement obligatoire, mais il manque : sans lui,
+une personne qui veut exercer ses droits (accès, effacement, retrait
+d'une photo) n'a que le courrier postal ou la visite sur place.
+`/confidentialite` le dit ainsi tant que le champ vaut `null`, et fait
+apparaître l'adresse d'elle-même le jour où il est renseigné. Une boîte
+dédiée, relevée, vaut mieux qu'une adresse personnelle.
 
 Ces champs sont volontairement **hors du tableau `pending`**, qui pilote
 le bandeau d'aperçu en haut du site : le remplir ferait réapparaître ce
@@ -173,8 +182,57 @@ l'afficher, c'est simplement du poids.
 du quartier est une image fabriquée au build depuis les tuiles
 OpenStreetMap. Un visiteur ne contacte aucun autre domaine : pas de
 Google Fonts, pas d'iframe Maps, donc pas de cookie ni de transfert d'IP
-à consentir. C'est ce qui permet à la page de mentions légales de
-l'affirmer sans réserve.
+à consentir. C'est la base de la page `/confidentialite`, et ça se
+mesure plutôt que ça ne s'affirme (bloc suivant).
+
+**Le RGPD, mesuré plutôt qu'affirmé.** « Ce site ne collecte aucune
+donnée » est une phrase facile à écrire et fausse une fois sur deux. Elle
+a donc été vérifiée dans un vrai navigateur, sur les trois pages, en
+faisant ce que fait une visiteuse — défiler, ouvrir le menu, agrandir une
+photo, déplier les tarifs : **82 requêtes, toutes vers l'origine du site,
+aucune vers un tiers**, et chez le visiteur `localStorage`,
+`sessionStorage`, `document.cookie`, les cookies du contexte et les bases
+IndexedDB tous vides. En ligne, aucune réponse ne porte de `Set-Cookie`.
+
+D'où l'absence de bandeau de consentement, qui est un choix et non un
+oubli : il n'y a rien à consentir. Un bandeau posé « par prudence » sur
+un site sans traceur fait cliquer pour rien et habitue à accepter sans
+lire.
+
+**Ce qui reste existe vraiment, et la page le dit.** Le site ne collecte
+rien, mais l'hébergeur journalise les connexions — adresse IP,
+horodatage, page demandée. C'est une donnée personnelle, et la première
+rédaction l'avait passée sous silence en affirmant que le site « ne
+collecte aucune donnée personnelle ». `/confidentialite` la nomme :
+finalité, base légale (intérêt légitime, article 6.1.f), et le fait que
+Vercel étant une société américaine, ces journaux peuvent être traités
+hors de l'Union. La page renvoie à la politique de Vercel pour les
+durées et les garanties de transfert au lieu de les affirmer à sa
+place — nous n'avons pas ce contrat sous les yeux, et une garantie
+inventée vaut moins qu'un lien exact.
+
+**Une page à part, pas un paragraphe de plus.** Les mentions légales et
+l'information RGPD sont deux obligations distinctes : la loi du 21 juin
+2004 d'un côté, les articles 13 et 14 du règlement de l'autre. Les
+fondre dans la même page noie la seconde. `/mentions-legales` garde donc
+trois phrases et un lien ; `/confidentialite` porte le détail —
+responsables, ce qui est traité, sur quelle base, les photographies, le
+renvoi vers Planity, les droits, et la CNIL pour réclamer (article 77).
+Elle est liée depuis le pied de page, donc depuis toutes les pages, et
+s'ouvre sur un résumé encadré : c'est la seule partie que la plupart des
+gens liront, et ici elle suffit.
+
+La date de révision vient de `legal.confidentialiteRevueLe`. **La
+changer à chaque modification de fond** : une politique sans date ne dit
+pas au lecteur si elle décrit encore le site qu'il visite.
+
+**Les en-têtes refusent ce que la page n'utilise pas.** `vercel.json`
+coupe caméra, micro et géolocalisation, et aussi `browsing-topics=()` et
+`interest-cohort=()` — les deux API par lesquelles un navigateur déduit
+des centres d'intérêt publicitaires des pages visitées, sans que la page
+ait rien à demander. Les refuser retire le site de cette collecte. La CSP
+`default-src 'self'` ferme la porte dans l'autre sens : même une erreur
+d'édition ne peut pas faire apparaître un traceur tiers.
 
 **Éléments natifs d'abord.** Les tarifs se replient avec `<details>` :
 le clavier, les lecteurs d'écran et le repli viennent gratuitement. Le
@@ -644,7 +702,10 @@ recherche locale.
    modèles trouvés ailleurs, et que les clientes photographiées sont
    d'accord pour figurer sur le site. Ni l'un ni l'autre ne se vérifie
    depuis le fichier.
-2. **Compléter les mentions légales** (tableau plus haut).
+2. **Compléter les mentions légales et ouvrir une adresse de courriel**
+   (tableau plus haut). Les trois champs légaux s'affichent en pointillés
+   roses tant qu'ils sont vides ; le courriel, lui, est ce qui manque
+   pour qu'une demande RGPD puisse arriver autrement que par la poste.
 3. **Obtenir le logo en vectoriel** (AI, EPS ou SVG). Le PNG fourni tient
    partout où il sert — en-tête et pied de page. Un vectoriel resterait
    préférable : il supprimerait le masque au profit d'un tracé, et

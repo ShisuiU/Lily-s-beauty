@@ -1964,6 +1964,57 @@ section {
   font-size: 0.98rem;
 }
 
+/* ── politique de confidentialité ──
+   Le résumé d'abord, sur fond crème : dans ce cas précis il suffit à la
+   plupart des visiteurs, et le reste n'est là que pour qui veut vérifier.
+   Angles vifs, comme les autres cartes du site. */
+.rgpd-resume {
+  margin-top: clamp(30px, 4vw, 44px);
+  padding: clamp(18px, 2.4vw, 26px) clamp(18px, 2.4vw, 28px);
+  background: var(--shell);
+  border-left: 2px solid var(--rose-ink);
+}
+.rgpd-resume h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+}
+.rgpd-resume p {
+  margin: 0;
+}
+.rgpd-liste {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: 68ch;
+}
+.rgpd-liste li {
+  position: relative;
+  padding-left: 20px;
+  color: var(--ink-2);
+  font-size: 0.97rem;
+}
+.rgpd-liste li + li {
+  margin-top: 12px;
+}
+/* Un tiret plutôt qu'une puce : la liste est faite de phrases, pas
+   d'items, et le tiret cadratin est déjà la ponctuation du site. */
+.rgpd-liste li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--rose-ink);
+}
+.rgpd-liste b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.rgpd-liste code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  color: var(--ink);
+}
+
 .legal-back {
   margin-top: clamp(44px, 6vw, 64px);
   padding-top: 22px;

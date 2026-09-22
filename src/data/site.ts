@@ -34,6 +34,10 @@ export const contact = {
   /** Décision du salon : pas de numéro public. Tout passe par Planity.
       Renseigner ici ferait réapparaître la ligne « Téléphone ». */
   phone: null as string | null,
+  /** Renseigner ici fait apparaître l'adresse dans la page
+      /confidentialite, en tête des voies pour exercer ses droits. Tant
+      qu'elle vaut null, il ne reste que le courrier et la demande sur
+      place. */
   email: null as string | null,
 };
 
@@ -449,6 +453,19 @@ export const legal = {
 
   /** Régime de TVA. Vrai tant que le chiffre d'affaires reste sous le seuil. */
   franchiseTva: true,
+
+  /** Date de la dernière révision de la politique de confidentialité.
+      Elle s'affiche en bas de /confidentialite : une politique sans date
+      ne dit pas au lecteur si elle décrit encore le site qu'il visite. */
+  confidentialiteRevueLe: '22 septembre 2026',
+
+  /** Autorité de contrôle compétente, pour le droit de réclamation
+      (RGPD, article 77). */
+  autorite: {
+    nom: 'Commission nationale de l\'informatique et des libertés (CNIL)',
+    adresse: '3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07',
+    site: 'https://www.cnil.fr/fr/plaintes',
+  },
 
   hebergeur: {
     nom: 'Vercel Inc.',

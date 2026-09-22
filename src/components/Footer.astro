@@ -18,6 +18,7 @@ const year = new Date().getFullYear();
       <nav class="foot-links" aria-label="Navigation de pied de page">
         {sections.map((s) => <a href={lienSection(s.href)}>{s.label}</a>)}
         <a href="/mentions-legales">Mentions légales</a>
+        <a href="/confidentialite">Données personnelles</a>
       </nav>
       <p class="foot-note">
         © {year} {site.name}.
